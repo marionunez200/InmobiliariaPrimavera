@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Acceso administrativo | Inmobiliaria Primavera</title>
+
+    <meta 
+        name="description" 
+        content="Página de acceso administrativo para Inmobiliaria Primavera."
+    >
+
+    <!-- Evita que Google indexe esta página -->
+    <meta name="robots" content="noindex, nofollow">
+
+    <meta name="theme-color" content="#ffffff">
+
+    <link rel="icon" href="../favicon.ico" type="image/x-icon">
+</head>
+
+<body>
+
+    <main class="login-main">
+
+        <section class="login-section" aria-labelledby="login-title">
+
+            <div class="login-brand">
+                <img 
+                    src="../logo.png" 
+                    alt="Logo de Inmobiliaria Primavera" 
+                    class="login-logo"
+                >
+
+                <p>Inmobiliaria Primavera</p>
+            </div>
+
+            <div class="login-container">
+                <h1 id="login-title">Iniciar sesión</h1>
+
+                <form action="/admin/login" method="POST" class="login-form">
+
+                    <div class="form-group">
+                        <label for="username">Usuario</label>
+                        <input 
+                            type="text" 
+                            id="username" 
+                            name="username" 
+                            autocomplete="username"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Contraseña</label>
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password" 
+                            autocomplete="current-password"
+                            required
+                        >
+                    </div>
+
+                    <button type="submit">
+                        Acceder
+                    </button>
+
+                    <a href="../index.html" class="back-link">
+                        Volver al inicio
+                    </a>
+
+                </form>
+            </div>
+
+        </section>
+
+    </main>
+
+</body>
+</html>

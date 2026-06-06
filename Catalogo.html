@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Inmobiliaria Primavera | Casas y propiedades en venta y renta en Sonora</title>
+
+    <meta 
+        name="description" 
+        content="Encuentra casas, terrenos, departamentos y locales comerciales en venta y renta en Sonora. Propiedades disponibles en Ciudad Obregón, San Carlos y Guaymas."
+    >
+
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#ffffff">
+
+    <!-- Cambia esta URL cuando tengan dominio real -->
+    <link rel="canonical" href="https://www.inmobiliariaprimavera.com/">
+
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+
+    <!-- Open Graph: mejora cómo se ve al compartir en WhatsApp/Facebook -->
+    <meta property="og:title" content="Inmobiliaria Primavera | Casas y propiedades en Sonora">
+    <meta property="og:description" content="Casas, terrenos, departamentos y locales comerciales en venta y renta en Ciudad Obregón, San Carlos y Guaymas.">
+    <meta property="og:image" content="https://www.inmobiliariaprimavera.com/img/preview-inmobiliaria.jpg">
+    <meta property="og:url" content="https://www.inmobiliariaprimavera.com/">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="es_MX">
+</head>
+<body>
+            <header class="site-header">
+        <nav class="navbar" aria-label="Navegación principal">
+
+            <a href="index.html" class="navbar-logo" aria-label="Ir al inicio">
+                <img src="logo.png" alt="Logo de Inmobiliaria Primavera">
+            </a>
+
+            <ul class="navbar-menu">
+                <li>
+                    <a href="index.html">Inicio</a>
+                </li>
+
+                <li>
+                    <a href="venta.html">Venta</a>
+
+                    <ul class="submenu">
+                        <li><a href="casas-en-venta.html">Casas en venta</a></li>
+                        <li><a href="departamentos-en-venta.html">Departamentos en venta</a></li>
+                        <li><a href="locales-comerciales-en-venta.html">Locales comerciales en venta</a></li>
+                        <li><a href="terrenos-en-venta.html">Terrenos en venta</a></li>
+                    </ul>
+                </li>
+
+                <li>
+                    <a href="renta.html">Renta</a>
+
+                    <ul class="submenu">
+                        <li><a href="casas-en-renta.html">Casas en renta</a></li>
+                        <li><a href="departamentos-en-renta.html">Departamentos en renta</a></li>
+                        <li><a href="locales-comerciales-en-renta.html">Locales comerciales en renta</a></li>
+                    </ul>
+                </li>
+
+                <li>
+                    <a href="contacto.html">Contacto</a>
+                </li>
+            </ul>
+
+        </nav>
+    </header>
+    <main class="site-main">
+        <!-- Filtro de propiedades -->
+        <section class="filtro">
+            <h1>Filtrar propiedades</h1>
+            <form class="filtro-form" aria-label="Formulario de filtrado de propiedades">
+                <div class="filtro-group">
+                    <label for="ubicacion">Ubicación:</label>
+                    <select id="ubicacion" name="ubicacion">
+                        <option value="">Cualquiera</option>
+                        <option value="ciudad-obregon">Ciudad Obregón</option>
+                        <option value="hermosillo">Hermosillo</option>
+                        <option value="guaymas">Guaymas</option>
+                    </select>
+                    <label for="tipo">Tipo de propiedad:</label>
+                    <select id="tipo" name="tipo">
+                        <option value="">Cualquiera</option>
+                        <option value="casa">Casa</option>
+                        <option value="departamento">Departamento</option>
+                        <option value="local">Local comercial</option>
+                        <option value="terreno">Terreno</option>
+                    </select>
+                    <label for="tipo de propiedad">Tipo de propiedad:</label>
+                    <select id="tipo" name="tipo">
+                        <option value="">Cualquiera</option>
+                        <option value="casa">Casa</option>
+                        <option value="departamento">Departamento</option>
+                        <option value="local">Local comercial</option>
+                        <option value="terreno">Terreno</option>
+                    </select>
+                    <label for="precio">Precio:</label>
+                    <input type="range" id="precio" name="precio" min="0" max="10000000" step="100000" aria-label="Rango de precios">
+                </div>
+
+                <div class="filtro-group">
+                    <label for="precio-min">Precio mínimo:</label>
+                    <input type="number" id="precio-min" name="precio-min" placeholder="$0">
+                </div>
+
+                <div class="filtro-group">
+                    <label for="precio-max">Precio máximo:</label>
+                    <input type="number" id="precio-max" name="precio-max" placeholder="$10,000,000">
+                </div>
+
+                <button type="submit" class="btn">Aplicar filtros</button>
+            </form>
+        </section>
+            <!-- Sección de catálogo de propiedades -->
+        <section class="catalogo">
+            <h1>Catálogo de propiedades</h1>
+            <div class="catalogo-grid">
+                <article class="propiedad-card">
+                    <img src="casa1.jpg" alt="Casa en venta en Ciudad Obregón">
+                    <h2>Casa en venta - Ciudad Obregón</h2>
+                    <p>$1,500,000 MXN</p>
+                    <p>Baños: x</p>
+                    <p>Recámaras: x</p>
+                    <a href="detalle-casa1.html" class="btn">Ver detalles</a>
+                </article>
+
+                <article class="propiedad-card">
+                    <img src="departamento1.jpg" alt="Departamento en renta en Ciudad Obregón">
+                    <h2>Departamento en renta - Ciudad Obregón</h2>
+                    <p>$8,000 MXN/mes</p>
+                    <p>Baños: x</p>
+                    <p>Recámaras: x</p>
+                    <a href="detalle-departamento1.html" class="btn">Ver detalles</a>
+                </article>
+
+                <article class="propiedad-card">
+                    <img src="local1.jpg" alt="Local comercial en venta en Ciudad Obregón">
+                    <h2>Local comercial en venta - Ciudad Obregón</h2>
+                    <p>$3,000,000 MXN</p>
+                    <p>Baños: x</p>
+                    <p>Recámaras: x</p>
+                    <a href="detalle-local1.html" class="btn">Ver detalles</a>
+                </article>
+
+                <!-- Más tarjetas de propiedades... -->
+
+            </div>
+        </section>
+    </main>
+    <footer class="site-footer">
+
+        <div class="footer-container">
+
+            <div class="footer-logo">
+                <a href="index.html" aria-label="Ir al inicio">
+                    <img src="logo.png" alt="Logo de Inmobiliaria Primavera">
+                </a>
+            </div>
+
+            <nav class="footer-info" aria-label="Enlaces de información">
+                <h2>Información</h2>
+
+                <ul>
+                    <li><a href="aviso-privacidad.html">Aviso de privacidad</a></li>
+                    <li><a href="terminos-condiciones.html">Términos y condiciones</a></li>
+                    <li><a href="propiedades.html">Todas las propiedades</a></li>
+                    <li><a href="contacto.html">Contacto</a></li>
+                </ul>
+            </nav>
+
+            <address class="footer-contacto">
+                <h2>Contacto</h2>
+
+                <p>Dirección #215, Ciudad Obregón, Sonora</p>
+                <p><a href="tel:+526441234567">(644) 123 4567</a></p>
+                <p><a href="mailto:sucorreo@gmail.com">sucorreo@gmail.com</a></p>
+            </address>
+
+            <div class="footer-redes">
+                <h2>Redes sociales</h2>
+
+                <a 
+                    href="https://www.facebook.com/inmobiliaria" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    aria-label="Facebook de Inmobiliaria Primavera"
+                >
+                    <img src="facebook.png" alt="" aria-hidden="true">
+                </a>
+
+                <p>@suusuario</p>
+
+                <a 
+                    href="https://www.instagram.com/inmobiliaria" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    aria-label="Instagram de Inmobiliaria Primavera"
+                >
+                    <img src="ins.png" alt="" aria-hidden="true">
+                </a>
+
+                <p>@suusuario</p>
+            </div>
+
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2027 Inmobiliaria Primavera. Todos los derechos reservados.</p>
+
+            <p>
+                Desarrollado por 
+                <a href="contacto-desarrolladores.html">ULSA North West</a>
+            </p>
+        </div>
+
+    </footer>
+</body>
+</html>
