@@ -1,40 +1,353 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es-MX">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <title>Document</title>
-</head>
-<body>
-    <Header>
-        <nav class="bg-gray-800 p-4 text-white">
-            <ul class="flex space-x-4 justify-between">
-                <li><a href="#">Home</a></li>
-                <li><a href="#">About</a></li>
-                <li><a href="#">Contact</a></li>
-            </ul>
-        </nav>
-    </Header>
-    <main>
-        <h1>Welcome to My Website</h1>
-        <p>This is a simple HTML template.</p>
 
-        <section>
-            <h2>Section Title</h2>
-            <p>This is a section of the website.</p>
+    <title>Inmobiliaria Primavera | Casas y propiedades en venta y renta en Sonora</title>
+
+    <meta 
+        name="description" 
+        content="Encuentra casas, terrenos, departamentos y locales comerciales en venta y renta en Sonora. Propiedades disponibles en Ciudad Obregón, San Carlos y Guaymas."
+    >
+
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#ffffff">
+
+    <!-- Cambia esta URL cuando tengan dominio real -->
+    <link rel="canonical" href="https://www.inmobiliariaprimavera.com/">
+
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+
+    <!-- Open Graph: mejora cómo se ve al compartir en WhatsApp/Facebook -->
+    <meta property="og:title" content="Inmobiliaria Primavera | Casas y propiedades en Sonora">
+    <meta property="og:description" content="Casas, terrenos, departamentos y locales comerciales en venta y renta en Ciudad Obregón, San Carlos y Guaymas.">
+    <meta property="og:image" content="https://www.inmobiliariaprimavera.com/img/preview-inmobiliaria.jpg">
+    <meta property="og:url" content="https://www.inmobiliariaprimavera.com/">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="es_MX">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <nav class="navbar" aria-label="Navegación principal">
+
+            <a href="index.html" class="navbar-logo" aria-label="Ir al inicio">
+                <img src="logo.png" alt="Logo de Inmobiliaria Primavera">
+            </a>
+
+            <ul class="navbar-menu">
+                <li>
+                    <a href="index.html">Inicio</a>
+                </li>
+
+                <li>
+                    <a href="venta.html">Venta</a>
+
+                    <ul class="submenu">
+                        <li><a href="casas-en-venta.html">Casas en venta</a></li>
+                        <li><a href="departamentos-en-venta.html">Departamentos en venta</a></li>
+                        <li><a href="locales-comerciales-en-venta.html">Locales comerciales en venta</a></li>
+                        <li><a href="terrenos-en-venta.html">Terrenos en venta</a></li>
+                    </ul>
+                </li>
+
+                <li>
+                    <a href="renta.html">Renta</a>
+
+                    <ul class="submenu">
+                        <li><a href="casas-en-renta.html">Casas en renta</a></li>
+                        <li><a href="departamentos-en-renta.html">Departamentos en renta</a></li>
+                        <li><a href="locales-comerciales-en-renta.html">Locales comerciales en renta</a></li>
+                    </ul>
+                </li>
+
+                <li>
+                    <a href="contacto.html">Contacto</a>
+                </li>
+            </ul>
+
+        </nav>
+    </header>
+
+
+    <main>
+
+        <!-- HERO / PORTADA PRINCIPAL -->
+        <section class="hero" aria-labelledby="hero-title">
+
+            <div class="hero-content">
+                <p class="hero-brand">Inmobiliaria Primavera</p>
+
+                <h1 id="hero-title">Casas, terrenos y propiedades en venta y renta en Sonora</h1>
+
+                <p class="hero-text">
+                    Encuentra propiedades en Ciudad Obregón, San Carlos y Guaymas.
+                    Te ayudamos a encontrar un nuevo hogar o una inversión segura.
+                </p>
+
+                <form class="search-form" action="propiedades.html" method="get">
+                    <label for="ubicacion">Selecciona una ubicación</label>
+
+                    <select name="ubicacion" id="ubicacion">
+                        <option value="">Seleccione ubicación...</option>
+                        <option value="ciudad-obregon">Ciudad Obregón</option>
+                        <option value="san-carlos">San Carlos</option>
+                        <option value="guaymas">Guaymas</option>
+                    </select>
+
+                    <button type="submit">Buscar</button>
+                </form>
+            </div>
+
+            <div class="hero-image">
+                <img 
+                    src="casa-principal.jpg" 
+                    alt="Casa moderna en venta en Sonora"
+                >
+            </div>
+
+            <aside class="hero-property-info" aria-label="Información destacada de propiedad">
+                <h2>Información destacada</h2>
+                <ul>
+                    <li>Ubicación de la propiedad</li>
+                    <li>Medidas del terreno</li>
+                    <li>Características principales</li>
+                </ul>
+            </aside>
+
         </section>
-        <section>
-            <h2>Another Section</h2>
-            <p>This is another section of the website.</p>
+
+
+        <!-- CATEGORÍAS DE PROPIEDADES -->
+        <section class="property-categories" aria-labelledby="categories-title">
+
+            <div class="section-heading">
+                <p>Propiedades disponibles</p>
+                <h2 id="categories-title">Encuentra casas, terrenos y propiedades en renta</h2>
+
+                <p>
+                    Explora nuestro catálogo de propiedades en Sonora. Contamos con opciones
+                    para compra, renta e inversión inmobiliaria.
+                </p>
+
+                <a href="propiedades.html" class="view-all-button">
+                    Ver todas las propiedades
+                </a>
+            </div>
+
+            <div class="categories-grid">
+
+                <article class="category-card">
+                    <img 
+                        src="casa-habitacion.jpg" 
+                        alt="Casa habitación en venta en Sonora"
+                    >
+
+                    <h3>Casas en venta</h3>
+
+                    <p>
+                        Encuentra casas habitación disponibles para compra en distintas zonas de Sonora.
+                    </p>
+
+                    <a href="casas-en-venta.html">Ver casas en venta</a>
+                </article>
+
+                <article class="category-card">
+                    <img 
+                        src="terreno.jpg" 
+                        alt="Terreno en venta en Sonora"
+                    >
+
+                    <h3>Terrenos en venta</h3>
+
+                    <p>
+                        Consulta terrenos habitacionales y comerciales disponibles para inversión.
+                    </p>
+
+                    <a href="terrenos-en-venta.html">Ver terrenos en venta</a>
+                </article>
+
+                <article class="category-card">
+                    <img 
+                        src="renta.jpg" 
+                        alt="Propiedad en renta en Sonora"
+                    >
+
+                    <h3>Propiedades en renta</h3>
+
+                    <p>
+                        Encuentra casas, departamentos y locales comerciales disponibles en renta.
+                    </p>
+
+                    <a href="propiedades-en-renta.html">Ver propiedades en renta</a>
+                </article>
+
+            </div>
+
         </section>
-        <section>
-            <h2>Contact Us</h2>
-            <p>You can contact us at contact@example.com.</p>
+
+
+        <!-- CIUDADES -->
+        <section class="cities-section" aria-labelledby="cities-title">
+
+            <div class="section-heading">
+                <p>Busca en tu ciudad</p>
+                <h2 id="cities-title">Encuentra propiedades cerca de ti</h2>
+            </div>
+
+            <div class="cities-list">
+                <a href="propiedades-ciudad-obregon.html">Propiedades en Ciudad Obregón</a>
+                <a href="propiedades-san-carlos.html">Propiedades en San Carlos</a>
+                <a href="propiedades-guaymas.html">Propiedades en Guaymas</a>
+            </div>
+
         </section>
+
+
+        <!-- QUIÉNES SOMOS -->
+        <section class="about-section" aria-labelledby="about-title">
+
+            <div class="about-content">
+                <h2 id="about-title">¿Quiénes somos?</h2>
+
+                <p>
+                    En Inmobiliaria Primavera ayudamos a las personas a encontrar casas,
+                    terrenos, departamentos y locales comerciales en venta o renta en Sonora.
+                </p>
+
+                <p>
+                    Nuestro objetivo es facilitar el proceso de búsqueda inmobiliaria con
+                    información clara, atención cercana y opciones adaptadas a las necesidades
+                    de cada cliente.
+                </p>
+            </div>
+
+            <div class="about-image">
+                <img 
+                    src="equipo-inmobiliaria.jpg" 
+                    alt="Equipo de Inmobiliaria Primavera atendiendo clientes"
+                >
+            </div>
+
+        </section>
+
+
+        <!-- MISIÓN, VISIÓN Y VALORES -->
+        <section class="company-values" aria-labelledby="values-title">
+
+            <h2 id="values-title">Lo que nos define</h2>
+
+            <div class="values-grid">
+
+                <article class="value-card">
+                    <img src="mision.png" alt="" aria-hidden="true">
+
+                    <h3>Misión</h3>
+
+                    <p>
+                        Brindar soluciones inmobiliarias confiables, ayudando a nuestros clientes
+                        a encontrar propiedades que se adapten a sus necesidades, ubicación y presupuesto.
+                    </p>
+                </article>
+
+                <article class="value-card">
+                    <img src="vision.png" alt="" aria-hidden="true">
+
+                    <h3>Visión</h3>
+
+                    <p>
+                        Ser una inmobiliaria reconocida en Sonora por su atención, transparencia
+                        y compromiso con cada cliente.
+                    </p>
+                </article>
+
+                <article class="value-card">
+                    <img src="valores.png" alt="" aria-hidden="true">
+
+                    <h3>Valores</h3>
+
+                    <p>
+                        Honestidad, responsabilidad, compromiso, respeto y confianza en cada proceso
+                        de compra, venta o renta de propiedades.
+                    </p>
+                </article>
+
+            </div>
+
+        </section>
+
     </main>
-    <footer>
-        <p>&copy; 2023 My Website. All rights reserved.</p>
+
+
+    <footer class="site-footer">
+
+        <div class="footer-container">
+
+            <div class="footer-logo">
+                <a href="index.html" aria-label="Ir al inicio">
+                    <img src="logo.png" alt="Logo de Inmobiliaria Primavera">
+                </a>
+            </div>
+
+            <nav class="footer-info" aria-label="Enlaces de información">
+                <h2>Información</h2>
+
+                <ul>
+                    <li><a href="aviso-privacidad.html">Aviso de privacidad</a></li>
+                    <li><a href="terminos-condiciones.html">Términos y condiciones</a></li>
+                    <li><a href="propiedades.html">Todas las propiedades</a></li>
+                    <li><a href="contacto.html">Contacto</a></li>
+                </ul>
+            </nav>
+
+            <address class="footer-contacto">
+                <h2>Contacto</h2>
+
+                <p>Dirección #215, Ciudad Obregón, Sonora</p>
+                <p><a href="tel:+526441234567">(644) 123 4567</a></p>
+                <p><a href="mailto:sucorreo@gmail.com">sucorreo@gmail.com</a></p>
+            </address>
+
+            <div class="footer-redes">
+                <h2>Redes sociales</h2>
+
+                <a 
+                    href="https://www.facebook.com/inmobiliaria" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    aria-label="Facebook de Inmobiliaria Primavera"
+                >
+                    <img src="facebook.png" alt="" aria-hidden="true">
+                </a>
+
+                <p>@suusuario</p>
+
+                <a 
+                    href="https://www.instagram.com/inmobiliaria" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    aria-label="Instagram de Inmobiliaria Primavera"
+                >
+                    <img src="ins.png" alt="" aria-hidden="true">
+                </a>
+
+                <p>@suusuario</p>
+            </div>
+
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2027 Inmobiliaria Primavera. Todos los derechos reservados.</p>
+
+            <p>
+                Desarrollado por 
+                <a href="contacto-desarrolladores.html">ULSA North West</a>
+            </p>
+        </div>
+
     </footer>
+
 </body>
 </html>
