@@ -1,0 +1,175 @@
+@font-face {
+    font-family: 'Montserrat';
+    src: url('../Font/Montserrat-SemiBold.woff2') format('woff2');
+    font-weight: 600;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Sole Serif Display';
+    src: url('../Font/sole-serif-display-bold.otf') format('opentype');
+    font-weight: 700;
+    font-style: normal;
+}
+.login-main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #fff5e0;
+    margin: 0px;
+}
+.login-section {
+    background-color: #ffffff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+}
+.login-brand {
+    text-align: center;
+}
+.login-logo {
+    width: 150px;
+    height: auto;
+}
+.login-container h1 {
+    text-align: center;
+    margin-bottom: 0.5rem;
+    color: #122548;
+    font-family: 'Sole Serif Display', serif;
+    font-size: 2rem;
+}
+.login-form .form-group {
+    margin-bottom: 1.2rem;
+}
+.login-form label {
+    display: block;
+    margin-bottom: 0.5rem;
+    margin-left: 0.5rem;
+    color: #122548;
+    font-family: 'Montserrat', sans-serif;
+}
+.login-form input {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #122548;
+    border-radius: 30px;
+    box-sizing: border-box;
+    font-family: 'Montserrat', sans-serif;
+}
+.login-form button {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #17305e;
+    color: #ffffff;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-family: 'Montserrat', sans-serif;
+}
+.login-form button:hover {
+    background-color: #122548;
+}
+.back-link {
+    display: inline-block;
+    width: 100%;
+    padding: 0.75rem;
+    text-align: center;
+    color: #122548;
+    background-color: transparent;
+    border: none;
+    border-radius: 30px;
+    text-decoration: none;
+    cursor: pointer;
+    font-size: 1rem;
+    font-family: 'Montserrat', sans-serif;
+    border: 1px solid #122548;
+    box-sizing: border-box;
+}
+.back-link:hover {
+    background-color: #122548;
+    color: #fff5e0;
+    text-decoration: none;
+}
+.login-form input:focus {
+    border-color: #f3cc5a;
+    outline: none;
+}
+.login-form button:focus {
+    outline: 2px solid #f3cc5a;
+    outline-offset: 2px;
+}
+.back-link:focus {
+    outline: 2px solid #f3cc5a;
+    outline-offset: 2px;
+}
+.login-footer {
+    text-align: center;
+    padding: 1rem;
+    color: #000000;
+    background-color: #122548;
+}
+.login-footer-text {
+    margin: 0;
+    color: #fff5e0;
+}
+.bodymagin {
+    margin: 0px;
+}
+.Login-buttons {
+    display: flex;
+    gap: 1rem;
+}
+.login-brand-text1 {
+    font-family: 'Sole Serif Display', serif;
+    font-size: 3rem;
+    color: #122548;
+    margin: 0;
+}
+.login-brand-text2 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1rem;
+    color: #122548;
+    margin: 0;
+}
+
+.floating-group {
+    position: relative;
+}
+
+.floating-group input {
+    width: 100%;
+    padding: 0.85rem 1rem 0.45rem;
+    border: 1px solid #122548;
+    border-radius: 30px;
+    box-sizing: border-box;
+    font-family: 'Montserrat', sans-serif;
+    color: #122548;
+    background-color: transparent;
+    outline: none;
+}
+
+.floating-group label {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #122548;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.95rem;
+    pointer-events: none;
+    background-color: #ffffff;
+    padding: 0 0.35rem;
+    transition: 0.25s ease;
+}
+
+/* Cuando das clic o ya hay texto */
+.floating-group input:focus + label,
+.floating-group input:not(:placeholder-shown) + label {
+    top: 0;
+    font-size: 0.75rem;
+    color: #17305e;
+}
