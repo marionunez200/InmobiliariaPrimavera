@@ -1,0 +1,124 @@
+
+@font-face {
+    font-family: 'Montserrat';
+    src: url('../Font/Montserrat-SemiBold.woff2') format('woff2');
+}
+
+@font-face {
+    font-family: 'Sole Serif Display';
+    src: url('../Font/sole-serif-display-bold.otf') format('opentype');
+}
+
+/* Header */
+
+.site-header {
+    background: #122548;
+    padding: 10px 80px;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.site-header a {
+    color: #fff5e0;
+    text-decoration: none;
+}
+
+/* Navbar */
+
+.navbar {
+    display: flex;
+    align-items: center;
+}
+
+.navbar-left,
+.navbar-right {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    flex: 1;
+}
+
+.navbar-right {
+    justify-content: flex-end;
+}
+
+.navbar-left>div {
+    position: relative;
+}
+
+.navbar-left>a,
+.navbar-left>div>a,
+.navbar-right a {
+    position: relative;
+    display: block;
+    padding: 15px 0;
+    transition: color .3s;
+}
+
+.navbar-left>a:hover,
+.navbar-left>div>a:hover,
+.navbar-right a:hover {
+    color: gray;
+}
+
+.navbar-left>a::before,
+.navbar-left>div>a::before,
+.navbar-right a::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 3px;
+    background: #F3CC5A;
+    transition: width .3s;
+}
+
+.navbar-left>a:hover::before,
+.navbar-left>div>a:hover::before,
+.navbar-right a:hover::before {
+    width: 100%;
+}
+
+.navbar-logo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 40px;
+}
+
+.logo {
+    height: 70px;
+    border-radius: 40px;
+}
+
+/* Submenús */
+
+.submenu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    min-width: 240px;
+    margin: 0;
+    padding: 10px 0;
+    list-style: none;
+    background: #fff5e0;
+    border-radius: 6px;
+    box-shadow: 0 4px 10px rgba(0,0,0,.15);
+}
+
+.submenu a {
+    display: block;
+    padding: 10px 18px;
+    color: black;
+    text-decoration: none;
+}
+
+.submenu a:hover {
+    background: #ece3d1;
+    color: gray;
+}
+
+.navbar-left>div:hover .submenu {
+    display: block;
+}
