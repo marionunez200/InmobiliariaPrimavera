@@ -25,54 +25,55 @@
     <meta property="og:url" content="https://www.inmobiliariaprimavera.com/">
     <meta property="og:type" content="website">
     <meta property="og:locale" content="es_MX">
-</head>
-<body>
-    <header class="site-header">
-        <nav class="navbar" aria-label="Navegación principal">
 
-            <a href="index.html" class="navbar-logo" aria-label="Ir al inicio">
-                <img src="logo.png" alt="Logo de Inmobiliaria Primavera">
+    <link rel="stylesheet" href="header.css">
+    <link rel="stylesheet" href="catalogo.css">
+    <link rel="stylesheet" href="footer.css">
+</head>
+<body style="margin:0">
+    <header class="site-header">
+        <nav class="navbar">
+
+            <div class="navbar-left">
+
+                <a href="index.html">Inicio</a>
+
+                <div>
+                    <a href="venta.html">Venta</a>
+                    <ul class="submenu">
+                        <li><a href="#">Casas en venta</a></li>
+                        <li><a href="#">Departamentos en venta</a></li>
+                        <li><a href="#">Locales comerciales en venta</a></li>
+                        <li><a href="#">Terrenos en venta</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <a href="renta.html">Renta</a>
+                    <ul class="submenu">
+                        <li><a href="#">Casas en renta</a></li>
+                        <li><a href="#">Departamentos en renta</a></li>
+                        <li><a href="#">Locales comerciales en renta</a></li>
+                    </ul>
+                </div>
+
+            </div>
+
+            <a href="index.html" class="navbar-logo">
+                <img class="logo" src="logo.jpeg" alt="Logo">
             </a>
 
-            <ul class="navbar-menu">
-                <li>
-                    <a href="index.html">Inicio</a>
-                </li>
-
-                <li>
-                    <a href="venta.html">Venta</a>
-
-                    <ul class="submenu">
-                        <li><a href="casas-en-venta.html">Casas en venta</a></li>
-                        <li><a href="departamentos-en-venta.html">Departamentos en venta</a></li>
-                        <li><a href="locales-comerciales-en-venta.html">Locales comerciales en venta</a></li>
-                        <li><a href="terrenos-en-venta.html">Terrenos en venta</a></li>
-                    </ul>
-                </li>
-
-                <li>
-                    <a href="renta.html">Renta</a>
-
-                    <ul class="submenu">
-                        <li><a href="casas-en-renta.html">Casas en renta</a></li>
-                        <li><a href="departamentos-en-renta.html">Departamentos en renta</a></li>
-                        <li><a href="locales-comerciales-en-renta.html">Locales comerciales en renta</a></li>
-                    </ul>
-                </li>
-
-                <li>
-                    <a href="contacto.html">Contacto</a>
-                </li>
-            </ul>
+            <div class="navbar-right">
+                <a href="contacto.html">Contacto</a>
+            </div>
 
         </nav>
-    </header>
-    <main class="site-main">
+    </header>    
+<main class="site-main">
         <!-- Filtro de propiedades -->
         <section class="filtro">
-            <h1>Filtrar propiedades</h1>
             <form class="filtro-form" aria-label="Formulario de filtrado de propiedades">
-                <div class="filtro-group">
+                <div class="filtro-group-top">
                     <label for="ubicacion">Ubicación:</label>
                     <select id="ubicacion" name="ubicacion">
                         <option value="">Cualquiera</option>
@@ -96,52 +97,106 @@
                         <option value="local">Local comercial</option>
                         <option value="terreno">Terreno</option>
                     </select>
-                    <label for="precio">Precio:</label>
-                    <input type="range" id="precio" name="precio" min="0" max="10000000" step="100000" aria-label="Rango de precios">
                 </div>
 
-                <div class="filtro-group">
-                    <label for="precio-min">Precio mínimo:</label>
-                    <input type="number" id="precio-min" name="precio-min" placeholder="$0">
+                <div class="filtro-group-bottom">
+                    <div class="floating-group">
+                        <input type="number" id="precio-min" name="precio-min" placeholder="$0">
+                        <label for="precio-min">Precio mínimo:</label>
+                    </div>
+                    
+                    <div>
+                        <input type="range" id="precio" name="precio" min="0" max="10000000" step="100000" aria-label="Rango de precios">
+                    </div>
+
+                    <div class="filtro-group floating-group">
+                        <input type="number" id="precio-max" name="precio-max" placeholder="$10,000,000">
+                        <label for="precio-max">Precio máximo:</label>
+                    </div>
+
+                    <button type="submit" id="aplicar_filtro" class="btn">Aplicar filtros</button>
                 </div>
 
-                <div class="filtro-group">
-                    <label for="precio-max">Precio máximo:</label>
-                    <input type="number" id="precio-max" name="precio-max" placeholder="$10,000,000">
-                </div>
-
-                <button type="submit" class="btn">Aplicar filtros</button>
             </form>
         </section>
             <!-- Sección de catálogo de propiedades -->
         <section class="catalogo">
-            <h1>Catálogo de propiedades</h1>
             <div class="catalogo-grid">
                 <article class="propiedad-card">
-                    <img src="casa1.jpg" alt="Casa en venta en Ciudad Obregón">
-                    <h2>Casa en venta - Ciudad Obregón</h2>
-                    <p>$1,500,000 MXN</p>
-                    <p>Baños: x</p>
-                    <p>Recámaras: x</p>
-                    <a href="detalle-casa1.html" class="btn">Ver detalles</a>
+                    <img class="propiedad-img" src="casa1.jpg" alt="Casa en venta en Ciudad Obregón">
+                    <div class="propiedad-info">
+                        <h2>Casa en venta - Ciudad Obregón</h2>
+                        <p class="precio-mxn">$1,500,000 MXN</p>
+                        <div class="info_card">
+                            <p>Baños: x</p>
+                            <p>Recámaras: x</p>
+                        </div>
+                        <a class="propiedad_detalles" href="detalle-casa1.html" class="btn">Ver detalles</a>
+                    </div>
                 </article>
 
                 <article class="propiedad-card">
-                    <img src="departamento1.jpg" alt="Departamento en renta en Ciudad Obregón">
-                    <h2>Departamento en renta - Ciudad Obregón</h2>
-                    <p>$8,000 MXN/mes</p>
-                    <p>Baños: x</p>
-                    <p>Recámaras: x</p>
-                    <a href="detalle-departamento1.html" class="btn">Ver detalles</a>
+                    <img class="propiedad-img" src="departamento1.jpg" alt="Departamento en renta en Ciudad Obregón">
+                    <div class="propiedad-info">
+                        <h2>Departamento en renta - Ciudad Obregón</h2>
+                        <p class="precio-mxn">$8,000 MXN/mes</p>
+                        <div class="info_card">
+                            <p>Baños: x</p>
+                            <p>Recámaras: x</p>
+                        </div>
+                        <a class="propiedad_detalles" href="detalle-departamento1.html" class="btn">Ver detalles</a>
+                    </div>
                 </article>
 
                 <article class="propiedad-card">
-                    <img src="local1.jpg" alt="Local comercial en venta en Ciudad Obregón">
+                    <img class="propiedad-img" src="local1.jpg" alt="Local comercial en venta en Ciudad Obregón">
+                    <div class="propiedad-info">
+                        <h2>Local comercial en venta - Ciudad Obregón</h2>
+                        <p class="precio-mxn">$3,000,000 MXN</p>
+                        <div class="info_card">
+                            <p>Baños: x</p>
+                            <p>Recámaras: x</p>
+                        </div>
+                        <a class="propiedad_detalles" href="detalle-local1.html" class="btn">Ver detalles</a>
+                    </div>
+                </article>
+
+                <article class="propiedad-card">
+                    <img class="propiedad-img" src="casa1.jpg" alt="Casa en venta en Ciudad Obregón">
+                    <div class="propiedad-info">
+                        <h2>Casa en venta - Ciudad Obregón</h2>
+                        <p class="precio-mxn">$1,500,000 MXN</p>
+                        <div class="info_card">
+                            <p>Baños: x</p>
+                            <p>Recámaras: x</p>
+                        </div>
+                        <a class="propiedad_detalles" href="detalle-casa1.html" class="btn">Ver detalles</a>
+                    </div>
+                </article>
+
+                <article class="propiedad-card">
+                    <img class="propiedad-img" src="departamento1.jpg" alt="Departamento en renta en Ciudad Obregón">
+                    <div class="propiedad-info">
+                        <h2>Departamento en renta - Ciudad Obregón</h2>
+                        <p class="precio-mxn">$8,000 MXN/mes</p>
+                        <div class="info_card">
+                            <p>Baños: x</p>
+                            <p>Recámaras: x</p>
+                        </div>
+                        <a class="propiedad_detalles" href="detalle-departamento1.html" class="btn">Ver detalles</a>
+                    </div>
+                </article>
+
+                <article class="propiedad-card">
+                    <img class="propiedad-img" src="local1.jpg" alt="Local comercial en venta en Ciudad Obregón">
+                    <div class="propiedad-info">
                     <h2>Local comercial en venta - Ciudad Obregón</h2>
-                    <p>$3,000,000 MXN</p>
-                    <p>Baños: x</p>
-                    <p>Recámaras: x</p>
-                    <a href="detalle-local1.html" class="btn">Ver detalles</a>
+                    <p class="precio-mxn">$3,000,000 MXN</p>
+                    <div class="info_card">
+                        <p>Baños: x</p>
+                        <p>Recámaras: x</p>
+                    </div>
+                    <a class="propiedad_detalles" href="detalle-local1.html" class="btn">Ver detalles</a>
                 </article>
 
                 <!-- Más tarjetas de propiedades... -->
