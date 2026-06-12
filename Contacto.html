@@ -4,6 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./CSS/Footer.css">
+    <link rel="stylesheet" href="./CSS/header.css">
 
     <title>Inmobiliaria Primavera | Casas y propiedades en venta y renta en Sonora</title>
 
@@ -18,9 +20,7 @@
     <!-- Cambia esta URL cuando tengan dominio real -->
     <link rel="canonical" href="https://www.inmobiliariaprimavera.com/">
 
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
-
-    <!-- Open Graph: mejora cómo se ve al compartir en WhatsApp/Facebook -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <meta property="og:title" content="Inmobiliaria Primavera | Casas y propiedades en Sonora">
     <meta property="og:description" content="Casas, terrenos, departamentos y locales comerciales en venta y renta en Ciudad Obregón, San Carlos y Guaymas.">
     <meta property="og:image" content="https://www.inmobiliariaprimavera.com/img/preview-inmobiliaria.jpg">
@@ -114,53 +114,59 @@
 
             <div class="footer-logo">
                 <a href="index.html" aria-label="Ir al inicio">
-                    <img src="logo.png" alt="Logo de Inmobiliaria Primavera">
+                    <img src="/Imagenes/Logosolo.png" alt="Logo de Inmobiliaria Primavera">
                 </a>
             </div>
 
             <nav class="footer-info" aria-label="Enlaces de información">
-                <h2>Información</h2>
+                <h2 class="footer-title">Información</h2>
 
-                <ul>
-                    <li><a href="aviso-privacidad.html">Aviso de privacidad</a></li>
-                    <li><a href="terminos-condiciones.html">Términos y condiciones</a></li>
-                    <li><a href="propiedades.html">Todas las propiedades</a></li>
-                    <li><a href="contacto.html">Contacto</a></li>
+                <ul class="footer-links">
+                    <li><a href="Politicas-privacidad.html" class="footer-link">Aviso de privacidad</a></li>
+                    <li><a href="terminos-condiciones.html" class="footer-link">Términos y condiciones</a></li>
+                    <li><a href="Catalogo.html" class="footer-link">Todas las propiedades</a></li>
+                    <li><a href="contacto.html" class="footer-link">Contacto</a></li>
                 </ul>
             </nav>
 
             <address class="footer-contacto">
-                <h2>Contacto</h2>
+                <h2 class="footer-title">Contacto</h2>
 
-                <p>Dirección #215, Ciudad Obregón, Sonora</p>
-                <p><a href="tel:+526441234567">(644) 123 4567</a></p>
-                <p><a href="mailto:sucorreo@gmail.com">sucorreo@gmail.com</a></p>
+                <p class="footer-text">Dirección #215, Ciudad Obregón, Sonora</p>
+                <p class="footer-text"><a class="footer-text" href="tel:+526441234567">(644) 123 4567</a></p>
+                <p class="footer-text"><a class="footer-text" href="mailto:sucorreo@gmail.com">sucorreo@gmail.com</a></p>
             </address>
 
             <div class="footer-redes">
-                <h2>Redes sociales</h2>
-
-                <a 
-                    href="https://www.facebook.com/inmobiliaria" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    aria-label="Facebook de Inmobiliaria Primavera"
-                >
-                    <img src="facebook.png" alt="" aria-hidden="true">
-                </a>
-
-                <p>@suusuario</p>
-
-                <a 
-                    href="https://www.instagram.com/inmobiliaria" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    aria-label="Instagram de Inmobiliaria Primavera"
-                >
-                    <img src="ins.png" alt="" aria-hidden="true">
-                </a>
-
-                <p>@suusuario</p>
+                <h2 class="footer-title">Redes sociales</h2>
+            
+                <div class="social-list">
+                    <a 
+                        href="https://www.facebook.com/inmobiliaria" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        aria-label="Facebook de Inmobiliaria Primavera"
+                        class="social-link"
+                    >
+                        <span class="social-icon facebook">
+                            <i class="fa-brands fa-facebook-f"></i>
+                        </span>
+                        <span class="social-user">@suusuario</span>
+                    </a>
+                
+                    <a 
+                        href="https://www.instagram.com/inmobiliaria" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        aria-label="Instagram de Inmobiliaria Primavera"
+                        class="social-link"
+                    >
+                        <span class="social-icon instagram">
+                            <i class="fa-brands fa-instagram"></i>
+                        </span>
+                        <span class="social-user">@suusuario</span>
+                    </a>
+                </div>
             </div>
 
         </div>

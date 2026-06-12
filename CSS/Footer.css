@@ -1,0 +1,161 @@
+/* Footer */
+
+body {
+    margin: 0;
+    color: #333;
+}
+
+.site-footer {
+    color: #fff5e0;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.footer-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 4rem;
+
+    padding: 5rem;
+    background: linear-gradient(
+        135deg,
+        #1b376b 0%,
+        #122548 55%,
+        #0a1427 100%
+    );
+}
+
+.footer-logo,
+.footer-info,
+.footer-contacto,
+.footer-redes {
+    flex: 1 1 200px;
+    max-width: 260px;
+}
+
+.footer-logo img {
+    width: 150px;
+    height: auto;
+}
+
+.footer-title {
+    font-size: 1.8rem;
+    margin: 0 0 1rem;
+    font-family: 'Montserrat', sans-serif;
+    color: #fff5e0;
+}
+
+.footer-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-links li {
+    margin-bottom: 0.4rem;
+}
+
+.footer-link,
+.footer-link:visited,
+.footer-text,
+.footer-text:visited,
+.footer-bottom a,
+.footer-bottom a:visited {
+    color: #fff5e0;
+    text-decoration: none;
+}
+
+.footer-link {
+    font-size: 1.125rem;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.footer-link:hover,
+.footer-text:hover,
+.footer-bottom a:hover {
+    color: #f3cc5a;
+}
+
+address.footer-contacto {
+    font-style: normal;
+}
+
+.footer-text {
+    font-size: 1.125rem;
+    font-family: 'Montserrat', sans-serif;
+    margin: 0.5rem 0;
+}
+
+/* Redes sociales */
+
+.social-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.social-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+
+    width: fit-content;
+    color: #fff5e0;
+    text-decoration: none;
+
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.125rem;
+
+    transition: 0.25s ease;
+}
+
+.social-link:hover {
+    color: #f3cc5a;
+    transform: translateX(4px);
+}
+
+.social-icon {
+    width: 42px;
+    height: 42px;
+
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    line-height: 1;
+    vertical-align: middle;
+
+    border-radius: 6px;
+    color: #ffffff;
+    font-size: 1.2rem;
+
+    flex-shrink: 0;
+}
+
+.facebook {
+    background-color: #3b5998;
+}
+
+.instagram {
+    background-color: #fa6bfa;
+}
+
+.social-user {
+    color: inherit;
+}
+
+/* Parte inferior */
+
+.footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+
+    padding: 1rem 5rem;
+    background: #0a1427;
+    color: #fff5e0;
+    font-size: 0.9rem;
+}
+
+.footer-bottom p {
+    margin: 0;
+}
