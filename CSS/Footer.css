@@ -1,13 +1,23 @@
 /* Footer */
 
+@font-face {
+    font-family: 'Montserrat';
+    src: url('../Font/Montserrat-SemiBold.woff2') format('woff2');
+}
+
+@font-face {
+    font-family: 'Sole Serif Display';
+    src: url('../Font/sole-serif-display-bold.otf') format('opentype');
+}
+
 body {
     margin: 0;
     color: #333;
 }
 
-.site-footer {
+.site-footer{
     color: #fff5e0;
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Montserrat', sans-serif !important;
 }
 
 .footer-container {

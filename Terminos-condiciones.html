@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./CSS/Footer.css">
-
+    <link rel="stylesheet" href="./CSS/header.css">
     <title>Términos y condiciones | Inmobiliaria Primavera</title>
 
     <meta 
@@ -22,48 +22,44 @@
 
 <body>
 
-    <header class="site-header">
-        <nav class="navbar" aria-label="Navegación principal">
+<header class="site-header">
+        <nav class="navbar">
 
-            <a href="index.html" class="navbar-logo" aria-label="Ir al inicio">
-                <img src="logo.png" alt="Logo de Inmobiliaria Primavera">
+            <div class="navbar-left">
+
+                <a href="index.html">Inicio</a>
+
+                <div>
+                    <a href="venta.html">Venta</a>
+                    <ul class="submenu">
+                        <li><a href="#">Casas en venta</a></li>
+                        <li><a href="#">Departamentos en venta</a></li>
+                        <li><a href="#">Locales comerciales en venta</a></li>
+                        <li><a href="#">Terrenos en venta</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <a href="renta.html">Renta</a>
+                    <ul class="submenu">
+                        <li><a href="#">Casas en renta</a></li>
+                        <li><a href="#">Departamentos en renta</a></li>
+                        <li><a href="#">Locales comerciales en renta</a></li>
+                    </ul>
+                </div>
+
+            </div>
+
+            <a href="index.html" class="navbar-logo">
+                <img class="logo" src="logo.jpeg" alt="Logo">
             </a>
 
-            <ul class="navbar-menu">
-                <li>
-                    <a href="index.html">Inicio</a>
-                </li>
-
-                <li>
-                    <a href="venta.html">Venta</a>
-
-                    <ul class="submenu">
-                        <li><a href="casas-en-venta.html">Casas en venta</a></li>
-                        <li><a href="departamentos-en-venta.html">Departamentos en venta</a></li>
-                        <li><a href="locales-comerciales-en-venta.html">Locales comerciales en venta</a></li>
-                        <li><a href="terrenos-en-venta.html">Terrenos en venta</a></li>
-                    </ul>
-                </li>
-
-                <li>
-                    <a href="renta.html">Renta</a>
-
-                    <ul class="submenu">
-                        <li><a href="casas-en-renta.html">Casas en renta</a></li>
-                        <li><a href="departamentos-en-renta.html">Departamentos en renta</a></li>
-                        <li><a href="locales-comerciales-en-renta.html">Locales comerciales en renta</a></li>
-                    </ul>
-                </li>
-
-                <li>
-                    <a href="contacto.html">Contacto</a>
-                </li>
-            </ul>
+            <div class="navbar-right">
+                <a href="contacto.html">Contacto</a>
+            </div>
 
         </nav>
-    </header>
-
-
+</header>
     <main class="legal-page">
 
         <article class="legal-content">
@@ -157,7 +153,7 @@
 
             <div class="footer-logo">
                 <a href="index.html" aria-label="Ir al inicio">
-                    <img src="/Imagenes/Logosolo.png" alt="Logo de Inmobiliaria Primavera">
+                    <img src="Imagenes/Logosolo.png" alt="Logo de Inmobiliaria Primavera">
                 </a>
             </div>
 
