@@ -1,0 +1,121 @@
+@font-face {
+    font-family: 'Montserrat';
+    src: url('../Font/Montserrat-SemiBold.woff2') format('woff2');
+}
+
+@font-face {
+    font-family: 'Sole Serif Display';
+    src: url('../Font/sole-serif-display-bold.otf') format('opentype');
+}
+.contacto_conteiner {
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3rem;
+
+    width: 100%;
+    min-height: calc(100vh - 90px);
+    padding: 5rem 4rem;
+
+    background: #fff5e0;
+    margin: 0;
+}
+.card_contacto h2{
+    font-family: 'Sole Serif Display';
+}
+
+.card_contacto {
+    box-sizing: border-box;
+    background: aliceblue;
+    padding: 2.5rem;
+    width: 100%;
+    max-width: 550px;
+    margin: 0;
+    border-radius: 15px;
+    color: #122548;
+    box-shadow: 0 10px 30px rgba(18, 37, 72, 0.15);
+}
+
+.art_info{
+    text-align: left;
+    padding-left: 1rem;
+    text-decoration: none;
+    max-height: 50%;
+    font-family: 'Montserrat', sans-serif;
+    font-style: normal;
+}
+
+.card_contacto h2{
+    font-size: 30px;
+}
+.art_horario ul{
+    list-style: none;;
+    margin: 0;
+    padding: 0;
+}
+.art_horario li{
+    display: flex;
+    justify-content: space-between;
+}
+
+.art_horario{
+    text-align: left;
+    padding-left: 1rem;
+    text-decoration: none;
+    max-height: 50%;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.link-text,
+.link-text:visited{
+    color: #122548;
+    text-decoration: none;
+}
+
+.ubicacion {
+    width: 100%;
+    max-width: 650px;
+    background: white;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 10px 30px rgba(18, 37, 72, 0.15);
+}
+
+.ubicacion h2 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: #122548;
+}
+
+.ubicacion iframe {
+    width: 100%;
+    max-width: 615px;
+    height: 575px;
+    border: 0;
+    border-radius: 15px;
+    margin-bottom: 1.5rem;
+}
+.ubicacion iframe:hover {
+    border-color: #122548;
+}
+
+
+@media (max-width: 900px) {
+    .contacto_conteiner {
+        flex-direction: column;
+        padding: 3rem 1.5rem;
+    }
+
+    .card_contacto,
+    .ubicacion {
+        max-width: 100%;
+    }
+
+    .ubicacion iframe {
+        height: 350px;
+        max-width: 95%;
+    }
+}
