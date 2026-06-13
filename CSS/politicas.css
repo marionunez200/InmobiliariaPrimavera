@@ -1,0 +1,50 @@
+@font-face {
+    font-family: 'Montserrat';
+    src: url('../Font/Montserrat-SemiBold.woff2') format('woff2');
+    font-weight: 600;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Sole Serif Display';
+    src: url('../Font/sole-serif-display-bold.otf') format('opentype');
+    font-weight: 700;
+    font-style: normal;
+}
+.legal-page {
+    min-height: 100vh;
+    padding: 4rem 1.5rem;
+    background-color: #fff5e0;
+}
+
+.legal-content {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 3rem;
+
+    background-color: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(18, 37, 72, 0.15);
+}
+.pol-section {
+    margin-bottom: 2rem;
+}
+
+.pol-h1 {
+    font-family: 'Sole Serif Display', serif;
+    font-size: 2.5rem;
+    color: #122548;
+}
+
+.pol-h2 {
+    font-family: 'Sole Serif Display', serif;
+    font-size: 1.8rem;
+    color: #122548;
+}
+
+.pol-p {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: #333;
+}
