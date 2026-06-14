@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./CSS/Footer.css">
     <link rel="stylesheet" href="./CSS/header.css">
+    <link rel="stylesheet" href="./CSS/index.css">
     <title>Inmobiliaria Primavera | Casas y propiedades en venta y renta en Sonora</title>
 
     <meta 
@@ -34,7 +35,7 @@
 
 <body>
 
-<header class="site-header">
+    <header class="site-header">
         <nav class="navbar">
 
             <div class="navbar-left">
@@ -71,139 +72,125 @@
             </div>
 
         </nav>
-</header>
-
+    </header>
     <main>
-
-        <!-- HERO / PORTADA PRINCIPAL -->
+    <!-- SECCIÓN HERO -->
         <section class="hero" aria-labelledby="hero-title">
-
+        
             <div class="hero-content">
-                <p class="hero-brand">Inmobiliaria Primavera</p>
-
-                <h1 id="hero-title">Casas, terrenos y propiedades en venta y renta en Sonora</h1>
-
-                <p class="hero-text">
-                    Encuentra propiedades en Ciudad Obregón, San Carlos y Guaymas.
-                    Te ayudamos a encontrar un nuevo hogar o una inversión segura.
-                </p>
-
-                <form class="search-form" action="propiedades.html" method="get">
-                    <label for="ubicacion">Selecciona una ubicación</label>
-
-                    <select name="ubicacion" id="ubicacion">
-                        <option value="">Seleccione ubicación...</option>
-                        <option value="ciudad-obregon">Ciudad Obregón</option>
-                        <option value="san-carlos">San Carlos</option>
-                        <option value="guaymas">Guaymas</option>
-                    </select>
-
-                    <button type="submit">Buscar</button>
-                </form>
+            
+                <div class="hero-center">
+                    <p class="hero-brand">Inmobiliaria Primavera</p>
+                
+                    <h1 id="hero-title">
+                        Casas, terrenos y propiedades en venta y renta en Sonora
+                    </h1>
+                
+                    <form class="search-form" action="propiedades.html" method="get">
+                        <select name="ubicacion" id="ubicacion">
+                            <option value="">Seleccione ubicación...</option>
+                            <option value="ciudad-obregon">Ciudad Obregón</option>
+                            <option value="san-carlos">San Carlos</option>
+                            <option value="guaymas">Guaymas</option>
+                        </select>
+                    
+                        <button type="submit" class="form-boton">Buscar</button>
+                    </form>
+                </div>
+            
             </div>
-
-            <div class="hero-image">
-                <img 
-                    src="casa-principal.jpg" 
-                    alt="Casa moderna en venta en Sonora"
-                >
-            </div>
-
-            <aside class="hero-property-info" aria-label="Información destacada de propiedad">
-                <h2>Información destacada</h2>
-                <ul>
-                    <li>Ubicación de la propiedad</li>
-                    <li>Medidas del terreno</li>
-                    <li>Características principales</li>
-                </ul>
-            </aside>
-
+        
         </section>
 
-
         <!-- CATEGORÍAS DE PROPIEDADES -->
-        <section class="property-categories" aria-labelledby="categories-title">
+        <section class="property-categories">
 
-            <div class="section-heading">
-                <p>Propiedades disponibles</p>
-                <h2 id="categories-title">Encuentra casas, terrenos y propiedades en renta</h2>
-
+            <div class="section1-heading">
+                <h2 id="categories-title">Encuentra un nuevo hogar</h2>
+                <div class="line">
+                </div>
                 <p>
                     Explora nuestro catálogo de propiedades en Sonora. Contamos con opciones
                     para compra, renta e inversión inmobiliaria.
                 </p>
 
                 <a href="propiedades.html" class="view-all-button">
-                    Ver todas las propiedades
+                    Ver propiedades
                 </a>
             </div>
 
             <div class="categories-grid">
 
-                <article class="category-card">
-                    <img 
-                        src="casa-habitacion.jpg" 
-                        alt="Casa habitación en venta en Sonora"
-                    >
-
+                <a href="Catalogo.html" class="category-card card-casa movcard">
                     <h3>Casas en venta</h3>
-
                     <p>
-                        Encuentra casas habitación disponibles para compra en distintas zonas de Sonora.
+                        Disponibles: x
                     </p>
+                </a>
 
-                    <a href="casas-en-venta.html">Ver casas en venta</a>
-                </article>
-
-                <article class="category-card">
-                    <img 
-                        src="terreno.jpg" 
-                        alt="Terreno en venta en Sonora"
-                    >
-
+                <a href="Catalogo.html" class="category-card card-terreno movcard">
                     <h3>Terrenos en venta</h3>
-
                     <p>
-                        Consulta terrenos habitacionales y comerciales disponibles para inversión.
+                        Disponibles: x
                     </p>
+                </a>
 
-                    <a href="terrenos-en-venta.html">Ver terrenos en venta</a>
-                </article>
-
-                <article class="category-card">
-                    <img 
-                        src="renta.jpg" 
-                        alt="Propiedad en renta en Sonora"
-                    >
-
+                <a href="Catalogo.html" class="category-card card-renta movcard">
                     <h3>Propiedades en renta</h3>
-
                     <p>
-                        Encuentra casas, departamentos y locales comerciales disponibles en renta.
+                        Disponibles: x
                     </p>
-
-                    <a href="propiedades-en-renta.html">Ver propiedades en renta</a>
-                </article>
-
+                </a>
             </div>
 
         </section>
 
 
         <!-- CIUDADES -->
-        <section class="cities-section" aria-labelledby="cities-title">
-
-            <div class="section-heading">
-                <p>Busca en tu ciudad</p>
-                <h2 id="cities-title">Encuentra propiedades cerca de ti</h2>
+        <section class="cities-section">
+            <div class="cities-header">
+                <h2>Busca en tu ciudad</h2>
+                <p>Encuentra un hogar cerca de ti</p>
             </div>
-
-            <div class="cities-list">
-                <a href="propiedades-ciudad-obregon.html">Propiedades en Ciudad Obregón</a>
-                <a href="propiedades-san-carlos.html">Propiedades en San Carlos</a>
-                <a href="propiedades-guaymas.html">Propiedades en Guaymas</a>
+        
+            <div class="cities-carousel">
+                <div class="cities-track">
+                
+                    <a href="Catalogo.html" class="city-card city-obregon">
+                        <h3>Obregón</h3>
+                    </a>
+                
+                    <a href="Catalogo.html" class="city-card city-san-carlos">
+                        <h3>San Carlos</h3>
+                    </a>
+                
+                    <a href="Catalogo.html" class="city-card city-guaymas">
+                        <h3>Guaymas</h3>
+                    </a>
+                
+                    <a href="Catalogo.html" class="city-card city-navojoa">
+                        <h3>Navojoa</h3>
+                    </a>
+                
+                    <!-- Se repiten para que el carrusel sea infinito -->
+                    <a href="Catalogo.html" class="city-card city-obregon">
+                        <h3>Obregón</h3>
+                    </a>
+                
+                    <a href="Catalogo.html" class="city-card city-san-carlos">
+                        <h3>San Carlos</h3>
+                    </a>
+                
+                    <a href="Catalogo.html" class="city-card city-guaymas">
+                        <h3>Guaymas</h3>
+                    </a>
+                
+                    <a href="Catalogo.html" class="city-card city-navojoa">
+                        <h3>Navojoa</h3>
+                    </a>
+                
+                </div>
             </div>
-
         </section>
 
 

@@ -1,0 +1,545 @@
+.main-content {
+    min-height: 100vh;
+    padding: 3rem 2rem;
+    background-color: #fff5e0;
+}
+
+/* Sección hero */
+.hero {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #fff5e0;
+    width: 100%;
+    min-height: calc(100vh - 90px);
+    margin: 0;
+}
+
+/* Card principal con imagen de fondo */
+.hero-content {
+    width: 90%;
+    min-height: 580px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 4rem 2rem;
+
+    background-image: linear-gradient(
+        rgba(0, 0, 0, 0.45),
+        rgba(0, 0, 0, 0.45)
+    ), url("../Imagenes/casa1.jpg");
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    border-radius: 12px;
+    overflow: hidden;
+
+    box-shadow: 0 12px 35px rgba(18, 37, 72, 0.25);
+}
+
+/* Contenido centrado */
+.hero-center {
+    width: 100%;
+    max-width: 650px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+
+    text-align: center;
+}
+
+/* Marca */
+.hero-brand {
+    margin: 0;
+
+    font-family: 'Sole Serif Display', serif;
+    font-size: 1.3rem;
+    color: #fff5e0;
+}
+
+/* Título principal */
+#hero-title {
+    max-width: 650px;
+    margin: 0;
+
+    font-family: 'Montserrat', sans-serif;
+    font-size: 2rem;
+    line-height: 1.2;
+    color: #fff5e0;
+}
+
+/* Buscador */
+.search-form {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    max-width: 620px;
+
+    padding: 0;
+    border-radius: 40px;
+
+    background-color: rgba(255, 255, 255, 0.75);
+    overflow: hidden;
+}
+
+/* Select */
+.search-form select {
+    flex: 1;
+
+    padding: 1rem 1.5rem;
+
+    border: none;
+    outline: none;
+
+    background-color: transparent;
+    color: #333;
+
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1rem;
+}
+
+/* Botón */
+.form-boton {
+    padding: 1rem 1.6rem;
+
+    border: none;
+    align-self: stretch;
+
+    background-color: rgba(255, 255, 255, 0.45);
+    color: #000000;
+
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+.form-boton:hover {
+    background-color: #122548;
+    color: #fff5e0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .main-content {
+        padding: 2rem 1rem;
+    }
+
+    .hero-content {
+        min-height: 500px;
+        padding: 3rem 1.5rem;
+    }
+
+    #hero-title {
+        font-size: 1.6rem;
+    }
+
+    .hero-brand {
+        font-size: 1.1rem;
+    }
+
+    .search-form {
+        flex-direction: column;
+        border-radius: 20px;
+        padding: 1rem;
+        gap: 0.8rem;
+    }
+
+    .search-form select,
+    .form-boton {
+        width: 100%;
+        border-radius: 30px;
+    }
+
+    .form-boton {
+        align-self: auto;
+    }
+}
+
+/* Sección de propiedades */
+/* Sección de propiedades */
+
+.property-categories {
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 100vh;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4rem;
+    flex-wrap: wrap;
+
+    padding: 4rem;
+    background-color: #fff5e0;
+}
+
+/* Texto de la izquierda */
+.section1-heading {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+
+    width: 30vw;
+    min-width: 320px;
+
+    padding: 2rem;
+    background-color: #fff5e0;
+}
+
+.section1-heading h2 {
+    width: 70%;
+    margin: 0;
+
+    color: #122548;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 2.5rem;
+    line-height: 1.15;
+    text-align: left;
+}
+
+.line {
+    width: 70%;
+    height: 4px;
+
+    margin: 1rem 0 1.5rem;
+
+    background-color: #000000;
+    border-radius: 30px;
+}
+
+.section1-heading p {
+    width: 100%;
+    margin: 0;
+
+    color: #122548;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.2rem;
+    line-height: 1.3;
+    text-align: left;
+}
+
+/* Botón */
+.view-all-button {
+    align-self: center;
+
+    display: inline-block;
+    width: 35%;
+    min-width: 150px;
+
+    margin-top: 1.5rem;
+    padding: 0.75rem;
+
+    color: #fff5e0;
+    background-color: #122548;
+
+    border: none;
+    border-radius: 30px;
+
+    text-align: center;
+    text-decoration: none;
+
+    cursor: pointer;
+    font-size: 1rem;
+    font-family: 'Montserrat', sans-serif;
+
+    box-sizing: border-box;
+    transition: background-color 0.25s ease;
+}
+
+.view-all-button:hover {
+    background-color: #1d3769;
+    text-decoration: none;
+}
+
+/* Grid de cards */
+.categories-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    width: 100%;
+    max-width: 850px;
+}
+
+/* Cards */
+.category-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    width: 100%;
+    min-height: 220px;
+
+    padding: 1rem;
+
+    border-radius: 20px;
+    overflow: hidden;
+
+    box-shadow: 0 10px 30px rgba(18, 37, 72, 0.15);
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    text-decoration: none;
+    color: #fff5e0;
+
+    cursor: default;
+
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Imágenes de fondo */
+.card-terreno {
+    background-image: linear-gradient(
+        rgba(0, 0, 0, 0.45),
+        rgba(0, 0, 0, 0.45)
+    ), url("../Imagenes/terreno.jpg");
+}
+
+.card-renta {
+    background-image: linear-gradient(
+        rgba(0, 0, 0, 0.45),
+        rgba(0, 0, 0, 0.45)
+    ), url("../Imagenes/departamento1.jpg");
+}
+
+.card-casa {
+    background-image: linear-gradient(
+        rgba(0, 0, 0, 0.45),
+        rgba(0, 0, 0, 0.45)
+    ), url("../Imagenes/casa1.jpg");
+}
+
+/* Textos dentro de cards */
+.category-card h3,
+.category-card p {
+    margin: 0;
+    padding: 10px;
+
+    color: #fff5e0;
+    font-family: 'Montserrat', sans-serif;
+
+    transition: color 0.3s ease;
+}
+
+.category-card h3 {
+    font-size: 1.5rem;
+}
+
+.category-card p {
+    font-size: 1rem;
+}
+
+/* Animación */
+.movcard:hover {
+    transform: translateX(-30px);
+    box-shadow: 0 14px 35px rgba(18, 37, 72, 0.22);
+}
+
+.movcard:hover h3,
+.movcard:hover p {
+    color: #f3cc5a;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .property-categories {
+        flex-direction: column;
+        align-items: center;
+        gap: 2rem;
+
+        padding: 3rem 1.5rem;
+    }
+
+    .section1-heading {
+        width: 100%;
+        min-width: 0;
+        padding: 1rem;
+    }
+
+    .section1-heading h2,
+    .line {
+        width: 70%;
+    }
+
+    .categories-grid {
+        max-width: 100%;
+    }
+
+    .movcard:hover {
+        transform: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .section1-heading h2 {
+        width: 100%;
+        font-size: 2rem;
+    }
+
+    .line {
+        width: 100%;
+    }
+
+    .section1-heading p {
+        font-size: 1rem;
+    }
+
+    .view-all-button {
+        width: 60%;
+    }
+
+    .category-card {
+        min-height: 190px;
+    }
+}
+
+/* CAROUSEL */
+
+.cities-section {
+    width: 100%;
+    padding: 4rem 0;
+    background-color: #fff5e0;
+    overflow: hidden;
+}
+
+.cities-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.cities-header h2 {
+    margin: 0;
+    color: #122548;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 2.2rem;
+}
+
+.cities-header p {
+    margin-top: 1rem;
+    color: #122548;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1rem;
+}
+
+/* Ventana visible del carrusel */
+.cities-carousel {
+    width: 100%;
+    overflow: hidden;
+}
+
+/* Tira que se mueve */
+.cities-track {
+    display: flex;
+    gap: 2rem;
+
+    width: max-content;
+
+    animation: moveCities 18s linear infinite;
+}
+
+/* Cards */
+.city-card {
+    width: 360px;
+    height: 180px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+
+    padding: 1.5rem;
+
+    border-radius: 15px;
+    overflow: hidden;
+
+    text-decoration: none;
+    color: #fff5e0;
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    box-shadow: 0 10px 30px rgba(18, 37, 72, 0.15);
+
+    transition: transform 0.3s ease, color 0.3s ease;
+    cursor: default;
+}
+
+.city-card h3 {
+    margin: 0;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.3rem;
+    color: #fff5e0;
+}
+
+/*hover*/
+.city-card:hover h3 {
+    color: #f3cc5a;
+}
+.city-card:hover {
+    transform: scale(1.04);
+}
+
+/* Imágenes de fondo */
+.city-obregon {
+    background-image: linear-gradient(
+        rgba(0, 0, 0, 0.35),
+        rgba(0, 0, 0, 0.55)
+    ), url("../Imagenes/CiudadObregon.jpg");
+}
+
+.city-san-carlos {
+    background-image: linear-gradient(
+        rgba(0, 0, 0, 0.35),
+        rgba(0, 0, 0, 0.55)
+    ), url("../Imagenes/Sancarlos.jpg");
+}
+
+.city-guaymas {
+    background-image: linear-gradient(
+        rgba(0, 0, 0, 0.35),
+        rgba(0, 0, 0, 0.55)
+    ), url("../Imagenes/Guaymas.jpg");
+}
+
+.city-navojoa {
+    background-image: linear-gradient(
+        rgba(0, 0, 0, 0.35),
+        rgba(0, 0, 0, 0.55)
+    ), url("../Imagenes/Navojoa.jpg");
+}
+
+/* Animación */
+@keyframes moveCities {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(-50%);
+    }
+}
+
+@media (max-width: 768px) {
+    .city-card {
+        width: 280px;
+        height: 160px;
+    }
+
+    .cities-header h2 {
+        font-size: 1.8rem;
+    }
+}
