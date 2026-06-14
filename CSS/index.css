@@ -543,3 +543,180 @@
         font-size: 1.8rem;
     }
 }
+
+/* quienes somos */
+.about-section {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 3rem;
+    width: 100%;
+    min-height: 70vh;
+    padding: 3rem 2rem;
+    background-color: #fff5e0;
+}
+
+.about-content {
+    width: 100%;
+    max-width: 420px;
+    padding: 3rem;
+    background-color: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(18, 37, 72, 0.15);
+}
+
+.about-content h2 {
+    margin: 0;
+    color: #122548;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 2.2rem;
+}
+
+.about-content p {
+    margin-top: 1rem;
+    color: #122548;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1rem;
+}
+
+.about-img {
+    width: 100%;
+    max-width: 660px;
+    height: auto;
+    border-radius: 15px;
+    object-fit: cover;
+}
+
+/* Lo que nos define */
+
+.company-values {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 4rem 2rem;
+    background-color: #fff5e0;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.company-card {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 1200px;
+
+    padding: 3rem 2rem 5rem;
+
+    background-color: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(18, 37, 72, 0.15);
+}
+
+/* Título principal */
+#values-title {
+    width: 100%;
+    margin: 0 0 3.5rem;
+
+    text-align: center;
+    color: #122548;
+
+    font-family: 'Montserrat', sans-serif;
+    font-size: 2.2rem;
+    font-weight: 600;
+}
+
+/* Contenedor de las 3 columnas */
+.values-grid {
+    width: 100%;
+
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3rem;
+
+    align-items: start;
+}
+
+/* Cada bloque: misión, visión, valores */
+.value-card {
+    box-sizing: border-box;
+
+    display: grid;
+    grid-template-rows: 70px 90px auto;
+    justify-items: center;
+
+    text-align: center;
+}
+
+/* Icono */
+.value-icon {
+    width: 62px;
+    height: 62px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background-color: #122548;
+    color: #fff5e0;
+
+    border-radius: 12px;
+    font-size: 1.7rem;
+}
+
+/* Título de cada bloque */
+.value-card h3 {
+    margin: 0;
+    align-self: center;
+
+    color: #122548;
+
+    font-family: 'Montserrat', sans-serif;
+    font-size: 2rem;
+    font-weight: 600;
+}
+
+/* Texto de cada bloque */
+.value-card p {
+    width: 100%;
+    max-width: 280px;
+    margin: 0;
+
+    color: #122548;
+
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1rem;
+    line-height: 1.25;
+    font-weight: 600;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .company-values {
+        padding: 3rem 1rem;
+    }
+
+    .company-card {
+        padding: 2.5rem 1.5rem;
+    }
+
+    #values-title {
+        font-size: 1.8rem;
+        margin-bottom: 2.5rem;
+    }
+
+    .values-grid {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+    }
+
+    .value-card {
+        grid-template-rows: auto;
+        gap: 1rem;
+    }
+
+    .value-card h3 {
+        font-size: 1.7rem;
+    }
+}
