@@ -1,0 +1,211 @@
+
+/* Imagenes de la propiedad */
+.propiedad_imagenes {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.imagen_principal {
+    width: 620px;
+    height: 600px;
+    border-radius: 10px;
+    margin-top: 15px;
+    margin-bottom:5px;
+}
+
+.contenedor_miniaturas{
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.miniaturas{
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+    overflow-x: auto;
+    padding-bottom: 30px;
+}
+
+.miniaturas img{
+    width: 200px;
+    height: 160px;
+    object-fit: cover;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.miniaturas img:hover{
+    transform: scale(1.05);
+}
+
+.boton{
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: white;
+    border: none;
+    box-shadow: 0 0 10px rgba(0,0,0,.2);
+    cursor: pointer;
+    z-index: 100;
+}
+
+.boton_izquierda{
+    left: -20px;
+}
+
+.boton_derecha{
+    right: -20px;
+}
+
+/* Información de la propiedad */
+
+.propiedad{
+    width: 80%;
+    margin: 60px auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 60px;
+}
+
+.propiedad h1 {
+    color: #122548;
+
+    font-family: 'Montserrat', sans-serif;
+    font-size: 2.2rem;
+    font-weight: 600;
+}
+
+.info_propiedad{
+    flex: 1;
+}
+
+.info_propiedad h1{
+    margin-bottom: 20px;
+    border-bottom: 3px solid black;
+    padding-bottom: 10px;
+}
+
+.ubicacion_precio{
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 30px;
+
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 100;
+}
+
+.precio {
+    color: #122548;
+    font-weight: 800;
+}
+
+.caracteristicas{
+    display: flex;
+    gap: 80px;
+}
+
+.caracteristicas ul{
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.caracteristicas li{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.2rem;
+}
+
+.caracteristicas img{
+    width: 24px;
+    height: 24px;
+}
+
+/* Card del agente*/
+
+.info_agente{
+    width: 280px;
+    background-color: #fff5e0;
+    width: 280px;
+    padding: 20px;    border-radius: 15px;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    box-sizing: border-box;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.info_agente img{
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 20px;
+}
+
+.info_agente h2{
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.info_agente .titulo{
+    color: gray;
+    margin-bottom: 10px;
+}
+
+.info_agente a{
+    color: black;
+    font-size: 18px;
+    text-decoration: underline;
+    margin-bottom: 15px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.2rem;
+}
+
+.info_agente p{
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.2rem;
+
+}
+
+.info_agente .telefono{
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.info_agente a:hover{
+    color: #122548;
+}
+
+/* Maps */
+
+.maps h1{
+    width: 100%;
+    margin: 0 0 3.5rem;
+    text-align: center;
+    color: #122548;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 2.2rem;
+    font-weight: 600;
+}
+
+.maps {
+    text-align: center;
+    margin-bottom: 30px;
+}

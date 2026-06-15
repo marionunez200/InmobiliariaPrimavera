@@ -30,6 +30,8 @@
     <meta property="og:url" content="https://www.inmobiliariaprimavera.com/">
     <meta property="og:type" content="website">
     <meta property="og:locale" content="es_MX">
+
+    <link rel="stylesheet" href="./CSS/propiedadInfo.css" as="style">
 </head>
 
 <body>
@@ -77,87 +79,102 @@
         <section class="propiedad_imagenes">
             <!-- Imágen principal -->
             <figure>
-                <img src="https://placehold.co/1020x530" alt="Fondo">
+                <img class="imagen_principal" src="Imagenes/casa2.jpg" alt="IMG_Princinpal">
             </figure>
 
-            <!-- Imágenes secundarias -->
-            <div class="miniaturas">
-                <img src="https://placehold.co/245x170" alt="Fondo">
-                <img src="https://placehold.co/245x170" alt="Fondo">
-                <img src="https://placehold.co/245x170" alt="Fondo">
-                <img src="https://placehold.co/245x170" alt="Fondo">
+            <div class="contenedor_miniaturas">
+                <!-- Botón izquierdo -->
+                <button class="boton boton_izquierda">&#10094;</button>
+                
+                <!-- Imágenes secundarias -->
+                <div class="miniaturas">
+                    <img src="Imagenes/miniatura1.jpg" alt="Miniatura_1">
+                    <img src="Imagenes/miniatura2.jpg" alt="Miniatura_2">
+                    <img src="Imagenes/miniatura3.jpg" alt="Miniatura_3">
+                    <img src="Imagenes/miniatura4.jpg" alt="Miniatura_4">
+                    <img src="Imagenes/miniatura5.jpg" alt="Miniatura_4">
+                    <img src="Imagenes/miniatura6.jpg" alt="Miniatura_4">
+                    <img src="Imagenes/miniatura7.jpg" alt="Miniatura_4">
+                    <img src="Imagenes/miniatura8.jpg" alt="Miniatura_4">
+                </div>
+
+                <!-- Botón derecho -->
+                <button class="boton boton_derecha">&#10095;</button>
             </div>
+
+            
+
         </section>
 
         <!-- Información de la propiedad -->
         <section class="propiedad">
-            <h1>Casa en venta - Ciudad Obregón</h1>
-                <article class="info_propiedad">
-                    <!-- Ubicación y precio -->
-                    <div>
-                        <p>Monte oscuro #3212, Colonia Bella Vista, Ciudad Obregón, Sonora.</p>
-                        <p><strong>$2,500,000.00</strong></p>
-                    </div>
-                    <!-- Información a la izquierda -->
-                    <div>
-                        <ul>
-                            <li>
-                                <img src="casa.jpg" alt="img_casa">
-                                <p>46.22 M2</p>
-                            </li>
-                            <li>
-                                <img src="regla.jpg" alt="img_regla">
-                                <p>17 M de fondo</p>
-                            </li>
-                            <li>
-                                <img src="regla.jpg" alt="img_regla">
-                                <p>7 M de frente</p>
-                            </li>
-                            <li>
-                                <img src="extra.jpg" alt="img_extra">
-                                <p>Boiler de paso</p>
-                            </li>
-                        </ul>
-                    </div>
-                    
-                    <!-- Información a la derecha -->
-                    <div>
-                        <ul>
-                            <li>
-                                <img src="casa.jpg" alt="img_casa">
-                                <p>1 piso</p>
-                            </li>
-                            <li>
-                                <img src="recamara.jpg" alt="img_recamara">
-                                <p>4 recamaras</p>
-                            </li>
-                            <li>
-                                <img src="baño.jpg" alt="img_baño">
-                                <p>3 baños</p>
-                            </li>
-                            <li>
-                                <img src="extra.jpg" alt="img_extra">
-                                <p>Cochera techada para 1 auto</p>
-                            </li>
-                        </ul>
-                    </div>
-                </article>
-        </section>
+            <article class="info_propiedad">
+                <h1>Casa en venta - Ciudad Obregón</h1>
 
-        <!-- Información del agente -->
-        <section>
-            <article class="info_agente">
-                <img src="agente.jpg" alt="foto_agente">
+                <!-- Ubicación y precio -->
+                <div class="ubicacion_precio">
+                    <p>Monte oscuro #3212, Colonia Bella Vista, Ciudad Obregón, Sonora.</p>
+                    <p class="precio"><strong>$2,500,000.00</strong></p>
+                </div>
+
+                <!-- Características -->
+                <div class="caracteristicas">
+
+                    <ul>
+                        <li>
+                            <i class="fa-solid fa-house"></i>
+                            <p>46.22 M²</p>
+                        </li>
+                        <li>
+                            <i class="fa-solid fa-ruler"></i>
+                            <p>17 M de fondo</p>
+                        </li>
+                        <li>
+                            <i class="fa-solid fa-ruler"></i>
+                            <p>7 M de frente</p>
+                        </li>
+                        <li>
+                            <i class="fa-solid fa-star"></i>
+                            <p>Boiler de paso</p>
+                        </li>
+                    </ul>
+
+                    <ul>
+                        <li>
+                            <i class="fa-solid fa-house"></i>
+                            <p>1 piso</p>
+                        </li>
+                        <li>
+                            <i class="fa-solid fa-bed"></i>
+                            <p>4 recámaras</p>
+                        </li>
+                        <li>
+                            <i class="fa-solid fa-toilet"></i>
+                            <p>3 baños</p>
+                        </li>
+                        <li>
+                            <i class="fa-solid fa-star"></i>
+                            <p>Cochera techada para 1 auto</p>
+                        </li>
+                    </ul>
+                </div>
+            </article>
+
+            <!-- Info agente -->
+            <aside class="info_agente">
+                <img src="Imagenes/agente1.webp" alt="foto_agente">
                 <div>
                     <h2>Jessica Perez</h2>
                     <p> <strong>Contacto</strong></p>
                     <p><a href="mailto:sucorreo@gmail.com">sucorreo@gmail.com</a></p>
                     <p><a href="tel:+526441234567">(644) 123 4567</a></p>
                 </div>
-            </article>
+
+            </aside>
+
         </section>
 
-        <section>
+        <section class="maps">
             <h1>Encuentra la propiedad</h1>
             <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d56631.121546203874!2d-109.94261074999999!3d27.4865298!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x86c815e1cb75ffb9%3A0x311f38aacd3515ae!2sCdad.%20Obreg%C3%B3n%2C%20Son.!5e0!3m2!1ses!2smx!4v1780782414850!5m2!1ses!2smx" width="945" height="370" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
         </section>
