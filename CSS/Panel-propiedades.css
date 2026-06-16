@@ -1,0 +1,260 @@
+*{
+    box-sizing: border-box;
+}
+
+body{
+    margin: 0;
+    color: #fff5e0
+}
+
+.admin-panel{
+    display: grid;
+    grid-template-columns: 170px 1fr;
+    grid-template-rows: 110px 1fr;
+    min-height: 100vh;
+
+    grid-template-areas: "header header" "sidebar main";
+    background: #fff5e0;
+    margin: 0;
+}
+
+
+/* Cards de la sección 1 */
+.cards_top {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    width: 100%;
+    margin-top: 50px;
+}
+.card_info_propiedades,
+.card_info_agente {
+    display: flex;
+    gap:2px;
+    color: #122548;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.card_info_propiedades h2,
+.card_info_agente h2 {
+    font-size: 1.4rem;
+    font-weight: 200;
+    margin-bottom: 0;
+}
+
+.card_info_propiedades p,
+.card_info_agente p {
+    font-size: 1.4rem;
+    font-weight: 800;
+    margin-top: 10px;
+}
+
+.cards_top ul {
+    display: flex;
+    justify-content: center;
+    gap: 10rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.card_info_propiedades,
+.card_info_agente {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    background-color: #ebdfc6;
+    width: 350px;
+    height: auto;
+    border: transparent;
+    border-radius: 20px;
+    padding: 15px;
+}
+
+.icon {
+    font-size: 35px;
+    margin-right: 20px;
+}
+
+/* Cards info propiedad */
+
+.tabla-propiedades {
+    width: 95%;
+    margin: 40px auto;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.tabla-propiedades h1 {
+    color: #122548;
+    font-size: 2rem;
+    margin-bottom: 20px;
+}
+
+.tabla-header {
+    display: grid;
+    grid-template-columns: 3fr 2fr 1.5fr 1.5fr 1.2fr 2fr;
+    padding: 0 20px;
+    margin-bottom: 15px;
+}
+
+.tabla-header p {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #555;
+}
+
+.fila-propiedad {
+    display: grid;
+    grid-template-columns: 3fr 2fr 1.5fr 1.5fr 1.2fr 2fr;
+    align-items: center;
+
+    background-color: #ebdfc6;
+    border-radius: 18px;
+
+    padding: 12px 20px;
+    margin-bottom: 10px;
+}
+
+/* Información de la propiedad */
+.detalles_propiedad {
+    width: 95%;
+    margin: 40px auto;
+    background-color: #ddd3be;
+    border-radius: 20px;
+    padding: 20px 25px;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.detalles_propiedad h2 {
+    color: #122548;
+    margin-bottom: 20px;
+    margin-top:5px;
+}
+
+.subtitulos,
+.detalles_fila {
+    display: grid;
+    grid-template-columns: 3fr 2fr 1.5fr 1.5fr 1fr 2fr;
+    align-items: center;
+    column-gap: 20px;
+    width: 100%;
+}
+
+.subtitulos {
+    margin-bottom: 15px;
+    font-weight: 600;
+    color: #122548;
+}
+
+.detalles_fila {
+    background-color: #ebdfc6;
+    padding: 15px 20px;
+    border-radius: 15px;
+    margin-bottom: 10px;
+}
+
+.info_propiedad {
+    color: #122548;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    
+    border-right: 1px solid #b8b8b8;
+    padding-right: 20px;
+}
+
+.info_propiedad img {
+    width: 60px;
+    height: 60px;
+    border-radius: 10px;
+    object-fit: cover;
+}
+
+.info_propiedad h3,
+.info_propiedad p {
+    margin: 0;
+}
+
+.acciones {
+    display: flex;
+    gap: 10px;
+}
+
+.acciones button {
+    width: 100px;
+    padding: 8px 15px;
+    margin: 20px auto;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    border: none;
+    border-radius: 30px;
+    background: #122548;
+    color: #fff5e0;
+    cursor: pointer;
+    transition: .3s;
+    font-family: 'Montserrat', sans-serif;
+}
+
+#aplicar_filtro:hover {
+    background: #17305e;
+    color: gray;
+}
+
+.detalles_fila span {
+    border-right: 1px solid #b8b8b8;
+    padding-right: 20px;
+}
+
+.text_dentro {
+    color: #122548;
+}
+
+/* Cards */
+
+.propiedad-card {
+    display: flex;
+    flex-direction: column;
+    width: 350px;
+    height: 400px;
+    background: #fff5e0;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(18, 37, 72, 0.15);
+}
+
+.propiedad-img {
+    width: 100%;
+    height: 225px;
+    object-fit: cover;
+}
+
+.propiedad-info {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 25px;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.propiedad-info h2 {
+    margin: 0 0 10px;
+    font-size: 24px;
+}
+
+.precio-mxn {
+    font-size: 18px;
+    font-weight: bold;
+    color: #122548;
+}
+
+.info_card {
+    display: flex;
+    justify-content: space-between;
+    margin: 15px 0;
+}
