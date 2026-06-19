@@ -123,6 +123,7 @@
 }
 
 .form-boton:hover {
+    transition: 0.5s;
     background-color: #122548;
     color: #fff5e0;
 }

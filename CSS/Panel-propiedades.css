@@ -18,7 +18,6 @@ body{
     margin: 0;
 }
 
-
 /* Cards de la sección 1 */
 .cards_top {
     display: flex;
@@ -201,6 +200,13 @@ body{
     font-family: 'Montserrat', sans-serif;
 }
 
+.acciones button:hover {
+    background-color: #17305e;
+    color: #555;
+    transform: scale(1.05);
+
+}
+
 #aplicar_filtro:hover {
     background: #17305e;
     color: gray;
@@ -217,20 +223,37 @@ body{
 
 /* Cards */
 
+.contenedor_cards {
+    margin-left: 10px;
+    display: flex;
+    gap: 20px;
+}
+
 .propiedad-card {
     display: flex;
     flex-direction: column;
+    align-items: space-between;
     width: 350px;
-    height: 400px;
+    height: 350px;
     background: #fff5e0;
     border-radius: 20px;
     overflow: hidden;
     box-shadow: 0 10px 30px rgba(18, 37, 72, 0.15);
 }
 
+.propiedad-card:hover {
+    opacity: 80%;
+    transition: 0.8s;
+    transform: scale(1.05);
+}
+
+.card_link {
+    text-decoration: none;
+}
+
 .propiedad-img {
     width: 100%;
-    height: 225px;
+    height: 200px;
     object-fit: cover;
 }
 
@@ -257,4 +280,55 @@ body{
     display: flex;
     justify-content: space-between;
     margin: 15px 0;
+}
+
+.contenedor_cards {
+    display: flex;
+    gap: 30px;
+}
+
+.cards_propiedades{
+    width: 95%;
+    margin: 40px auto;
+}
+
+.cards_propiedades article{
+    margin-top: 10px;
+}
+
+.text_top{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+    margin-top: 5px;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.text_top_info {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
+
+.text_top h2{
+    font-family: 'Montserrat', sans-serif;
+    color: #122548;
+    margin-left: 30px;
+}
+
+.text_top_info h2, p{
+    font-family: 'Montserrat', sans-serif;
+    color: #122548;
+    margin: 0;
+    padding: 3px;
+}
+
+.text_top button{
+    padding: 8px 18px;
+    border: none;
+    border-radius: 20px;
+    background: #122548;
+    color: #fff5e0;
+    cursor: pointer;
 }

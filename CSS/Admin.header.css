@@ -83,6 +83,9 @@ body{
     margin-top: auto;
     margin-bottom: 2rem;
 
+    position: fixed;
+    left: 20px;
+    bottom: 20px;
     width: 130px;
     height: 45px;
 
@@ -101,6 +104,7 @@ body{
     font-family: 'Montserrat', sans-serif;
     transition: 0.25s ease, background-color 0.25s ease, escale 0.25s ease;
 }
+
 .admin-header button:hover,
 .admin-opciones a:hover,
 .cerrar-sesion:hover {
