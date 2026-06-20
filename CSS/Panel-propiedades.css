@@ -200,9 +200,15 @@ body{
     font-family: 'Montserrat', sans-serif;
 }
 
-.acciones button:hover {
-    background-color: #17305e;
-    color: #555;
+.editar:hover {
+    background-color: #42c705;
+    color: #fff5e0;
+    transform: scale(1.05);
+
+}
+.eliminar:hover {
+    background-color: #ca0303;
+    color: #fff5e0;
     transform: scale(1.05);
 
 }

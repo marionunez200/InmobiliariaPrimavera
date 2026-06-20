@@ -12,45 +12,68 @@
     font-style: normal;
 }
 
-*{
+*,
+*::before,
+*::after {
     box-sizing: border-box;
 }
 
-body{
+body {
     margin: 0;
-    color: #fff5e0
+    color: #fff5e0;
 }
 
-.admin-panel{
+/* Layout principal */
+.admin-panel {
     display: grid;
     grid-template-columns: 170px 1fr;
     grid-template-rows: 110px 1fr;
-    min-height: 100vh;
+    grid-template-areas:
+        "header header"
+        "sidebar main";
 
-    grid-template-areas: "header header" "sidebar main";
+    min-height: 100vh;
     background: #fff5e0;
-    margin: 0;
 }
 
-.admin-header{
+/* Header fijo al hacer scroll */
+.admin-header {
     grid-area: header;
+
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+
+    height: 110px;
+
     display: flex;
     align-items: center;
     gap: 2.5rem;
+
     padding: 1.5rem 2rem;
+
     background-color: #122548;
     font-family: 'Montserrat', sans-serif;
-}   
+}
 
-.admin-sidebar{
+/* Sidebar fijo debajo del header */
+.admin-sidebar {
     grid-area: sidebar;
+
+    position: sticky;
+    top: 110px;
+    align-self: start;
+
+    height: calc(100vh - 110px);
+
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 10vw;
-    background-color: #122548
+
+    background-color: #122548;
 }
 
+/* Opciones del sidebar */
 .admin-opciones {
     display: flex;
     flex-direction: column;
@@ -76,16 +99,15 @@ body{
 
     background-color: #fff5e0;
     border-radius: 30px;
-    transition: 0.25s ease, background-color 0.25s ease, escale 0.25s ease;
+
+    transition: 0.25s ease, background-color 0.25s ease, transform 0.25s ease;
 }
 
+/* Botón cerrar sesión */
 .cerrar-sesion {
     margin-top: auto;
     margin-bottom: 2rem;
 
-    position: fixed;
-    left: 20px;
-    bottom: 20px;
     width: 130px;
     height: 45px;
 
@@ -102,9 +124,11 @@ body{
     cursor: pointer;
     font-size: 1rem;
     font-family: 'Montserrat', sans-serif;
-    transition: 0.25s ease, background-color 0.25s ease, escale 0.25s ease;
+
+    transition: 0.25s ease, background-color 0.25s ease, transform 0.25s ease;
 }
 
+/* Hovers */
 .admin-header button:hover,
 .admin-opciones a:hover,
 .cerrar-sesion:hover {
@@ -113,12 +137,15 @@ body{
     transform: scale(1.05);
 }
 
+/* Logo */
 .contenedor-logo {
     width: 100px;
+
     display: flex;
     justify-content: center;
     align-items: center;
     flex-shrink: 0;
+
     margin-left: 15px;
 }
 
@@ -128,15 +155,15 @@ body{
     object-fit: contain;
 }
 
-.left-adminh{
+/* Parte izquierda del header */
+.left-adminh {
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 3rem;
-
 }
 
-.left-adminh button{
+.left-adminh button {
     margin-left: auto;
 }
 
@@ -144,7 +171,8 @@ body{
     margin-left: 35px;
 }
 
-.button_anadir{
+/* Botón agregar propiedad */
+.button_anadir {
     width: 180px;
     height: 45px;
 
@@ -160,5 +188,6 @@ body{
     cursor: pointer;
     font-size: 1rem;
     font-family: 'Montserrat', sans-serif;
-    transition: 0.25s ease, background-color 0.25s ease, escale 0.25s ease;
-}   
+
+    transition: 0.25s ease, background-color 0.25s ease, transform 0.25s ease;
+}

@@ -1,33 +1,69 @@
+@font-face {
+    font-family: 'Montserrat';
+    src: url('../Font/Montserrat-SemiBold.woff2') format('woff2');
+    font-weight: 600;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Sole Serif Display';
+    src: url('../Font/sole-serif-display-bold.otf') format('opentype');
+    font-weight: 700;
+    font-style: normal;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    overflow-x: hidden;
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    background-color: #fff5e0;
+}
+
+/* MAIN */
+
 .main-content {
     min-height: 100vh;
-    padding: 3rem 2rem;
     background-color: #fff5e0;
 }
 
-/* Sección hero */
+/* HERO */
+
 .hero {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #fff5e0;
     width: 100%;
     min-height: calc(100vh - 90px);
-    margin: 0;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 4rem 2rem;
+    background-color: #fff5e0;
 }
 
-/* Card principal con imagen de fondo */
 .hero-content {
-    width: 90%;
-    min-height: 580px;
+    width: 100%;
+    max-width: 1500px;
+    min-height: 640px;
+
     display: flex;
-    align-items: center;
     justify-content: center;
+    align-items: center;
 
     padding: 4rem 2rem;
 
     background-image: linear-gradient(
-        rgba(0, 0, 0, 0.45),
-        rgba(0, 0, 0, 0.45)
+        rgba(0, 0, 0, 0.48),
+        rgba(0, 0, 0, 0.48)
     ), url("../Imagenes/casa1.jpg");
 
     background-size: cover;
@@ -40,136 +76,178 @@
     box-shadow: 0 12px 35px rgba(18, 37, 72, 0.25);
 }
 
-/* Contenido centrado */
 .hero-center {
     width: 100%;
-    max-width: 650px;
+    max-width: 850px;
 
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 2rem;
+    gap: 1.7rem;
 
     text-align: center;
 }
 
-/* Marca */
 .hero-brand {
     margin: 0;
 
-    font-family: 'Sole Serif Display', serif;
-    font-size: 1.3rem;
     color: #fff5e0;
+    font-family: 'Sole Serif Display', serif;
+    font-size: 1.4rem;
 }
 
-/* Título principal */
 #hero-title {
-    max-width: 650px;
+    max-width: 800px;
     margin: 0;
 
+    color: #ffffff;
     font-family: 'Montserrat', sans-serif;
-    font-size: 2rem;
-    line-height: 1.2;
-    color: #fff5e0;
+    font-size: 2.4rem;
+    line-height: 1.15;
 }
 
-/* Buscador */
+/* BUSCADOR */
+
 .search-form {
+    width: 100%;
+    max-width: 820px;
+    height: 72px;
+
     display: flex;
     align-items: center;
-    justify-content: center;
 
-    width: 100%;
-    max-width: 620px;
+    padding: 0.45rem;
 
-    padding: 0;
-    border-radius: 40px;
+    border-radius: 999px;
+    background-color: rgba(255, 245, 224, 0.85);
+    backdrop-filter: blur(6px);
 
-    background-color: rgba(255, 255, 255, 0.75);
-    overflow: hidden;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.22);
+}
+
+/* Contenedor del select */
+.select-wrapper {
+    position: relative;
+    flex: 1;
+    height: 100%;
 }
 
 /* Select */
-.search-form select {
-    flex: 1;
+.select-wrapper select {
+    width: 100%;
+    height: 100%;
 
-    padding: 1rem 1.5rem;
+    padding: 0 3rem 0 1.5rem;
 
     border: none;
     outline: none;
+    box-shadow: none;
 
-    background-color: transparent;
-    color: #333;
+    border-radius: 999px 0 0 999px;
 
-    font-family: 'Montserrat', sans-serif;
-    font-size: 1rem;
-}
-
-/* Botón */
-.form-boton {
-    padding: 1rem 1.6rem;
-
-    border: none;
-    align-self: stretch;
-
-    background-color: rgba(255, 255, 255, 0.45);
-    color: #000000;
+    background-color: #ffffff;
+    color: #122548;
 
     font-family: 'Montserrat', sans-serif;
     font-size: 1rem;
     font-weight: 600;
 
     cursor: pointer;
+
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+.select-wrapper select:focus,
+.select-wrapper select:focus-visible,
+.select-wrapper select:active {
+    border: none;
+    outline: none;
+    box-shadow: none;
+}
+
+/* Flecha personalizada */
+.select-wrapper i {
+    position: absolute;
+    right: 1.4rem;
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    color: #122548;
+    font-size: 0.85rem;
+
+    pointer-events: none;
+}
+
+/* Botón */
+.form-boton {
+    height: 100%;
+    min-width: 170px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+
+    border: none;
+    outline: none;
+
+    border-radius: 0 999px 999px 0;
+
+    background-color: #122548;
+    color: #fff5e0;
+
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 .form-boton:hover {
-    transition: 0.5s;
-    background-color: #122548;
-    color: #fff5e0;
+    background-color: #f3cc5a;
+    color: #122548;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-    .main-content {
-        padding: 2rem 1rem;
-    }
+.form-boton:focus,
+.form-boton:focus-visible,
+.form-boton:active {
+    outline: none;
+    box-shadow: none;
+}
 
-    .hero-content {
-        min-height: 500px;
-        padding: 3rem 1.5rem;
-    }
-
-    #hero-title {
-        font-size: 1.6rem;
-    }
-
-    .hero-brand {
-        font-size: 1.1rem;
-    }
-
+/* Responsive buscador */
+@media (max-width: 900px) {
     .search-form {
+        height: auto;
+        max-width: 90%;
+
         flex-direction: column;
-        border-radius: 20px;
+        border-radius: 24px;
+
         padding: 1rem;
         gap: 0.8rem;
     }
 
-    .search-form select,
-    .form-boton {
+    .select-wrapper {
         width: 100%;
-        border-radius: 30px;
+        height: 48px;
     }
 
     .form-boton {
-        align-self: auto;
+        width: 100%;
+        height: 48px;
+        min-width: 0;
     }
 }
 
-/* Sección de propiedades */
-/* Sección de propiedades */
+/* CATEGORÍAS DE PROPIEDADES */
 
 .property-categories {
-    box-sizing: border-box;
     width: 100%;
     min-height: 100vh;
 
@@ -179,22 +257,19 @@
     gap: 4rem;
     flex-wrap: wrap;
 
-    padding: 4rem;
+    padding: 4rem 2rem;
     background-color: #fff5e0;
 }
 
-/* Texto de la izquierda */
 .section1-heading {
+    width: 100%;
+    max-width: 460px;
+
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: flex-start;
 
-    width: 30vw;
-    min-width: 320px;
-
     padding: 2rem;
-    background-color: #fff5e0;
 }
 
 .section1-heading h2 {
@@ -229,78 +304,78 @@
     text-align: left;
 }
 
-/* Botón */
 .view-all-button {
     align-self: center;
 
     display: inline-block;
-    width: 35%;
-    min-width: 150px;
+    min-width: 170px;
 
     margin-top: 1.5rem;
-    padding: 0.75rem;
+    padding: 0.8rem 2rem;
 
     color: #fff5e0;
     background-color: #122548;
 
-    border: none;
     border-radius: 30px;
 
     text-align: center;
     text-decoration: none;
 
-    cursor: pointer;
     font-size: 1rem;
     font-family: 'Montserrat', sans-serif;
 
-    box-sizing: border-box;
-    transition: background-color 0.25s ease;
+    transition: background-color 0.25s ease, transform 0.25s ease;
 }
 
 .view-all-button:hover {
     background-color: #1d3769;
-    text-decoration: none;
+    transform: scale(1.04);
 }
 
-/* Grid de cards */
+/* CARDS DE CATEGORÍAS */
+
 .categories-grid {
+    width: 100%;
+    max-width: 850px;
+
     display: flex;
     flex-direction: column;
     gap: 1rem;
-
-    width: 100%;
-    max-width: 850px;
 }
 
-/* Cards */
 .category-card {
+    width: 100%;
+    min-height: 220px;
+
     display: flex;
     flex-direction: column;
     justify-content: space-between;
 
-    width: 100%;
-    min-height: 220px;
-
-    padding: 1rem;
+    padding: 1.3rem;
 
     border-radius: 20px;
     overflow: hidden;
 
-    box-shadow: 0 10px 30px rgba(18, 37, 72, 0.15);
+    color: #fff5e0;
+    text-decoration: none;
 
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
 
-    text-decoration: none;
-    color: #fff5e0;
+    box-shadow: 0 10px 30px rgba(18, 37, 72, 0.15);
 
     cursor: default;
-
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* Imágenes de fondo */
+.card-casa {
+    background-image: linear-gradient(
+        rgba(0, 0, 0, 0.45),
+        rgba(0, 0, 0, 0.45)
+    ), url("../Imagenes/casa1.jpg");
+}
+
 .card-terreno {
     background-image: linear-gradient(
         rgba(0, 0, 0, 0.45),
@@ -315,18 +390,10 @@
     ), url("../Imagenes/departamento1.jpg");
 }
 
-.card-casa {
-    background-image: linear-gradient(
-        rgba(0, 0, 0, 0.45),
-        rgba(0, 0, 0, 0.45)
-    ), url("../Imagenes/casa1.jpg");
-}
-
-/* Textos dentro de cards */
 .category-card h3,
 .category-card p {
     margin: 0;
-    padding: 10px;
+    padding: 0.5rem;
 
     color: #fff5e0;
     font-family: 'Montserrat', sans-serif;
@@ -342,9 +409,8 @@
     font-size: 1rem;
 }
 
-/* Animación */
 .movcard:hover {
-    transform: translateX(-30px);
+    transform: translateX(-20px);
     box-shadow: 0 14px 35px rgba(18, 37, 72, 0.22);
 }
 
@@ -353,61 +419,7 @@
     color: #f3cc5a;
 }
 
-/* Responsive */
-@media (max-width: 900px) {
-    .property-categories {
-        flex-direction: column;
-        align-items: center;
-        gap: 2rem;
-
-        padding: 3rem 1.5rem;
-    }
-
-    .section1-heading {
-        width: 100%;
-        min-width: 0;
-        padding: 1rem;
-    }
-
-    .section1-heading h2,
-    .line {
-        width: 70%;
-    }
-
-    .categories-grid {
-        max-width: 100%;
-    }
-
-    .movcard:hover {
-        transform: none;
-    }
-}
-
-@media (max-width: 480px) {
-    .section1-heading h2 {
-        width: 100%;
-        font-size: 2rem;
-    }
-
-    .line {
-        width: 100%;
-    }
-
-    .section1-heading p {
-        font-size: 1rem;
-    }
-
-    .view-all-button {
-        width: 60%;
-    }
-
-    .category-card {
-        min-height: 190px;
-    }
-}
-
-/* CAROUSEL */
-
+/* CIUDADES */
 .cities-section {
     width: 100%;
     padding: 4rem 0;
@@ -434,20 +446,59 @@
     font-size: 1rem;
 }
 
-/* Ventana visible del carrusel */
+/* Ventana visible */
 .cities-carousel {
+    position: relative;
     width: 100%;
-    overflow: hidden;
+}
+
+/* Sombra izquierda */
+.cities-carousel::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    width: 120px;
+    height: 100%;
+
+    background: linear-gradient(
+        to right,
+        #fff5e0 0%,
+        rgba(255, 245, 224, 0) 100%
+    );
+
+    z-index: 2;
+    pointer-events: none;
+}
+
+/* Sombra derecha */
+.cities-carousel::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+
+    width: 120px;
+    height: 100%;
+
+    background: linear-gradient(
+        to left,
+        #fff5e0 0%,
+        rgba(255, 245, 224, 0) 100%
+    );
+
+    z-index: 2;
+    pointer-events: none;
 }
 
 /* Tira que se mueve */
 .cities-track {
     display: flex;
     gap: 2rem;
-
     width: max-content;
 
-    animation: moveCities 18s linear infinite;
+    animation: moveCities 22s linear infinite;
 }
 
 /* Cards */
@@ -475,8 +526,7 @@
 
     box-shadow: 0 10px 30px rgba(18, 37, 72, 0.15);
 
-    transition: transform 0.3s ease, color 0.3s ease;
-    cursor: default;
+    transition: transform 0.3s ease;
 }
 
 .city-card h3 {
@@ -486,10 +536,10 @@
     color: #fff5e0;
 }
 
-/*hover*/
 .city-card:hover h3 {
     color: #f3cc5a;
 }
+
 .city-card:hover {
     transform: scale(1.04);
 }
@@ -534,6 +584,9 @@
     }
 }
 
+/* Pausa al pasar el mouse */
+
+/* Responsive */
 @media (max-width: 768px) {
     .city-card {
         width: 280px;
@@ -545,24 +598,42 @@
     }
 }
 
-/* quienes somos */
+/* QUIÉNES SOMOS */
+
 .about-section {
-    box-sizing: border-box;
+    width: 100%;
+    min-height: 70vh;
+
     display: flex;
-    flex-direction: row;
     align-items: center;
     justify-content: center;
     gap: 3rem;
-    width: 100%;
-    min-height: 70vh;
+
     padding: 3rem 2rem;
     background-color: #fff5e0;
+}
+
+.about-image {
+    width: 100%;
+    max-width: 660px;
+}
+
+.about-img {
+    width: 100%;
+    height: auto;
+
+    display: block;
+
+    border-radius: 15px;
+    object-fit: cover;
 }
 
 .about-content {
     width: 100%;
     max-width: 420px;
+
     padding: 3rem;
+
     background-color: #ffffff;
     border-radius: 15px;
     box-shadow: 0 10px 30px rgba(18, 37, 72, 0.15);
@@ -570,6 +641,7 @@
 
 .about-content h2 {
     margin: 0;
+
     color: #122548;
     font-family: 'Montserrat', sans-serif;
     font-size: 2.2rem;
@@ -577,34 +649,27 @@
 
 .about-content p {
     margin-top: 1rem;
+
     color: #122548;
     font-family: 'Montserrat', sans-serif;
     font-size: 1rem;
+    line-height: 1.35;
 }
 
-.about-img {
-    width: 100%;
-    max-width: 660px;
-    height: auto;
-    border-radius: 15px;
-    object-fit: cover;
-}
-
-/* Lo que nos define */
+/* LO QUE NOS DEFINE */
 
 .company-values {
-    box-sizing: border-box;
     width: 100%;
-    padding: 4rem 2rem;
-    background-color: #fff5e0;
 
     display: flex;
     justify-content: center;
     align-items: center;
+
+    padding: 4rem 2rem;
+    background-color: #fff5e0;
 }
 
 .company-card {
-    box-sizing: border-box;
     width: 100%;
     max-width: 1200px;
 
@@ -615,7 +680,6 @@
     box-shadow: 0 10px 30px rgba(18, 37, 72, 0.15);
 }
 
-/* Título principal */
 #values-title {
     width: 100%;
     margin: 0 0 3.5rem;
@@ -628,7 +692,6 @@
     font-weight: 600;
 }
 
-/* Contenedor de las 3 columnas */
 .values-grid {
     width: 100%;
 
@@ -639,10 +702,7 @@
     align-items: start;
 }
 
-/* Cada bloque: misión, visión, valores */
 .value-card {
-    box-sizing: border-box;
-
     display: grid;
     grid-template-rows: 70px 90px auto;
     justify-items: center;
@@ -650,7 +710,6 @@
     text-align: center;
 }
 
-/* Icono */
 .value-icon {
     width: 62px;
     height: 62px;
@@ -666,7 +725,6 @@
     font-size: 1.7rem;
 }
 
-/* Título de cada bloque */
 .value-card h3 {
     margin: 0;
     align-self: center;
@@ -678,7 +736,6 @@
     font-weight: 600;
 }
 
-/* Texto de cada bloque */
 .value-card p {
     width: 100%;
     max-width: 280px;
@@ -692,19 +749,74 @@
     font-weight: 600;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-    .company-values {
+/* RESPONSIVE */
+
+@media (max-width: 900px) {
+    .hero {
         padding: 3rem 1rem;
     }
 
-    .company-card {
-        padding: 2.5rem 1.5rem;
+    .hero-content {
+        min-height: 520px;
+        padding: 3rem 1.5rem;
     }
 
-    #values-title {
+    #hero-title {
         font-size: 1.8rem;
-        margin-bottom: 2.5rem;
+    }
+
+    .search-form {
+        height: auto;
+        max-width: 90%;
+        flex-direction: column;
+        border-radius: 24px;
+        padding: 1rem;
+        gap: 0.8rem;
+    }
+
+    .search-form select,
+    .form-boton {
+        width: 100%;
+        height: 48px;
+        border-radius: 999px;
+    }
+
+    .form-boton {
+        min-width: 0;
+    }
+
+    .property-categories {
+        flex-direction: column;
+        gap: 2rem;
+
+        padding: 3rem 1.5rem;
+    }
+
+    .section1-heading {
+        max-width: 100%;
+        padding: 1rem;
+    }
+
+    .section1-heading h2,
+    .line {
+        width: 70%;
+    }
+
+    .categories-grid {
+        max-width: 100%;
+    }
+
+    .movcard:hover {
+        transform: none;
+    }
+
+    .about-section {
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .about-content {
+        max-width: 100%;
     }
 
     .values-grid {
@@ -715,6 +827,55 @@
     .value-card {
         grid-template-rows: auto;
         gap: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-brand {
+        font-size: 1.1rem;
+    }
+
+    #hero-title {
+        font-size: 1.5rem;
+    }
+
+    .section1-heading h2 {
+        width: 100%;
+        font-size: 2rem;
+    }
+
+    .line {
+        width: 100%;
+    }
+
+    .section1-heading p {
+        font-size: 1rem;
+    }
+
+    .view-all-button {
+        align-self: flex-start;
+    }
+
+    .category-card {
+        min-height: 190px;
+    }
+
+    .city-card {
+        width: 280px;
+        height: 160px;
+    }
+
+    .cities-header h2 {
+        font-size: 1.8rem;
+    }
+
+    .company-card {
+        padding: 2.5rem 1.5rem;
+    }
+
+    #values-title {
+        font-size: 1.8rem;
+        margin-bottom: 2.5rem;
     }
 
     .value-card h3 {
