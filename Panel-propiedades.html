@@ -231,18 +231,42 @@
         </main>
     </div>
 
-<!-- MODAL AGREGAR -->
-    <dialog class="modal" id="modalAgregar">
+<!-- MODAL AGREGAR PROPIEDAD -->
+<dialog class="modal" id="modalAgregar">
     <form class="modal-content">
         <div class="modal-header">
             <h2>Agregar propiedad</h2>
-            <button type="button" class="modal-close" data-close-modal>&times;</button>
+
+            <button type="button" class="modal-close" data-close-modal>
+                &times;
+            </button>
         </div>
 
         <div class="modal-body">
             <label>
+                ID de propiedad
+                <input type="text" name="id" placeholder="A001">
+            </label>
+
+            <label>
                 Título
-                <input type="text" name="titulo" placeholder="Casa moderna">
+                <input type="text" name="titulo" placeholder="Casa en Puente Real">
+            </label>
+
+            <label>
+                Ubicación
+                <input type="text" name="ubicacion" placeholder="Cd. Obregón">
+            </label>
+
+            <label>
+                Tipo de propiedad
+                <select name="tipo">
+                    <option value="">Selecciona una opción</option>
+                    <option value="Casa">Casa</option>
+                    <option value="Terreno">Terreno</option>
+                    <option value="Departamento">Departamento</option>
+                    <option value="Local">Local</option>
+                </select>
             </label>
 
             <label>
@@ -251,8 +275,18 @@
             </label>
 
             <label>
-                Ubicación
-                <input type="text" name="ubicacion" placeholder="Ciudad Obregón">
+                Estado
+                <select name="estado">
+                    <option value="Activo">Activo</option>
+                    <option value="Inactivo">Inactivo</option>
+                    <option value="Vendido">Vendido</option>
+                    <option value="Rentado">Rentado</option>
+                </select>
+            </label>
+
+            <label>
+                Imagen principal
+                <input type="file" name="imagen" accept="image/*">
             </label>
 
             <label>
@@ -262,26 +296,51 @@
         </div>
 
         <div class="modal-actions">
-            <button type="button" class="btn-secondary" data-close-modal>Cancelar</button>
-            <button type="submit" class="btn-primary">Guardar propiedad</button>
+            <button type="button" class="btn-secondary" data-close-modal>
+                Cancelar
+            </button>
+
+            <button type="submit" class="btn-primary">
+                Guardar propiedad
+            </button>
         </div>
     </form>
 </dialog>
-
-<!-- MODAL EDITAR -->
+<!--MODAL EDITAR PROPIEDAD -->
 <dialog class="modal" id="modalEditar">
     <form class="modal-content">
         <div class="modal-header">
             <h2>Editar propiedad</h2>
-            <button type="button" class="modal-close" data-close-modal>&times;</button>
+
+            <button type="button" class="modal-close" data-close-modal>
+                &times;
+            </button>
         </div>
 
         <div class="modal-body">
-            <input type="hidden" name="id">
+            <label>
+                ID de propiedad
+                <input type="text" name="id" readonly>
+            </label>
 
             <label>
                 Título
                 <input type="text" name="titulo">
+            </label>
+
+            <label>
+                Ubicación
+                <input type="text" name="ubicacion">
+            </label>
+
+            <label>
+                Tipo de propiedad
+                <select name="tipo">
+                    <option value="Casa">Casa</option>
+                    <option value="Terreno">Terreno</option>
+                    <option value="Departamento">Departamento</option>
+                    <option value="Local">Local</option>
+                </select>
             </label>
 
             <label>
@@ -290,33 +349,60 @@
             </label>
 
             <label>
-                Ubicación
-                <input type="text" name="ubicacion">
+                Estado
+                <select name="estado">
+                    <option value="Activo">Activo</option>
+                    <option value="Inactivo">Inactivo</option>
+                    <option value="Vendido">Vendido</option>
+                    <option value="Rentado">Rentado</option>
+                </select>
+            </label>
+
+            <label>
+                Nueva imagen
+                <input type="file" name="imagen" accept="image/*">
+            </label>
+
+            <label>
+                Descripción
+                <textarea name="descripcion"></textarea>
             </label>
         </div>
 
         <div class="modal-actions">
-            <button type="button" class="btn-secondary" data-close-modal>Cancelar</button>
-            <button type="submit" class="btn-primary">Actualizar propiedad</button>
+            <button type="button" class="btn-secondary" data-close-modal>
+                Cancelar
+            </button>
+
+            <button type="submit" class="btn-primary">
+                Guardar cambios
+            </button>
         </div>
     </form>
 </dialog>
-
-<!-- MODAL ELIMINAR -->
+<!-- MODAL ELIMINAR PROPIEDAD -->
 <dialog class="modal modal-small" id="modalEliminar">
     <div class="modal-content">
         <div class="modal-header">
             <h2>Eliminar propiedad</h2>
-            <button type="button" class="modal-close" data-close-modal>&times;</button>
+
+            <button type="button" class="modal-close" data-close-modal>
+                &times;
+            </button>
         </div>
 
         <div class="modal-body">
             <p>¿Seguro que quieres eliminar esta propiedad?</p>
-            <p class="warning">Esta acción no se puede deshacer.</p>
+            <p class="warning">
+                Esta acción no se podrá deshacer cuando tengas base de datos.
+            </p>
         </div>
 
         <div class="modal-actions">
-            <button type="button" class="btn-secondary" data-close-modal>Cancelar</button>
+            <button type="button" class="btn-secondary" data-close-modal>
+                Cancelar
+            </button>
+
             <button type="button" class="btn-danger" id="confirmarEliminar">
                 Sí, eliminar
             </button>
