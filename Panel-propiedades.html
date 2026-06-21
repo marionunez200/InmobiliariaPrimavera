@@ -27,7 +27,7 @@
     <meta property="og:url" content="https://www.inmobiliariaprimavera.com/">
     <meta property="og:type" content="website">
     <meta property="og:locale" content="es_MX">
-    
+    <script src="./JS/Modal.js" defer></script>
 </head>
 <body>
     <div class="admin-panel">
@@ -45,7 +45,7 @@
                 </div>
             </div>
 
-            <button class="button_anadir">Agregar propiedad</button>
+            <button class="button_anadir" data-open-modal="modalAgregar">Agregar propiedad</button>
         </header>
         <aside class="admin-sidebar">
             <div class="admin-logo"></div>
@@ -92,7 +92,7 @@
                 </div>
 
                 <!-- Fila 1 -->
-                <article class="detalles_fila">
+                <article class="detalles_fila" data-property-row>
                     <div class="info_propiedad">
                         <img src="Imagenes/casa1.jpg" alt="Casa_1">
                         <div>
@@ -107,13 +107,13 @@
                         <span class="text_dentro">Activo</span>
 
                         <div class="acciones">
-                            <button class="editar">Editar</button>
-                            <button class="eliminar">Eliminar</button>
+                            <button class="editar" data-edit>Editar</button>
+                            <button class="eliminar" data-delete>Eliminar</button>
                         </div>
                 </article>
 
                 <!-- Fila extra -->
-                <article class="detalles_fila">
+                <article class="detalles_fila" data-property-row>
                     <div class="info_propiedad">
                         <img src="Imagenes/casa1.jpg" alt="Casa_1">
                         <div>
@@ -128,14 +128,14 @@
                         <span class="text_dentro">Activo</span>
 
                         <div class="acciones">
-                            <button class="editar">Editar</button>
-                            <button class="eliminar">Eliminar</button>
+                            <button class="editar" data-edit>Editar</button>
+                            <button class="eliminar" data-delete>Eliminar</button>
                         </div>
 
                 </article>
                 
                 <!-- Fila extra -->
-                <article class="detalles_fila">
+                <article class="detalles_fila" data-property-row>
                     <div class="info_propiedad">
                         <img src="Imagenes/casa1.jpg" alt="Casa_1">
                         <div>
@@ -150,13 +150,13 @@
                         <span class="text_dentro">Activo</span>
 
                         <div class="acciones">
-                            <button class="editar">Editar</button>
-                            <button class="eliminar">Eliminar</button>
+                            <button class="editar" data-edit>Editar</button>
+                            <button class="eliminar" data-delete>Eliminar</button>
                         </div>
                 </article>
 
                 <!-- Fila extra -->
-                <article class="detalles_fila">
+                <article class="detalles_fila" data-property-row="">
                     <div class="info_propiedad">
                         <img src="Imagenes/casa1.jpg" alt="Casa_1">
                         <div>
@@ -171,8 +171,8 @@
                         <span class="text_dentro">Activo</span>
 
                         <div class="acciones">
-                            <button class="editar">Editar</button>
-                            <button class="eliminar">Eliminar</button>
+                            <button class="editar" data-edit>Editar</button>
+                            <button class="eliminar" data-delete>Eliminar</button>
                         </div>
                 </article>
             </section>
@@ -230,5 +230,98 @@
             </section>
         </main>
     </div>
+
+<!-- MODAL AGREGAR -->
+    <dialog class="modal" id="modalAgregar">
+    <form class="modal-content">
+        <div class="modal-header">
+            <h2>Agregar propiedad</h2>
+            <button type="button" class="modal-close" data-close-modal>&times;</button>
+        </div>
+
+        <div class="modal-body">
+            <label>
+                Título
+                <input type="text" name="titulo" placeholder="Casa moderna">
+            </label>
+
+            <label>
+                Precio
+                <input type="number" name="precio" placeholder="2500000">
+            </label>
+
+            <label>
+                Ubicación
+                <input type="text" name="ubicacion" placeholder="Ciudad Obregón">
+            </label>
+
+            <label>
+                Descripción
+                <textarea name="descripcion" placeholder="Descripción de la propiedad"></textarea>
+            </label>
+        </div>
+
+        <div class="modal-actions">
+            <button type="button" class="btn-secondary" data-close-modal>Cancelar</button>
+            <button type="submit" class="btn-primary">Guardar propiedad</button>
+        </div>
+    </form>
+</dialog>
+
+<!-- MODAL EDITAR -->
+<dialog class="modal" id="modalEditar">
+    <form class="modal-content">
+        <div class="modal-header">
+            <h2>Editar propiedad</h2>
+            <button type="button" class="modal-close" data-close-modal>&times;</button>
+        </div>
+
+        <div class="modal-body">
+            <input type="hidden" name="id">
+
+            <label>
+                Título
+                <input type="text" name="titulo">
+            </label>
+
+            <label>
+                Precio
+                <input type="number" name="precio">
+            </label>
+
+            <label>
+                Ubicación
+                <input type="text" name="ubicacion">
+            </label>
+        </div>
+
+        <div class="modal-actions">
+            <button type="button" class="btn-secondary" data-close-modal>Cancelar</button>
+            <button type="submit" class="btn-primary">Actualizar propiedad</button>
+        </div>
+    </form>
+</dialog>
+
+<!-- MODAL ELIMINAR -->
+<dialog class="modal modal-small" id="modalEliminar">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Eliminar propiedad</h2>
+            <button type="button" class="modal-close" data-close-modal>&times;</button>
+        </div>
+
+        <div class="modal-body">
+            <p>¿Seguro que quieres eliminar esta propiedad?</p>
+            <p class="warning">Esta acción no se puede deshacer.</p>
+        </div>
+
+        <div class="modal-actions">
+            <button type="button" class="btn-secondary" data-close-modal>Cancelar</button>
+            <button type="button" class="btn-danger" id="confirmarEliminar">
+                Sí, eliminar
+            </button>
+        </div>
+    </div>
+</dialog>
 </body>
 </html>

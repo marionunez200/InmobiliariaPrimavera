@@ -338,3 +338,112 @@ body{
     color: #fff5e0;
     cursor: pointer;
 }
+
+.modal {
+    border: none;
+    border-radius: 18px;
+    padding: 0;
+    width: min(90%, 750px);
+    background: #ffffff;
+    color: #1f1f1f;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+}
+
+.modal-small {
+    width: min(90%, 420px);
+}
+
+.modal::backdrop {
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(4px);
+}
+
+.modal-content {
+    padding: 0;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.2rem 1.5rem;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.modal-header h2 {
+    margin: 0;
+    color: #2d2d2d;
+}
+
+.modal-close {
+    border: none;
+    background: transparent;
+    font-size: 2rem;
+    cursor: pointer;
+    color: #555;
+}
+
+.modal-body {
+    padding: 1.5rem;
+    display: grid;
+    gap: 1rem;
+}
+
+.modal-body label {
+    display: grid;
+    gap: 0.4rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.modal-body input,
+.modal-body textarea,
+.modal-body select {
+    padding: 0.8rem 1rem;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    font: inherit;
+}
+
+.modal-body textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    padding: 1.2rem 1.5rem;
+    border-top: 1px solid #e5e5e5;
+}
+
+.btn-primary,
+.btn-secondary,
+.btn-danger {
+    border: none;
+    border-radius: 10px;
+    padding: 0.8rem 1.2rem;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.btn-primary {
+    background: #8b5e34;
+    color: white;
+}
+
+.btn-secondary {
+    background: #e5e5e5;
+    color: #222;
+}
+
+.btn-danger {
+    background: #b42318;
+    color: white;
+}
+
+.warning {
+    color: #b42318;
+    font-weight: 700;
+}
