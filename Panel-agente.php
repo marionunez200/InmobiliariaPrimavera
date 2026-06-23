@@ -111,7 +111,7 @@ $ultimosAgentes = array_slice($agentes, 0, 4);
 
     <header class="admin-header">
         <div class="contenedor-logo">
-            <a href="index.html">
+            <a href="/Panel-agente.php">
                 <img class="logo-panel" src="Imagenes/Logosolo.png" alt="Logo Primavera inmobiliaria">
             </a>
         </div>
@@ -140,7 +140,7 @@ $ultimosAgentes = array_slice($agentes, 0, 4);
             <a href="Panel-agente.php">Agentes</a>
         </nav>
     
-        <button class="cerrar-sesion" type="button" onclick="location.href='logout.php'">
+        <button class="cerrar-sesion" type="button" onclick="location.href='login.php'">
             Cerrar sesión
         </button>
     </aside>
