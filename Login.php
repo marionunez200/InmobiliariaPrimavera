@@ -1,0 +1,142 @@
+<?php
+require_once __DIR__ . '/Config/database.php';
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+$pdo = db();
+
+$error = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $usuarioLogin = trim($_POST['usuario'] ?? '');
+    $password = trim($_POST['password'] ?? '');
+
+    if ($usuarioLogin === '' || $password === '') {
+        $error = 'Completa todos los campos.';
+    } else {
+        $stmt = $pdo->prepare("
+            SELECT id, nombre, email, rol, activo
+            FROM usuarios_admin
+            WHERE (email = ? OR nombre = ?)
+            AND password_hash = ?
+            AND activo = 1
+            LIMIT 1
+        ");
+
+        $stmt->execute([
+            $usuarioLogin,
+            $usuarioLogin,
+            $password
+        ]);
+
+        $usuario = $stmt->fetch();
+
+        if ($usuario) {
+            $_SESSION['admin_id'] = $usuario['id'];
+            $_SESSION['admin_nombre'] = $usuario['nombre'];
+            $_SESSION['admin_email'] = $usuario['email'];
+            $_SESSION['admin_rol'] = $usuario['rol'];
+
+            header('Location: Panel-propiedades.php');
+            exit;
+        } else {
+            $error = 'Usuario, correo o contraseña incorrectos.';
+        }
+    }
+}
+?>
+
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Acceso administrativo | Primavera inmobiliaria</title>
+
+    <meta 
+        name="description" 
+        content="Página de acceso administrativo para Primavera inmobiliaria."
+    >
+
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="theme-color" content="#ffffff">
+
+    <link rel="stylesheet" href="./CSS/Login.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" href="./favicon.ico" type="image/x-icon">
+</head>
+
+<body class="bodymagin">
+
+    <main class="login-main">
+        <section class="login-section" aria-labelledby="login-title">
+
+            <div class="login-brand">
+                <img 
+                    src="./Imagenes/Logosolo.png" 
+                    alt="Logo de Primavera inmobiliaria" 
+                    class="login-logo"
+                >
+
+                <p class="login-brand-text1">Primavera</p>
+                <p class="login-brand-text2">INMOBILIARIA</p>
+            </div>
+
+            <div class="login-container">
+                <h1 id="login-title">Iniciar sesión</h1>
+
+                <?php if ($error !== ''): ?>
+                    <p class="login-error">
+                        <?= e($error) ?>
+                    </p>
+                <?php endif; ?>
+
+                <form action="Login.php" method="POST" class="login-form">
+
+                    <div class="form-group floating-group">
+                        <input 
+                            type="text" 
+                            id="usuario" 
+                            name="usuario" 
+                            autocomplete="username"
+                            required
+                            placeholder=" "
+                            value="<?= e($_POST['usuario'] ?? '') ?>"
+                        >
+                        <label for="usuario">Usuario o correo</label>
+                    </div>
+
+                    <div class="form-group floating-group">
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password" 
+                            autocomplete="current-password"
+                            required
+                            placeholder=" "
+                        >
+                        <label for="password">Contraseña</label>
+                    </div>
+
+                    <div class="Login-buttons">
+                        <a href="index.html" class="back-link">Volver</a>
+                        <button type="submit">Acceder</button>
+                    </div>
+
+                </form>
+            </div>
+
+        </section>
+    </main>
+
+    <div class="login-footer">
+        <p class="login-footer-text">
+            &copy; 2026 Primavera inmobiliaria. Todos los derechos reservados.
+        </p>
+    </div>
+
+</body>
+</html>

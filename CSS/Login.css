@@ -173,3 +173,14 @@
     font-size: 0.75rem;
     color: #17305e;
 }
+
+.login-container .login-error p {
+    background: #ffe0e0;
+    color: #8a0000 !important;
+    padding: 10px 14px;
+    border-radius: 12px;
+    justify-content: center;
+    text-align: center;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
