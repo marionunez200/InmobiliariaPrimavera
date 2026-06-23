@@ -25,7 +25,7 @@ body{
     align-items: center;
     gap: 2rem;
     width: 100%;
-    margin-top: 50px;
+    margin-top: 10px;
 }
 .card_info_propiedades,
 .card_info_agente {
@@ -225,6 +225,80 @@ body{
 
 .text_dentro {
     color: #122548;
+}
+
+/* Info de los agentes */
+.detalles_agente {
+    width: 95%;
+    margin: 40px auto;
+    background-color: #ddd3be;
+    border-radius: 20px;
+    padding: 20px 25px;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.detalles_agente h2 {
+    color: #122548;
+    margin: 0 0 20px;
+}
+
+.subtitulos_agente,
+.detalles_agente_fila {
+    display: grid;
+    grid-template-columns: 3fr 2fr 1.5fr 1fr 1.5fr;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+}
+
+.subtitulos_agente {
+    margin-bottom: 15px;
+    font-weight: 600;
+    color: #122548;
+}
+
+.detalles_agente_fila {
+    background-color: #ebdfc6;
+    padding: 15px 20px;
+    border-radius: 15px;
+    margin-bottom: 10px;
+}
+
+.info_agente {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 15px;
+
+    color: #122548;
+
+    border-right: 1px solid #b8b8b8;
+    padding-right: 20px;
+}
+
+.info_agente img {
+    width: 60px;
+    height: 60px;
+    border-radius: 10px;
+    object-fit: cover;
+}
+
+.info_agente h3,
+.info_agente p {
+    margin: 0;
+}
+
+.info_agente div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.detalles_agente_fila .text_dentro {
+    color: #122548;
+    border-right: 1px solid #b8b8b8;
+    padding-right: 20px;
 }
 
 /* Cards */

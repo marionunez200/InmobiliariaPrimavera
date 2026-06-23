@@ -5,7 +5,7 @@ const modalEliminar = document.getElementById("modalEliminar");
 
 let propiedadAEliminar = null;
 
-// Abrir modal de agregar
+// Abrir modal de agregar propiedad
 document.addEventListener("click", (event) => {
     const openButton = event.target.closest("[data-open-modal]");
 
@@ -81,4 +81,47 @@ confirmarEliminar.addEventListener("click", () => {
     console.log("Eliminar propiedad:", propiedadAEliminar);
 
     modalEliminar.close();
+});
+
+
+
+// Abrir modal de agregar agente
+document.addEventListener("click", (event) => {
+    const openButton = event.target.closest("[data-open-modal]");
+
+    if (!openButton) return;
+
+    const modalId = openButton.dataset.openModal;
+    const modal = document.getElementById(modalId);
+
+    if (!modal) {
+        console.error("No existe un modal con el id:", modalId);
+        return;
+    }
+
+    modal.showModal();
+});
+
+// Abrir modal de editar agente
+document.addEventListener("click", (event) => {
+    const editButton = event.target.closest("[data-edit]");
+
+    if (!editButton) return;
+
+    const fila = editButton.closest("[data-property-row]");
+
+    if (!fila) {
+        console.error("No encontré la fila. Agrega data-property-row al article.");
+        return;
+    }
+
+    modalEditar.querySelector("[name='id_agente']").value = fila.dataset.id;
+
+    modalEditar.querySelector("[name='nombre_agente']").value = fila.dataset.nombre;
+
+    modalEditar.querySelector("[name='phone']").value = fila.dataset.telefono;
+
+    modalEditar.querySelector("[name='correo']").value = fila.dataset.correo; 
+
+    modalEditar.showModal();
 });
