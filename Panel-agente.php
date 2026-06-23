@@ -29,11 +29,35 @@ $totalAgentesActivos = (int)$pdo->query("
     WHERE activo = 1
 ")->fetchColumn();
 
-$stmt = $pdo->query("
-    SELECT *
-    FROM agentes
-    ORDER BY creado_en DESC, id DESC
-");
+$buscar = trim($_GET['buscar'] ?? '');
+
+if ($buscar !== '') {
+
+    $stmt = $pdo->prepare("
+        SELECT *
+        FROM agentes
+        WHERE nombre LIKE ?
+            OR email LIKE ?
+            OR telefono LIKE ?
+        ORDER BY creado_en DESC, id DESC
+    ");
+
+    $texto = "%{$buscar}%";
+
+    $stmt->execute([
+        $texto,
+        $texto,
+        $texto
+    ]);
+
+} else {
+
+    $stmt = $pdo->query("
+        SELECT *
+        FROM agentes
+        ORDER BY creado_en DESC, id DESC
+    ");
+}
 
 $agentes = $stmt->fetchAll();
 
@@ -56,7 +80,7 @@ $ultimosAgentes = array_slice($agentes, 0, 4);
     <meta name="robots" content="noindex, nofollow">
     <meta name="theme-color" content="#ffffff">
 
-    <link rel="stylesheet" href="./CSS/panel-propiedades.css">
+    <link rel="stylesheet" href="./CSS/Panel-propiedades.css">
     <link rel="stylesheet" href="./CSS/Admin.header.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
@@ -132,8 +156,22 @@ $ultimosAgentes = array_slice($agentes, 0, 4);
             </ul>
         </section>
 
-        <section class="detalles_agente">
-            <h2>Agentes inmobiliarios</h2>
+        <section class="detalles_agente">        
+            <div class="contenedor_busqueda">
+                <h2>Agentes inmobiliarios</h2>
+
+                <form class="busqueda" method="GET">
+                <input
+                    type="text"
+                    name="buscar"
+                    placeholder="Buscar agente..."
+                    value="<?= e($_GET['buscar'] ?? '') ?>"
+                >
+                    <button type="submit">
+                        Buscar
+                    </button>
+                </form>
+            </div>
 
             <div class="subtitulos_agente">
                 <span>Nombre</span>
@@ -143,67 +181,70 @@ $ultimosAgentes = array_slice($agentes, 0, 4);
                 <span>Acciones</span>
             </div>
 
-            <?php if (empty($agentes)): ?>
-                <p>No hay agentes registrados.</p>
-            <?php endif; ?>
+            <div class="contenedor_agentes">
+                <?php if (empty($agentes)): ?>
+                    <p>No hay agentes registrados.</p>
+                <?php endif; ?>
 
-            <?php foreach ($agentes as $agente): ?>
-                <?php
-                    $foto = $agente['foto_url'] ?: 'Imagenes/agente1.webp';
+                <?php foreach ($agentes as $agente): ?>
+                    <?php
+                        $foto = $agente['foto_url'] ?: 'Imagenes/agente1.webp';
 
-                    $agenteJson = json_encode([
-                        'id' => $agente['id'],
-                        'nombre' => $agente['nombre'],
-                        'telefono' => $agente['telefono'],
-                        'email' => $agente['email'],
-                        'foto_url' => $agente['foto_url'],
-                        'activo' => $agente['activo'],
-                    ], JSON_UNESCAPED_UNICODE);
-                ?>
+                        $agenteJson = json_encode([
+                            'id' => $agente['id'],
+                            'nombre' => $agente['nombre'],
+                            'telefono' => $agente['telefono'],
+                            'email' => $agente['email'],
+                            'foto_url' => $agente['foto_url'],
+                            'activo' => $agente['activo'],
+                        ], JSON_UNESCAPED_UNICODE);
+                    ?>
 
-                <article class="detalles_agente_fila" data-agent-row>
-                    <div class="info_agente">
-                        <img src="<?= e((string)$foto) ?>" alt="<?= e((string)$agente['nombre']) ?>">
+                    <article class="detalles_agente_fila" data-agent-row>
+                        <div class="info_agente">
+                            <img src="<?= e((string)$foto) ?>" alt="<?= e((string)$agente['nombre']) ?>">
 
-                        <div>
-                            <h3><?= e((string)$agente['nombre']) ?></h3>
-                            <p>ID: <?= e((string)$agente['id']) ?></p>
+                            <div>
+                                <h3><?= e((string)$agente['nombre']) ?></h3>
+                                <p>ID: <?= e((string)$agente['id']) ?></p>
+                            </div>
                         </div>
-                    </div>
 
-                    <span class="text_dentro">
-                        <?= e((string)($agente['email'] ?: 'Sin correo')) ?>
-                    </span>
+                        <span class="text_dentro">
+                            <?= e((string)($agente['email'] ?: 'Sin correo')) ?>
+                        </span>
 
-                    <span class="text_dentro">
-                        <?= e((string)($agente['telefono'] ?: 'Sin teléfono')) ?>
-                    </span>
+                        <span class="text_dentro">
+                            <?= e((string)($agente['telefono'] ?: 'Sin teléfono')) ?>
+                        </span>
 
-                    <span class="text_dentro">
-                        <?= e(agenteActivoTexto($agente['activo'])) ?>
-                    </span>
+                        <span class="text_dentro">
+                            <?= e(agenteActivoTexto($agente['activo'])) ?>
+                        </span>
 
-                    <div class="acciones">
-                        <button 
-                            class="editar" 
-                            type="button"
-                            data-edit
-                            data-agente='<?= e((string)$agenteJson) ?>'
-                        >
-                            Editar
-                        </button>
+                        <div class="acciones">
+                            <button 
+                                class="editar" 
+                                type="button"
+                                data-edit
+                                data-agente='<?= e((string)$agenteJson) ?>'
+                            >
+                                Editar
+                            </button>
 
-                        <button 
-                            class="eliminar" 
-                            type="button"
-                            data-delete
-                            data-id="<?= e((string)$agente['id']) ?>"
-                        >
-                            Eliminar
-                        </button>
-                    </div>
-                </article>
-            <?php endforeach; ?>
+                            <button 
+                                class="eliminar" 
+                                type="button"
+                                data-delete
+                                data-id="<?= e((string)$agente['id']) ?>"
+                            >
+                                Eliminar
+                            </button>
+                        </div>
+                    </article>
+                <?php endforeach; ?>
+
+            </div>
 
         </section>
 
