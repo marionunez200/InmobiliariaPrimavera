@@ -1435,3 +1435,30 @@ MODAL DE ÉXITO
 .busqueda button:hover {
     background: #0c1a33;
 }
+
+.contenedor_agentes{
+    max-height: 500px; /* ajusta la altura */
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    padding-right: 10px;
+}
+
+/* Scroll personalizado */
+.contenedor_agentes::-webkit-scrollbar{
+    width: 8px;
+}
+
+.contenedor_agentes::-webkit-scrollbar-track{
+    background: #ddd3be;
+    border-radius: 10px;
+}
+
+.contenedor_agentes::-webkit-scrollbar-thumb{
+    background: #122548;
+    border-radius: 10px;
+}
+
+.contenedor_agentes::-webkit-scrollbar-thumb:hover{
+    background: #17305e;
+}
