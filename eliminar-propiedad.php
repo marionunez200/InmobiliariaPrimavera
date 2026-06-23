@@ -1,11 +1,15 @@
 <?php
 require_once __DIR__ . '/Config/database.php';
 
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 $pdo = db();
 
 $id = $_POST['id'] ?? null;
 
-if (!$id) {
+if (!$id || !is_numeric($id)) {
     die('ID no válido.');
 }
 
@@ -17,7 +21,12 @@ try {
 
     $stmt->execute([$id]);
 
-    header('Location: Panel-propiedades.php?eliminado=1');
+    $_SESSION['modal_exito'] = [
+        'titulo' => 'Propiedad eliminada',
+        'mensaje' => 'La propiedad fue eliminada correctamente.'
+    ];
+
+    header('Location: Panel-propiedades.php');
     exit;
 
 } catch (Exception $e) {

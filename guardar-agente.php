@@ -1,6 +1,12 @@
 <?php
 require_once __DIR__ . '/Config/database.php';
 
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+$pdo = db();
+
 $pdo = db();
 
 function subirFotoAgente(?string $fotoActual = null): ?string
@@ -64,6 +70,7 @@ function subirFotoAgente(?string $fotoActual = null): ?string
 }
 
 $id = trim($_POST['id'] ?? '');
+$esEdicion = $id !== '';
 
 $nombre = trim($_POST['nombre'] ?? '');
 $telefono = trim($_POST['telefono'] ?? '');
@@ -135,7 +142,14 @@ try {
         ]);
     }
 
-    header('Location: Panel-agente.php?ok=1');
+    $_SESSION['modal_exito'] = [
+        'titulo' => $esEdicion ? 'Cambios guardados' : 'Agente agregado',
+        'mensaje' => $esEdicion
+            ? 'La información del agente se actualizó correctamente.'
+            : 'El agente se agregó correctamente al panel.'
+    ];
+    
+    header('Location: Panel-agente.php');
     exit;
 
 } catch (Exception $e) {

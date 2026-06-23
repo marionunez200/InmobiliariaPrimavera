@@ -1,6 +1,10 @@
 <?php
 require_once __DIR__ . '/Config/database.php';
 
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 $pdo = db();
 
 function crearSlugPanel(string $texto): string
@@ -54,6 +58,27 @@ function guardarImagenesPropiedad(PDO $pdo, int $propiedad_id, string $titulo, b
     }
 
     if ($reemplazar) {
+        $stmtImagenes = $pdo->prepare("
+            SELECT imagen_url
+            FROM imagenes_propiedades
+            WHERE propiedad_id = ?
+        ");
+
+        $stmtImagenes->execute([$propiedad_id]);
+        $imagenesViejas = $stmtImagenes->fetchAll();
+
+        foreach ($imagenesViejas as $imagen) {
+            $ruta = (string)$imagen['imagen_url'];
+
+            if (str_starts_with($ruta, 'Uploads/propiedades/')) {
+                $rutaServidor = __DIR__ . '/' . $ruta;
+
+                if (is_file($rutaServidor)) {
+                    unlink($rutaServidor);
+                }
+            }
+        }
+
         $stmtDelete = $pdo->prepare("
             DELETE FROM imagenes_propiedades
             WHERE propiedad_id = ?
@@ -65,7 +90,7 @@ function guardarImagenesPropiedad(PDO $pdo, int $propiedad_id, string $titulo, b
     $hayPrincipal = propiedadTieneImagenPrincipal($pdo, $propiedad_id);
 
     $extensionesPermitidas = ['jpg', 'jpeg', 'png', 'webp'];
-    $maxSize = 5 * 1024 * 1024; // 5 MB
+    $maxSize = 5 * 1024 * 1024;
 
     $total = count($_FILES['imagenes']['name']);
 
@@ -134,6 +159,7 @@ function guardarImagenesPropiedad(PDO $pdo, int $propiedad_id, string $titulo, b
         $hayPrincipal = true;
     }
 }
+
 function eliminarImagenesSeleccionadas(PDO $pdo, int $propiedad_id, array $idsImagenes): void
 {
     $idsImagenes = array_values(array_filter(array_map('intval', $idsImagenes)));
@@ -246,6 +272,7 @@ function cambiarImagenPrincipal(PDO $pdo, int $propiedad_id, int $imagen_id): vo
 }
 
 $id = trim($_POST['id'] ?? '');
+$esEdicion = $id !== '';
 
 $agente_id = (int)($_POST['agente_id'] ?? 0);
 $titulo = trim($_POST['titulo'] ?? '');
@@ -287,7 +314,7 @@ if ($direccion_completa === '') {
 try {
     $pdo->beginTransaction();
 
-    if ($id !== '') {
+    if ($esEdicion) {
         $sql = "
             UPDATE propiedades SET
                 agente_id = ?,
@@ -401,18 +428,25 @@ try {
         $titulo,
         $reemplazarImagenes
     );
-    
+
     if ($imagenPrincipalId > 0) {
-    cambiarImagenPrincipal(
-        $pdo,
-        $propiedad_id,
-        $imagenPrincipalId
-    );
-}
+        cambiarImagenPrincipal(
+            $pdo,
+            $propiedad_id,
+            $imagenPrincipalId
+        );
+    }
 
     $pdo->commit();
 
-    header('Location: Panel-propiedades.php?ok=1');
+    $_SESSION['modal_exito'] = [
+        'titulo' => $esEdicion ? 'Cambios guardados' : 'Propiedad agregada',
+        'mensaje' => $esEdicion
+            ? 'La información de la propiedad se actualizó correctamente.'
+            : 'La propiedad se agregó correctamente al catálogo.'
+    ];
+
+    header('Location: Panel-propiedades.php');
     exit;
 
 } catch (Exception $e) {

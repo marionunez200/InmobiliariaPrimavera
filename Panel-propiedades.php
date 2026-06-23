@@ -7,15 +7,23 @@ if (session_status() === PHP_SESSION_NONE) {
 
 $pdo = db();
 
-function panelSelected(?string $actual, string $valor): string
-{
-    return $actual === $valor ? 'selected' : '';
+/* ================================
+   MODAL DE ÉXITO
+================================ */
+
+$modalExitoTitulo = '';
+$modalExitoMensaje = '';
+
+if (!empty($_SESSION['modal_exito'])) {
+    $modalExitoTitulo = $_SESSION['modal_exito']['titulo'] ?? '';
+    $modalExitoMensaje = $_SESSION['modal_exito']['mensaje'] ?? '';
+
+    unset($_SESSION['modal_exito']);
 }
 
-function panelChecked($valor): string
-{
-    return (int)$valor === 1 ? 'checked' : '';
-}
+/* ================================
+   FUNCIONES
+================================ */
 
 function ciudadPanelTexto(?string $ciudad): string
 {
@@ -39,14 +47,11 @@ function tipoPanelTexto(?string $tipo): string
     };
 }
 
-function operacionPanelTexto(?string $operacion): string
-{
-    return match ($operacion) {
-        'venta' => 'Venta',
-        'renta' => 'Renta',
-        default => 'Operación'
-    };
-}
+/* ================================
+   DATOS GENERALES
+================================ */
+
+$buscar = trim($_GET['buscar'] ?? '');
 
 $agentes = $pdo->query("
     SELECT id, nombre
@@ -67,57 +72,60 @@ $totalAgentesActivos = (int)$pdo->query("
     WHERE activo = 1
 ")->fetchColumn();
 
-$buscar = trim($_GET['buscar'] ?? '');
+/* ================================
+   CONSULTA PROPIEDADES
+================================ */
+
+$sql = "
+    SELECT
+        p.*,
+        a.nombre AS agente_nombre,
+        (
+            SELECT ip.imagen_url
+            FROM imagenes_propiedades ip
+            WHERE ip.propiedad_id = p.id
+            ORDER BY ip.es_principal DESC, ip.orden ASC, ip.id ASC
+            LIMIT 1
+        ) AS imagen_principal
+    FROM propiedades p
+    LEFT JOIN agentes a ON p.agente_id = a.id
+";
+
+$params = [];
 
 if ($buscar !== '') {
-
-    $stmt = $pdo->prepare("
-        SELECT
-            p.*,
-            a.nombre AS agente_nombre,
-            (
-                SELECT ip.imagen_url
-                FROM imagenes_propiedades ip
-                WHERE ip.propiedad_id = p.id
-                ORDER BY ip.es_principal DESC, ip.orden ASC, ip.id ASC
-                LIMIT 1
-            ) AS imagen_principal
-        FROM propiedades p
-        LEFT JOIN agentes a ON p.agente_id = a.id
-        WHERE p.titulo LIKE ?
-            OR a.nombre LIKE ?
+    $sql .= "
+        WHERE 
+            p.titulo LIKE ?
+            OR p.direccion_completa LIKE ?
             OR p.ciudad LIKE ?
-        ORDER BY p.creado_en DESC, p.id DESC
-    ");
+            OR p.tipo_propiedad LIKE ?
+            OR p.tipo_operacion LIKE ?
+    ";
 
-    $texto = "%{$buscar}%";
+    $like = '%' . $buscar . '%';
 
-    $stmt->execute([
-        $texto,
-        $texto,
-        $texto
-    ]);
-
-} else {
-
-    $stmt = $pdo->query("
-        SELECT
-            p.*,
-            a.nombre AS agente_nombre,
-            (
-                SELECT ip.imagen_url
-                FROM imagenes_propiedades ip
-                WHERE ip.propiedad_id = p.id
-                ORDER BY ip.es_principal DESC, ip.orden ASC, ip.id ASC
-                LIMIT 1
-            ) AS imagen_principal
-        FROM propiedades p
-        LEFT JOIN agentes a ON p.agente_id = a.id
-        ORDER BY p.creado_en DESC, p.id DESC
-    ");
+    $params = [
+        $like,
+        $like,
+        $like,
+        $like,
+        $like
+    ];
 }
 
+$sql .= "
+    ORDER BY p.creado_en DESC, p.id DESC
+";
+
+$stmt = $pdo->prepare($sql);
+$stmt->execute($params);
+
 $propiedades = $stmt->fetchAll();
+
+/* ================================
+   IMÁGENES POR PROPIEDAD
+================================ */
 
 $imagenesPorPropiedad = [];
 
@@ -164,7 +172,7 @@ $ultimasPropiedades = array_slice($propiedades, 0, 4);
     <meta name="robots" content="noindex, nofollow">
     <meta name="theme-color" content="#ffffff">
 
-    <link rel="stylesheet" href="./CSS/Panel-propiedades.css">
+    <link rel="stylesheet" href="./CSS/panel-propiedades.css">
     <link rel="stylesheet" href="./CSS/Admin.header.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
@@ -192,7 +200,7 @@ $ultimasPropiedades = array_slice($propiedades, 0, 4);
             </div>
         </div>
 
-        <button class="button_anadir" data-open-modal="modalAgregar">
+        <button class="button_anadir" type="button" data-open-modal="modalAgregar">
             Agregar propiedad
         </button>
     </header>
@@ -212,17 +220,9 @@ $ultimasPropiedades = array_slice($propiedades, 0, 4);
 
     <main class="admin-main">
 
-        <?php if (isset($_GET['ok'])): ?>
-            <p style="color: green; font-weight: bold;">Propiedad guardada correctamente.</p>
-        <?php endif; ?>
-
-        <?php if (isset($_GET['eliminado'])): ?>
-            <p style="color: green; font-weight: bold;">Propiedad eliminada correctamente.</p>
-        <?php endif; ?>
-
         <?php if (empty($agentes)): ?>
-            <p style="color: red; font-weight: bold;">
-                Primero necesitas agregar al menos un agente activo en la tabla agentes.
+            <p class="panel-alerta">
+                Primero necesitas agregar al menos un agente activo.
             </p>
         <?php endif; ?>
 
@@ -247,16 +247,18 @@ $ultimasPropiedades = array_slice($propiedades, 0, 4);
         </section>
 
         <section class="detalles_propiedad">
-            <div class="contenedor_busqueda">
+
+            <div class="contenedor-busqueda">
                 <h2>Propiedades</h2>
 
-                <form class="busqueda" method="GET">
-                <input
-                    type="text"
-                    name="buscar"
-                    placeholder="Buscar propiedad..."
-                    value="<?= e($_GET['buscar'] ?? '') ?>"
-                >
+                <form method="GET" action="Panel-propiedades.php" class="busqueda">
+                    <input 
+                        type="search" 
+                        name="buscar"
+                        placeholder="Buscar propiedad..."
+                        value="<?= e($buscar) ?>"
+                    >
+
                     <button type="submit">
                         Buscar
                     </button>
@@ -280,6 +282,15 @@ $ultimasPropiedades = array_slice($propiedades, 0, 4);
                 <?php
                     $imagen = $propiedad['imagen_principal'] ?: 'Imagenes/casa1.jpg';
 
+                    $imagenesJson = array_map(function ($imagenItem) {
+                        return [
+                            'id' => (int)$imagenItem['id'],
+                            'url' => $imagenItem['imagen_url'],
+                            'nombre' => basename((string)$imagenItem['imagen_url']),
+                            'es_principal' => (int)$imagenItem['es_principal'],
+                        ];
+                    }, $imagenesPorPropiedad[(int)$propiedad['id']] ?? []);
+
                     $propiedadJson = json_encode([
                         'id' => $propiedad['id'],
                         'agente_id' => $propiedad['agente_id'],
@@ -299,22 +310,14 @@ $ultimasPropiedades = array_slice($propiedades, 0, 4);
                         'estacionamientos' => $propiedad['estacionamientos'],
                         'terreno_m2' => $propiedad['terreno_m2'],
                         'construccion_m2' => $propiedad['construccion_m2'],
-                        'imagen_url' => $propiedad['imagen_principal'],
-                        'imagenes' => array_map(function ($imagen) {
-
-                        return [
-                            'id' => (int)$imagen['id'],
-                            'url' => $imagen['imagen_url'],
-                            'nombre' => basename((string)$imagen['imagen_url']),
-                            'es_principal' => (int)$imagen['es_principal'],
-                        ];
-                    }, $imagenesPorPropiedad[(int)$propiedad['id']] ?? []),
-                    ], JSON_UNESCAPED_UNICODE);
+                        'imagenes' => $imagenesJson,
+                    ], JSON_UNESCAPED_UNICODE | JSON_HEX_APOS | JSON_HEX_QUOT);
                 ?>
 
                 <article class="detalles_fila" data-property-row>
                     <div class="info_propiedad">
                         <img src="<?= e((string)$imagen) ?>" alt="<?= e((string)$propiedad['titulo']) ?>">
+
                         <div>
                             <h3><?= e((string)$propiedad['titulo']) ?></h3>
                             <p>ID: <?= e((string)$propiedad['id']) ?></p>
@@ -351,8 +354,7 @@ $ultimasPropiedades = array_slice($propiedades, 0, 4);
                         <button 
                             class="eliminar" 
                             type="button"
-                            data-delete
-                            data-id="<?= e((string)$propiedad['id']) ?>"
+                            onclick="abrirModalEliminar(<?= e((string)$propiedad['id']) ?>)"
                         >
                             Eliminar
                         </button>
@@ -360,7 +362,6 @@ $ultimasPropiedades = array_slice($propiedades, 0, 4);
                 </article>
 
             <?php endforeach; ?>
-
         </section>
 
         <section class="cards_propiedades">
@@ -369,7 +370,6 @@ $ultimasPropiedades = array_slice($propiedades, 0, 4);
             </div>
 
             <div class="contenedor_cards">
-
                 <?php foreach ($ultimasPropiedades as $propiedad): ?>
                     <?php $imagen = $propiedad['imagen_principal'] ?: 'Imagenes/casa1.jpg'; ?>
 
@@ -392,7 +392,6 @@ $ultimasPropiedades = array_slice($propiedades, 0, 4);
                         </article>
                     </a>
                 <?php endforeach; ?>
-
             </div>
         </section>
 
@@ -402,6 +401,7 @@ $ultimasPropiedades = array_slice($propiedades, 0, 4);
 <!-- MODAL AGREGAR PROPIEDAD -->
 <dialog class="modal" id="modalAgregar">
     <form class="modal-content" action="guardar-propiedad.php" method="POST" enctype="multipart/form-data">
+
         <div class="modal-header">
             <h2>Agregar propiedad</h2>
 
@@ -506,8 +506,8 @@ $ultimasPropiedades = array_slice($propiedades, 0, 4);
                 <input type="number" name="construccion_m2" step="0.01">
             </label>
 
-            <label>
-                Imágenes de la propiedad
+            <div>
+                <p class="imagenes-actuales-title">Imágenes de la propiedad</p>
 
                 <div class="upload-box" id="dropAgregar">
                     <input 
@@ -527,16 +527,16 @@ $ultimasPropiedades = array_slice($propiedades, 0, 4);
                 </div>
 
                 <div class="lista-archivos" id="previewAgregar"></div>
-            </label>
+            </div>
 
             <label>
                 Google Maps URL
                 <input type="text" name="google_maps_url" placeholder="https://maps.google.com/...">
             </label>
 
-            <label>
-                Destacada
+            <label class="checkbox-reemplazar">
                 <input type="checkbox" name="destacada" value="1">
+                Destacada
             </label>
 
             <label>
@@ -561,7 +561,8 @@ $ultimasPropiedades = array_slice($propiedades, 0, 4);
 
 <!-- MODAL EDITAR PROPIEDAD -->
 <dialog class="modal" id="modalEditar">
-<form class="modal-content" action="guardar-propiedad.php" method="POST" enctype="multipart/form-data">
+    <form class="modal-content" action="guardar-propiedad.php" method="POST" enctype="multipart/form-data">
+
         <input type="hidden" name="id" id="edit_id">
         <input type="hidden" name="imagen_principal_id" id="imagen_principal_id">
 
@@ -668,6 +669,7 @@ $ultimasPropiedades = array_slice($propiedades, 0, 4);
                 Construcción m²
                 <input type="number" name="construccion_m2" id="edit_construccion_m2" step="0.01">
             </label>
+
             <div class="imagenes-actuales-box">
                 <p class="imagenes-actuales-title">Imágenes ya subidas</p>
 
@@ -676,8 +678,9 @@ $ultimasPropiedades = array_slice($propiedades, 0, 4);
                     id="imagenesActualesEditar"
                 ></div>
             </div>
-            <label>
-                Agregar más imágenes
+
+            <div>
+                <p class="imagenes-actuales-title">Agregar más imágenes</p>
 
                 <div class="upload-box" id="dropEditar">
                     <input 
@@ -697,13 +700,11 @@ $ultimasPropiedades = array_slice($propiedades, 0, 4);
                 </div>
 
                 <div class="lista-archivos" id="previewEditar"></div>
-            </label>
+            </div>
+
             <label class="checkbox-reemplazar">
                 <input type="checkbox" name="reemplazar_imagenes" value="1">
                 Reemplazar imágenes anteriores
-            </label>
-
-                <div class="preview-imagenes" id="previewAgregar"></div>
             </label>
 
             <label>
@@ -711,9 +712,9 @@ $ultimasPropiedades = array_slice($propiedades, 0, 4);
                 <input type="text" name="google_maps_url" id="edit_google_maps_url">
             </label>
 
-            <label>
-                Destacada
+            <label class="checkbox-reemplazar">
                 <input type="checkbox" name="destacada" id="edit_destacada" value="1">
+                Destacada
             </label>
 
             <label>
@@ -752,6 +753,7 @@ $ultimasPropiedades = array_slice($propiedades, 0, 4);
 
         <div class="modal-body">
             <p>¿Seguro que quieres eliminar esta propiedad?</p>
+
             <p class="warning">
                 Esta acción no se podrá deshacer.
             </p>
@@ -770,42 +772,31 @@ $ultimasPropiedades = array_slice($propiedades, 0, 4);
     </form>
 </dialog>
 
+<!-- MODAL DE ÉXITO -->
+<?php if ($modalExitoTitulo !== ''): ?>
+    <dialog class="modal-exito" id="modalExito">
+        <div class="modal-exito-content">
+
+            <div class="modal-exito-icon">
+                <i class="fa-solid fa-check"></i>
+            </div>
+
+            <h2><?= e($modalExitoTitulo) ?></h2>
+
+            <p><?= e($modalExitoMensaje) ?></p>
+
+            <button type="button" id="cerrarModalExito">
+                Entendido
+            </button>
+
+        </div>
+    </dialog>
+<?php endif; ?>
+
 <script>
 const modalAgregar = document.getElementById('modalAgregar');
 const modalEditar = document.getElementById('modalEditar');
 const modalEliminar = document.getElementById('modalEliminar');
-
-document.addEventListener('click', (event) => {
-    const openButton = event.target.closest('[data-open-modal]');
-
-    if (!openButton) return;
-
-    const modal = document.getElementById(openButton.dataset.openModal);
-
-    if (modal) {
-        modal.showModal();
-    }
-});
-
-document.addEventListener('click', (event) => {
-    const closeButton = event.target.closest('[data-close-modal]');
-
-    if (!closeButton) return;
-
-    const modal = closeButton.closest('dialog');
-
-    if (modal) {
-        modal.close();
-    }
-});
-
-document.querySelectorAll('dialog').forEach((modal) => {
-    modal.addEventListener('click', (event) => {
-        if (event.target === modal) {
-            modal.close();
-        }
-    });
-});
 
 function ponerValorSeguro(id, valor) {
     const input = document.getElementById(id);
@@ -827,12 +818,210 @@ function ponerCheckSeguro(id, valor) {
     input.checked = Number(valor) === 1;
 }
 
+function abrirModal(modal) {
+    if (modal) {
+        modal.showModal();
+    }
+}
+
+function cerrarModal(modal) {
+    if (modal) {
+        modal.close();
+    }
+}
+
+/* Abrir modal agregar */
+document.addEventListener('click', (event) => {
+    const openButton = event.target.closest('[data-open-modal]');
+
+    if (!openButton) {
+        return;
+    }
+
+    const modal = document.getElementById(openButton.dataset.openModal);
+
+    abrirModal(modal);
+});
+
+/* Cerrar modales */
+document.addEventListener('click', (event) => {
+    const closeButton = event.target.closest('[data-close-modal]');
+
+    if (!closeButton) {
+        return;
+    }
+
+    const modal = closeButton.closest('dialog');
+
+    cerrarModal(modal);
+});
+
+document.querySelectorAll('dialog').forEach((modal) => {
+    modal.addEventListener('click', (event) => {
+        if (event.target === modal) {
+            modal.close();
+        }
+    });
+});
+
+/* Imágenes actuales en editar */
+function renderizarImagenesActuales(imagenes) {
+    const contenedor = document.getElementById('imagenesActualesEditar');
+    const inputPrincipal = document.getElementById('imagen_principal_id');
+
+    if (!contenedor) {
+        return;
+    }
+
+    contenedor.innerHTML = '';
+
+    if (inputPrincipal) {
+        inputPrincipal.value = '';
+    }
+
+    if (!imagenes || imagenes.length === 0) {
+        contenedor.innerHTML = '<p class="sin-imagenes">Esta propiedad no tiene imágenes guardadas.</p>';
+        return;
+    }
+
+    imagenes.forEach((imagen) => {
+        const card = document.createElement('div');
+        card.className = 'archivo-preview archivo-existente';
+
+        if (Number(imagen.es_principal) === 1) {
+            card.classList.add('imagen-principal-activa');
+
+            if (inputPrincipal) {
+                inputPrincipal.value = imagen.id;
+            }
+        }
+
+        const badgePrincipal = Number(imagen.es_principal) === 1
+            ? '<span class="archivo-principal">Principal</span>'
+            : '<span class="archivo-principal oculto">Principal</span>';
+
+        card.innerHTML = `
+            <img src="${imagen.url}" alt="${imagen.nombre}">
+
+            <div class="archivo-info">
+                <span class="archivo-nombre" title="${imagen.nombre}">
+                    ${imagen.nombre}
+                </span>
+
+                <span class="archivo-peso">
+                    Imagen guardada
+                </span>
+
+                ${badgePrincipal}
+
+                <button 
+                    type="button" 
+                    class="archivo-principal-btn" 
+                    data-id="${imagen.id}"
+                >
+                    Hacer principal
+                </button>
+
+                <button 
+                    type="button" 
+                    class="archivo-quitar quitar-imagen-existente" 
+                    data-id="${imagen.id}"
+                >
+                    Quitar
+                </button>
+            </div>
+        `;
+
+        contenedor.appendChild(card);
+    });
+}
+
+/* Elegir imagen principal */
+document.addEventListener('click', (event) => {
+    const botonPrincipal = event.target.closest('.archivo-principal-btn');
+
+    if (!botonPrincipal) {
+        return;
+    }
+
+    const idImagen = botonPrincipal.dataset.id;
+    const inputPrincipal = document.getElementById('imagen_principal_id');
+    const contenedor = document.getElementById('imagenesActualesEditar');
+
+    if (!inputPrincipal || !contenedor) {
+        return;
+    }
+
+    inputPrincipal.value = idImagen;
+
+    contenedor.querySelectorAll('.archivo-preview').forEach((card) => {
+        card.classList.remove('imagen-principal-activa');
+
+        const badge = card.querySelector('.archivo-principal');
+
+        if (badge) {
+            badge.classList.add('oculto');
+        }
+    });
+
+    const cardSeleccionada = botonPrincipal.closest('.archivo-preview');
+
+    if (cardSeleccionada) {
+        cardSeleccionada.classList.add('imagen-principal-activa');
+
+        const badge = cardSeleccionada.querySelector('.archivo-principal');
+
+        if (badge) {
+            badge.classList.remove('oculto');
+        }
+    }
+});
+
+/* Quitar imágenes existentes */
+document.addEventListener('click', (event) => {
+    const botonQuitar = event.target.closest('.quitar-imagen-existente');
+
+    if (!botonQuitar) {
+        return;
+    }
+
+    const idImagen = botonQuitar.dataset.id;
+    const formEditar = document.querySelector('#modalEditar form');
+
+    if (!formEditar) {
+        return;
+    }
+
+    const inputHidden = document.createElement('input');
+    inputHidden.type = 'hidden';
+    inputHidden.name = 'eliminar_imagenes[]';
+    inputHidden.value = idImagen;
+
+    formEditar.appendChild(inputHidden);
+
+    const card = botonQuitar.closest('.archivo-preview');
+
+    if (card) {
+        card.remove();
+    }
+});
+
+/* Botón editar */
 document.addEventListener('click', (event) => {
     const editButton = event.target.closest('[data-edit]');
 
-    if (!editButton) return;
+    if (!editButton) {
+        return;
+    }
 
-    const propiedad = JSON.parse(editButton.dataset.propiedad);
+    let propiedad = {};
+
+    try {
+        propiedad = JSON.parse(editButton.dataset.propiedad);
+    } catch (error) {
+        console.error('Error leyendo data-propiedad:', error);
+        return;
+    }
 
     ponerValorSeguro('edit_id', propiedad.id);
     ponerValorSeguro('edit_agente_id', propiedad.agente_id);
@@ -871,20 +1060,24 @@ document.addEventListener('click', (event) => {
         input.remove();
     });
 
-    modalEditar.showModal();
+    abrirModal(modalEditar);
 });
 
-document.addEventListener('click', (event) => {
-    const deleteButton = event.target.closest('[data-delete]');
+/* Botón eliminar */
+function abrirModalEliminar(idPropiedad) {
+    const inputEliminar = document.getElementById('delete_id');
+    const modalEliminarPropiedad = document.getElementById('modalEliminar');
 
-    if (!deleteButton) return;
+    if (!inputEliminar || !modalEliminarPropiedad) {
+        console.error('No se encontró el modal de eliminar o el input delete_id');
+        return;
+    }
 
-    document.getElementById('delete_id').value = deleteButton.dataset.id;
+    inputEliminar.value = idPropiedad;
+    modalEliminarPropiedad.showModal();
+}
 
-    modalEliminar.showModal();
-});
-</script>
-<script>
+/* Upload mini archivos */
 function configurarUploadMini(dropId, inputId, previewId) {
     const dropzone = document.getElementById(dropId);
     const input = document.getElementById(inputId);
@@ -1006,145 +1199,31 @@ function configurarUploadMini(dropId, inputId, previewId) {
 
 configurarUploadMini('dropAgregar', 'inputImagenesAgregar', 'previewAgregar');
 configurarUploadMini('dropEditar', 'inputImagenesEditar', 'previewEditar');
-</script>
-<script>
-    function renderizarImagenesActuales(imagenes) {
-    const contenedor = document.getElementById('imagenesActualesEditar');
-    const inputPrincipal = document.getElementById('imagen_principal_id');
 
-    if (!contenedor) {
+/* Modal de éxito */
+document.addEventListener('DOMContentLoaded', () => {
+    const modalExito = document.getElementById('modalExito');
+    const cerrarModalExito = document.getElementById('cerrarModalExito');
+
+    if (!modalExito) {
         return;
     }
 
-    contenedor.innerHTML = '';
+    modalExito.showModal();
 
-    if (inputPrincipal) {
-        inputPrincipal.value = '';
+    function cerrarExito() {
+        modalExito.close();
     }
 
-    if (!imagenes || imagenes.length === 0) {
-        contenedor.innerHTML = '<p class="sin-imagenes">Esta propiedad no tiene imágenes guardadas.</p>';
-        return;
+    if (cerrarModalExito) {
+        cerrarModalExito.addEventListener('click', cerrarExito);
     }
 
-    imagenes.forEach((imagen) => {
-        const card = document.createElement('div');
-        card.className = 'archivo-preview archivo-existente';
-
-        if (Number(imagen.es_principal) === 1) {
-            card.classList.add('imagen-principal-activa');
-
-            if (inputPrincipal) {
-                inputPrincipal.value = imagen.id;
-            }
-        }
-
-        const badgePrincipal = Number(imagen.es_principal) === 1
-            ? '<span class="archivo-principal">Principal</span>'
-            : '<span class="archivo-principal oculto">Principal</span>';
-
-        card.innerHTML = `
-            <img src="${imagen.url}" alt="${imagen.nombre}">
-
-            <div class="archivo-info">
-                <span class="archivo-nombre" title="${imagen.nombre}">
-                    ${imagen.nombre}
-                </span>
-
-                <span class="archivo-peso">
-                    Imagen guardada
-                </span>
-
-                ${badgePrincipal}
-
-                <button 
-                    type="button" 
-                    class="archivo-principal-btn" 
-                    data-id="${imagen.id}"
-                >
-                    Hacer principal
-                </button>
-
-                <button 
-                    type="button" 
-                    class="archivo-quitar quitar-imagen-existente" 
-                    data-id="${imagen.id}"
-                >
-                    Quitar
-                </button>
-            </div>
-        `;
-
-        contenedor.appendChild(card);
-    });
-}
-
-document.addEventListener('click', (event) => {
-    const botonQuitar = event.target.closest('.quitar-imagen-existente');
-
-    if (!botonQuitar) {
-        return;
-    }
-
-    const idImagen = botonQuitar.dataset.id;
-    const formEditar = document.querySelector('#modalEditar form');
-
-    if (!formEditar) {
-        return;
-    }
-
-    const inputHidden = document.createElement('input');
-    inputHidden.type = 'hidden';
-    inputHidden.name = 'eliminar_imagenes[]';
-    inputHidden.value = idImagen;
-
-    formEditar.appendChild(inputHidden);
-
-    const card = botonQuitar.closest('.archivo-preview');
-
-    if (card) {
-        card.remove();
-    }
-});
-
-document.addEventListener('click', (event) => {
-    const botonPrincipal = event.target.closest('.archivo-principal-btn');
-
-    if (!botonPrincipal) {
-        return;
-    }
-
-    const idImagen = botonPrincipal.dataset.id;
-    const inputPrincipal = document.getElementById('imagen_principal_id');
-    const contenedor = document.getElementById('imagenesActualesEditar');
-
-    if (!inputPrincipal || !contenedor) {
-        return;
-    }
-
-    inputPrincipal.value = idImagen;
-
-    contenedor.querySelectorAll('.archivo-preview').forEach((card) => {
-        card.classList.remove('imagen-principal-activa');
-
-        const badge = card.querySelector('.archivo-principal');
-
-        if (badge) {
-            badge.classList.add('oculto');
+    modalExito.addEventListener('click', (event) => {
+        if (event.target === modalExito) {
+            cerrarExito();
         }
     });
-
-    const cardSeleccionada = botonPrincipal.closest('.archivo-preview');
-
-    if (cardSeleccionada) {
-        cardSeleccionada.classList.add('imagen-principal-activa');
-
-        const badge = cardSeleccionada.querySelector('.archivo-principal');
-
-        if (badge) {
-            badge.classList.remove('oculto');
-        }
-    }
 });
 </script>
 </body>

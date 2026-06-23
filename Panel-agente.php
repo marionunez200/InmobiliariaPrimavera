@@ -7,6 +7,15 @@ if (session_status() === PHP_SESSION_NONE) {
 
 $pdo = db();
 
+$modalExitoTitulo = '';
+$modalExitoMensaje = '';
+
+if (!empty($_SESSION['modal_exito'])) {
+    $modalExitoTitulo = $_SESSION['modal_exito']['titulo'] ?? '';
+    $modalExitoMensaje = $_SESSION['modal_exito']['mensaje'] ?? '';
+
+    unset($_SESSION['modal_exito']);
+}
 function agenteActivoTexto($activo): string
 {
     return (int)$activo === 1 ? 'Activo' : 'Inactivo';
@@ -138,14 +147,6 @@ $ultimosAgentes = array_slice($agentes, 0, 4);
 
     <main class="admin-main">
 
-        <?php if (isset($_GET['ok'])): ?>
-            <p style="color: green; font-weight: bold;">Agente guardado correctamente.</p>
-        <?php endif; ?>
-
-        <?php if (isset($_GET['eliminado'])): ?>
-            <p style="color: green; font-weight: bold;">Agente desactivado correctamente.</p>
-        <?php endif; ?>
-
         <section class="cards_top">
             <ul>
                 <li class="card_info_propiedades">
@@ -167,16 +168,17 @@ $ultimosAgentes = array_slice($agentes, 0, 4);
         </section>
 
         <section class="detalles_agente">        
-            <div class="contenedor_busqueda">
+            <div class="contenedor-busqueda">
                 <h2>Agentes inmobiliarios</h2>
 
-                <form class="busqueda" method="GET">
-                <input
-                    type="text"
-                    name="buscar"
-                    placeholder="Buscar agente..."
-                    value="<?= e($_GET['buscar'] ?? '') ?>"
-                >
+                <form method="GET" action="Panel-agente.php" class="busqueda">
+                    <input 
+                        type="search" 
+                        name="buscar"
+                        placeholder="Buscar agente..."
+                        value="<?= e($buscar) ?>"
+                    >
+
                     <button type="submit">
                         Buscar
                     </button>
@@ -508,7 +510,26 @@ $ultimosAgentes = array_slice($agentes, 0, 4);
 
     </form>
 </dialog>
+<!-- MODAL DE ÉXITO -->
+<?php if ($modalExitoTitulo !== ''): ?>
+    <dialog class="modal-exito" id="modalExito">
+        <div class="modal-exito-content">
 
+            <div class="modal-exito-icon">
+                <i class="fa-solid fa-check"></i>
+            </div>
+
+            <h2><?= e($modalExitoTitulo) ?></h2>
+
+            <p><?= e($modalExitoMensaje) ?></p>
+
+            <button type="button" id="cerrarModalExito">
+                Entendido
+            </button>
+
+        </div>
+    </dialog>
+<?php endif; ?>
 <script>
 const modalAgregar = document.getElementById('modalAgregar');
 const modalEditar = document.getElementById('modalEditar');
@@ -536,7 +557,10 @@ function cerrarModal(modal) {
     }
 }
 
-// Abrir modal agregar
+/* ================================
+   ABRIR MODAL AGREGAR
+================================ */
+
 document.addEventListener('click', (event) => {
     const openButton = event.target.closest('[data-open-modal]');
 
@@ -549,7 +573,10 @@ document.addEventListener('click', (event) => {
     abrirModal(modal);
 });
 
-// Cerrar modal
+/* ================================
+   CERRAR MODALES
+================================ */
+
 document.addEventListener('click', (event) => {
     const closeButton = event.target.closest('[data-close-modal]');
 
@@ -562,7 +589,6 @@ document.addEventListener('click', (event) => {
     cerrarModal(modal);
 });
 
-// Cerrar al dar clic afuera
 document.querySelectorAll('dialog').forEach((modal) => {
     modal.addEventListener('click', (event) => {
         if (event.target === modal) {
@@ -571,7 +597,10 @@ document.querySelectorAll('dialog').forEach((modal) => {
     });
 });
 
-// Mostrar foto actual del agente
+/* ================================
+   FOTO ACTUAL DEL AGENTE
+================================ */
+
 function renderizarFotoActualAgente(fotoUrl, nombreAgente) {
     const contenedor = document.getElementById('fotoActualAgenteEditar');
 
@@ -604,7 +633,10 @@ function renderizarFotoActualAgente(fotoUrl, nombreAgente) {
     contenedor.appendChild(card);
 }
 
-// Editar agente
+/* ================================
+   EDITAR AGENTE
+================================ */
+
 document.addEventListener('click', (event) => {
     const editButton = event.target.closest('[data-edit]');
 
@@ -643,7 +675,10 @@ document.addEventListener('click', (event) => {
     abrirModal(modalEditar);
 });
 
-// Eliminar agente
+/* ================================
+   ELIMINAR AGENTE
+================================ */
+
 document.addEventListener('click', (event) => {
     const deleteButton = event.target.closest('[data-delete]');
 
@@ -656,7 +691,10 @@ document.addEventListener('click', (event) => {
     abrirModal(modalEliminar);
 });
 
-// Subida de foto tipo archivo mini
+/* ================================
+   PREVIEW MINI DE FOTO
+================================ */
+
 function formatearPesoAgente(bytes) {
     if (bytes < 1024) {
         return bytes + ' B';
@@ -760,145 +798,35 @@ function configurarFotoAgente(dropId, inputId, previewId) {
 
 configurarFotoAgente('dropAgenteAgregar', 'inputAgenteAgregar', 'previewAgenteAgregar');
 configurarFotoAgente('dropAgenteEditar', 'inputAgenteEditar', 'previewAgenteEditar');
-</script>
-<script>
-function formatearPesoAgente(bytes) {
-    if (bytes < 1024) {
-        return bytes + ' B';
-    }
 
-    if (bytes < 1024 * 1024) {
-        return (bytes / 1024).toFixed(1) + ' KB';
-    }
+/* ================================
+   MODAL DE ÉXITO
+================================ */
 
-    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
-}
+document.addEventListener('DOMContentLoaded', () => {
+    const modalExito = document.getElementById('modalExito');
+    const cerrarModalExito = document.getElementById('cerrarModalExito');
 
-function renderizarFotoActualAgente(fotoUrl, nombreAgente) {
-    const contenedor = document.getElementById('fotoActualAgenteEditar');
-
-    if (!contenedor) {
+    if (!modalExito) {
         return;
     }
 
-    contenedor.innerHTML = '';
+    modalExito.showModal();
 
-    const foto = fotoUrl || 'Imagenes/agente1.webp';
-    const nombre = foto.split('/').pop();
-
-    const card = document.createElement('div');
-    card.className = 'archivo-preview archivo-existente';
-
-    card.innerHTML = `
-        <img src="${foto}" alt="${nombreAgente || 'Agente'}">
-
-        <div class="archivo-info">
-            <span class="archivo-nombre" title="${nombre}">
-                ${nombre}
-            </span>
-
-            <span class="archivo-peso">
-                Foto actual
-            </span>
-        </div>
-    `;
-
-    contenedor.appendChild(card);
-}
-
-function configurarFotoAgente(dropId, inputId, previewId) {
-    const dropzone = document.getElementById(dropId);
-    const input = document.getElementById(inputId);
-    const preview = document.getElementById(previewId);
-
-    if (!dropzone || !input || !preview) {
-        return;
+    function cerrarExito() {
+        modalExito.close();
     }
 
-    function mostrarPreview(file) {
-        preview.innerHTML = '';
-
-        if (!file || !file.type.startsWith('image/')) {
-            return;
-        }
-
-        const reader = new FileReader();
-
-        reader.onload = (event) => {
-            const card = document.createElement('div');
-            card.className = 'archivo-preview';
-
-            card.innerHTML = `
-                <img src="${event.target.result}" alt="${file.name}">
-
-                <div class="archivo-info">
-                    <span class="archivo-nombre" title="${file.name}">
-                        ${file.name}
-                    </span>
-
-                    <span class="archivo-peso">
-                        ${formatearPesoAgente(file.size)}
-                    </span>
-
-                    <button type="button" class="archivo-quitar">
-                        Quitar
-                    </button>
-                </div>
-            `;
-
-            preview.appendChild(card);
-        };
-
-        reader.readAsDataURL(file);
+    if (cerrarModalExito) {
+        cerrarModalExito.addEventListener('click', cerrarExito);
     }
 
-    input.addEventListener('change', () => {
-        const file = input.files[0];
-
-        mostrarPreview(file);
-    });
-
-    preview.addEventListener('click', (event) => {
-        const botonQuitar = event.target.closest('.archivo-quitar');
-
-        if (!botonQuitar) {
-            return;
+    modalExito.addEventListener('click', (event) => {
+        if (event.target === modalExito) {
+            cerrarExito();
         }
-
-        input.value = '';
-        preview.innerHTML = '';
     });
-
-    dropzone.addEventListener('dragover', (event) => {
-        event.preventDefault();
-        dropzone.classList.add('dragover');
-    });
-
-    dropzone.addEventListener('dragleave', () => {
-        dropzone.classList.remove('dragover');
-    });
-
-    dropzone.addEventListener('drop', (event) => {
-        event.preventDefault();
-        dropzone.classList.remove('dragover');
-
-        const file = event.dataTransfer.files[0];
-
-        if (!file || !file.type.startsWith('image/')) {
-            return;
-        }
-
-        const dataTransfer = new DataTransfer();
-        dataTransfer.items.add(file);
-
-        input.files = dataTransfer.files;
-
-        mostrarPreview(file);
-    });
-}
-
-configurarFotoAgente('dropAgenteAgregar', 'inputAgenteAgregar', 'previewAgenteAgregar');
-configurarFotoAgente('dropAgenteEditar', 'inputAgenteEditar', 'previewAgenteEditar');
+});
 </script>
 </body>
 </html>

@@ -1,6 +1,10 @@
 <?php
 require_once __DIR__ . '/Config/database.php';
 
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 $pdo = db();
 
 $id = $_POST['id'] ?? null;
@@ -17,8 +21,13 @@ try {
     ");
 
     $stmt->execute([$id]);
-
-    header('Location: Panel-agente.php?eliminado=1');
+    
+    $_SESSION['modal_exito'] = [
+        'titulo' => 'Agente desactivado',
+        'mensaje' => 'El agente fue marcado como inactivo correctamente.'
+    ];
+    
+    header('Location: Panel-agente.php');
     exit;
 
 } catch (Exception $e) {
