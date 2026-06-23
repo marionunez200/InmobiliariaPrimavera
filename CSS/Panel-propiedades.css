@@ -18,6 +18,21 @@ body{
     margin: 0;
 }
 
+.detalles_agente {
+    width: 95%;
+    margin: 40px auto;
+    background-color: #ddd3be;
+    border-radius: 20px;
+    padding: 20px 25px;
+
+    height: 600px;
+}
+
+.contenedor_agentes {
+    height: calc(100% - 80px);
+    overflow-y: auto;
+}
+
 /* Cards de la sección 1 */
 .cards_top {
     display: flex;
@@ -206,6 +221,7 @@ body{
     transform: scale(1.05);
 
 }
+
 .eliminar:hover {
     background-color: #ca0303;
     color: #fff5e0;
@@ -522,6 +538,7 @@ body{
     font-weight: 700;
 }
 
+<<<<<<< HEAD
 .dropzone {
     position: relative;
     min-height: 150px;
@@ -780,4 +797,25 @@ body{
 
 .archivo-principal.oculto {
     display: none;
+=======
+.contenedor_busqueda {
+    display: flex;
+    justify-content: space-between;
+}
+
+.busqueda input, button {
+    font-family: 'Montserrat', sans-serif;
+    background-color: #fff5e0;
+    border-radius: 18px;
+
+    padding: 12px 20px;
+    margin-bottom: 25px;
+}
+
+.busqueda button:hover {
+    background-color: #8b5e34;
+    color: #fff5e0;
+    transition: 0.2s;
+    transform: scale(1.05);
+>>>>>>> 47c784ec242a5833fbb2bc9b2deae612a1fd52c6
 }

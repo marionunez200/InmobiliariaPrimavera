@@ -67,21 +67,55 @@ $totalAgentesActivos = (int)$pdo->query("
     WHERE activo = 1
 ")->fetchColumn();
 
-$stmt = $pdo->query("
-    SELECT
-        p.*,
-        a.nombre AS agente_nombre,
-        (
-            SELECT ip.imagen_url
-            FROM imagenes_propiedades ip
-            WHERE ip.propiedad_id = p.id
-            ORDER BY ip.es_principal DESC, ip.orden ASC, ip.id ASC
-            LIMIT 1
-        ) AS imagen_principal
-    FROM propiedades p
-    LEFT JOIN agentes a ON p.agente_id = a.id
-    ORDER BY p.creado_en DESC, p.id DESC
-");
+$buscar = trim($_GET['buscar'] ?? '');
+
+if ($buscar !== '') {
+
+    $stmt = $pdo->prepare("
+        SELECT
+            p.*,
+            a.nombre AS agente_nombre,
+            (
+                SELECT ip.imagen_url
+                FROM imagenes_propiedades ip
+                WHERE ip.propiedad_id = p.id
+                ORDER BY ip.es_principal DESC, ip.orden ASC, ip.id ASC
+                LIMIT 1
+            ) AS imagen_principal
+        FROM propiedades p
+        LEFT JOIN agentes a ON p.agente_id = a.id
+        WHERE p.titulo LIKE ?
+            OR a.nombre LIKE ?
+            OR p.ciudad LIKE ?
+        ORDER BY p.creado_en DESC, p.id DESC
+    ");
+
+    $texto = "%{$buscar}%";
+
+    $stmt->execute([
+        $texto,
+        $texto,
+        $texto
+    ]);
+
+} else {
+
+    $stmt = $pdo->query("
+        SELECT
+            p.*,
+            a.nombre AS agente_nombre,
+            (
+                SELECT ip.imagen_url
+                FROM imagenes_propiedades ip
+                WHERE ip.propiedad_id = p.id
+                ORDER BY ip.es_principal DESC, ip.orden ASC, ip.id ASC
+                LIMIT 1
+            ) AS imagen_principal
+        FROM propiedades p
+        LEFT JOIN agentes a ON p.agente_id = a.id
+        ORDER BY p.creado_en DESC, p.id DESC
+    ");
+}
 
 $propiedades = $stmt->fetchAll();
 
@@ -130,7 +164,7 @@ $ultimasPropiedades = array_slice($propiedades, 0, 4);
     <meta name="robots" content="noindex, nofollow">
     <meta name="theme-color" content="#ffffff">
 
-    <link rel="stylesheet" href="./CSS/panel-propiedades.css">
+    <link rel="stylesheet" href="./CSS/Panel-propiedades.css">
     <link rel="stylesheet" href="./CSS/Admin.header.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
@@ -213,7 +247,21 @@ $ultimasPropiedades = array_slice($propiedades, 0, 4);
         </section>
 
         <section class="detalles_propiedad">
-            <h2>Propiedades</h2>
+            <div class="contenedor_busqueda">
+                <h2>Propiedades</h2>
+
+                <form class="busqueda" method="GET">
+                <input
+                    type="text"
+                    name="buscar"
+                    placeholder="Buscar propiedad..."
+                    value="<?= e($_GET['buscar'] ?? '') ?>"
+                >
+                    <button type="submit">
+                        Buscar
+                    </button>
+                </form>
+            </div>
 
             <div class="subtitulos">
                 <span>Propiedad</span>
