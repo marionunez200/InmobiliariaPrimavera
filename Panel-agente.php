@@ -33,21 +33,32 @@ $buscar = trim($_GET['buscar'] ?? '');
 
 if ($buscar !== '') {
 
-    $stmt = $pdo->prepare("
+    $sql = "
         SELECT *
         FROM agentes
-        WHERE nombre LIKE ?
-            OR email LIKE ?
-            OR telefono LIKE ?
-        ORDER BY creado_en DESC, id DESC
-    ");
+        WHERE nombre LIKE :nombre
+            OR email LIKE :email
+            OR telefono LIKE :telefono
+    ";
+
+    if (strtolower($buscar) === 'activo') {
+        $sql .= " OR activo = 1";
+    }
+
+    if (strtolower($buscar) === 'inactivo') {
+        $sql .= " OR activo = 0";
+    }
+
+    $sql .= " ORDER BY creado_en DESC, id DESC";
+
+    $stmt = $pdo->prepare($sql);
 
     $texto = "%{$buscar}%";
 
     $stmt->execute([
-        $texto,
-        $texto,
-        $texto
+        ':nombre' => $texto,
+        ':email' => $texto,
+        ':telefono' => $texto
     ]);
 
 } else {
@@ -60,7 +71,6 @@ if ($buscar !== '') {
 }
 
 $agentes = $stmt->fetchAll();
-
 $ultimosAgentes = array_slice($agentes, 0, 4);
 ?>
 
