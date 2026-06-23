@@ -538,7 +538,7 @@ body{
     font-weight: 700;
 }
 
-<<<<<<< HEAD
+HEAD
 .dropzone {
     position: relative;
     min-height: 150px;
@@ -797,7 +797,8 @@ body{
 
 .archivo-principal.oculto {
     display: none;
-=======
+}
+
 .contenedor_busqueda {
     display: flex;
     justify-content: space-between;
@@ -817,5 +818,4 @@ body{
     color: #fff5e0;
     transition: 0.2s;
     transform: scale(1.05);
->>>>>>> 47c784ec242a5833fbb2bc9b2deae612a1fd52c6
 }
