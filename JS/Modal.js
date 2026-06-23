@@ -1,10 +1,21 @@
 console.log("Modal.js cargado correctamente");
 
+// ================================
+// MODALES
+// ================================
+
+const modalAgregar = document.getElementById("modalAgregar");
 const modalEditar = document.getElementById("modalEditar");
 const modalEliminar = document.getElementById("modalEliminar");
 
-let propiedadAEliminar = null;
+let filaEditando = null;
+let filaAEliminar = null;
 
+<<<<<<< HEAD
+// ================================
+// FUNCIONES DE AYUDA
+// ================================
+=======
 // Abrir modal de agregar propiedad
 document.addEventListener("click", (event) => {
     const openButton = event.target.closest("[data-open-modal]");
@@ -13,73 +24,111 @@ document.addEventListener("click", (event) => {
 
     const modalId = openButton.dataset.openModal;
     const modal = document.getElementById(modalId);
+>>>>>>> 0fca288bcdc01bd89b89505f27697010667e2024
 
+function abrirModal(modal) {
     if (!modal) {
-        console.error("No existe un modal con el id:", modalId);
+        console.error("El modal no existe");
         return;
     }
 
     modal.showModal();
-});
+}
 
-// Abrir modal de editar
-document.addEventListener("click", (event) => {
-    const editButton = event.target.closest("[data-edit]");
-
-    if (!editButton) return;
-
-    const fila = editButton.closest("[data-property-row]");
-
-    if (!fila) {
-        console.error("No encontré la fila. Agrega data-property-row al article.");
-        return;
-    }
-
-    modalEditar.querySelector("[name='id']").value = fila.dataset.id;
-    modalEditar.querySelector("[name='titulo']").value = fila.dataset.titulo;
-    modalEditar.querySelector("[name='precio']").value = fila.dataset.precio;
-    modalEditar.querySelector("[name='ubicacion']").value = fila.dataset.ubicacion;
-
-    modalEditar.showModal();
-});
-
-// Abrir modal de eliminar
-document.addEventListener("click", (event) => {
-    const deleteButton = event.target.closest("[data-delete]");
-
-    if (!deleteButton) return;
-
-    const fila = deleteButton.closest("[data-property-row]");
-
-    if (!fila) {
-        console.error("No encontré la fila. Agrega data-property-row al article.");
-        return;
-    }
-
-    propiedadAEliminar = fila.dataset.id;
-
-    modalEliminar.showModal();
-});
-
-// Cerrar cualquier modal
-document.addEventListener("click", (event) => {
-    const closeButton = event.target.closest("[data-close-modal]");
-
-    if (!closeButton) return;
-
-    const modal = closeButton.closest("dialog");
-
+function cerrarModal(modal) {
     if (modal) {
         modal.close();
     }
+}
+
+function limpiarPrecio(precio) {
+    return precio.replace("$", "").replaceAll(",", "").trim();
+}
+
+function formatearPrecio(precio) {
+    const numero = Number(precio);
+
+    if (isNaN(numero)) {
+        return precio;
+    }
+
+    return "$" + numero.toLocaleString("es-MX");
+}
+
+function obtenerValor(modal, nombreInput) {
+    const input = modal.querySelector(`[name="${nombreInput}"]`);
+
+    if (!input) {
+        console.warn(`No encontré el input con name="${nombreInput}"`);
+        return "";
+    }
+
+    return input.value.trim();
+}
+
+function ponerValor(modal, nombreInput, valor) {
+    const input = modal.querySelector(`[name="${nombreInput}"]`);
+
+    if (!input) {
+        console.warn(`No encontré el input con name="${nombreInput}"`);
+        return;
+    }
+
+    input.value = valor;
+}
+
+// ================================
+// ABRIR MODAL AGREGAR
+// ================================
+
+document.addEventListener("click", (event) => {
+    const botonAbrir = event.target.closest("[data-open-modal]");
+
+    if (!botonAbrir) return;
+
+    const modalId = botonAbrir.dataset.openModal;
+    const modal = document.getElementById(modalId);
+
+    abrirModal(modal);
 });
 
-// Confirmar eliminación
-const confirmarEliminar = document.getElementById("confirmarEliminar");
+// ================================
+// CERRAR MODALES
+// ================================
 
-confirmarEliminar.addEventListener("click", () => {
-    console.log("Eliminar propiedad:", propiedadAEliminar);
+document.addEventListener("click", (event) => {
+    const botonCerrar = event.target.closest("[data-close-modal]");
 
+<<<<<<< HEAD
+    if (!botonCerrar) return;
+
+    const modal = botonCerrar.closest("dialog");
+
+    cerrarModal(modal);
+});
+
+// Cerrar modal al hacer click fuera del contenido
+document.querySelectorAll("dialog").forEach((modal) => {
+    modal.addEventListener("click", (event) => {
+        if (event.target === modal) {
+            modal.close();
+        }
+    });
+});
+
+// ================================
+// MODAL EDITAR
+// ================================
+
+document.addEventListener("click", (event) => {
+    const botonEditar = event.target.closest("[data-edit]");
+
+    if (!botonEditar) return;
+
+    filaEditando = botonEditar.closest("[data-property-row]");
+
+    if (!filaEditando) {
+=======
     modalEliminar.close();
 });
 
@@ -111,10 +160,103 @@ document.addEventListener("click", (event) => {
     const fila = editButton.closest("[data-property-row]");
 
     if (!fila) {
+>>>>>>> 0fca288bcdc01bd89b89505f27697010667e2024
         console.error("No encontré la fila. Agrega data-property-row al article.");
         return;
     }
 
+<<<<<<< HEAD
+    const titulo = filaEditando.querySelector("h3")?.textContent.trim() || "";
+
+    const idTexto = filaEditando.querySelector(".info_propiedad p")?.textContent.trim() || "";
+    const id = idTexto.replace("ID:", "").trim();
+
+    const datos = filaEditando.querySelectorAll(".text_dentro");
+
+    const ubicacion = datos[0]?.textContent.trim() || "";
+    const tipo = datos[1]?.textContent.trim() || "";
+    const precio = limpiarPrecio(datos[2]?.textContent.trim() || "");
+    const estado = datos[3]?.textContent.trim() || "";
+
+    ponerValor(modalEditar, "id", id);
+    ponerValor(modalEditar, "titulo", titulo);
+    ponerValor(modalEditar, "ubicacion", ubicacion);
+    ponerValor(modalEditar, "tipo", tipo);
+    ponerValor(modalEditar, "precio", precio);
+    ponerValor(modalEditar, "estado", estado);
+
+    abrirModal(modalEditar);
+});
+
+// Guardar cambios de editar
+const formularioEditar = modalEditar?.querySelector("form");
+
+if (formularioEditar) {
+    formularioEditar.addEventListener("submit", (event) => {
+        event.preventDefault();
+
+        if (!filaEditando) {
+            console.error("No hay ninguna fila seleccionada para editar.");
+            return;
+        }
+
+        const id = obtenerValor(modalEditar, "id");
+        const titulo = obtenerValor(modalEditar, "titulo");
+        const ubicacion = obtenerValor(modalEditar, "ubicacion");
+        const tipo = obtenerValor(modalEditar, "tipo");
+        const precio = obtenerValor(modalEditar, "precio");
+        const estado = obtenerValor(modalEditar, "estado");
+
+        const tituloHTML = filaEditando.querySelector("h3");
+        const idHTML = filaEditando.querySelector(".info_propiedad p");
+        const datos = filaEditando.querySelectorAll(".text_dentro");
+
+        if (tituloHTML) tituloHTML.textContent = titulo;
+        if (idHTML) idHTML.textContent = `ID: ${id}`;
+
+        if (datos[0]) datos[0].textContent = ubicacion;
+        if (datos[1]) datos[1].textContent = tipo;
+        if (datos[2]) datos[2].textContent = formatearPrecio(precio);
+        if (datos[3]) datos[3].textContent = estado;
+
+        cerrarModal(modalEditar);
+
+        filaEditando = null;
+    });
+}
+
+// ================================
+// MODAL ELIMINAR
+// ================================
+
+document.addEventListener("click", (event) => {
+    const botonEliminar = event.target.closest("[data-delete]");
+
+    if (!botonEliminar) return;
+
+    filaAEliminar = botonEliminar.closest("[data-property-row]");
+
+    if (!filaAEliminar) {
+        console.error("No encontré la fila. Agrega data-property-row al article.");
+        return;
+    }
+
+    abrirModal(modalEliminar);
+});
+
+const botonConfirmarEliminar = document.getElementById("confirmarEliminar");
+
+if (botonConfirmarEliminar) {
+    botonConfirmarEliminar.addEventListener("click", () => {
+        if (filaAEliminar) {
+            filaAEliminar.remove();
+            filaAEliminar = null;
+        }
+
+        cerrarModal(modalEliminar);
+    });
+}
+=======
     modalEditar.querySelector("[name='id_agente']").value = fila.dataset.id;
 
     modalEditar.querySelector("[name='nombre_agente']").value = fila.dataset.nombre;
@@ -125,3 +267,4 @@ document.addEventListener("click", (event) => {
 
     modalEditar.showModal();
 });
+>>>>>>> 0fca288bcdc01bd89b89505f27697010667e2024
