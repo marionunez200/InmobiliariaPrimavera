@@ -1,0 +1,17 @@
+Direccion del archivo .sql 
+primero schemal.sql y luego seed.sql
+
+En la terminal de mysql ejecutar:
+
+source ruta/ruta/schema.sql
+source ruta/ruta/seed.sql 
+
+Usar las / y no \ en la ruta
+
+al poner los comandos la base de datos podra funcionar :)
+
+-- schema.sql es para crear las tablas (puedes ver los campos de estas ahí)
+-- seed.sql es para insertar datos de prueba (puedes ver los datos de estas ahí)
+
+----busca como instalar mysql en windows para poder usar el comando source
+----busca como instalar mysqlworkbench en windows para ver las tablas y datos visualmente
