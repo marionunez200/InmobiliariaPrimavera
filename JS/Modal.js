@@ -11,9 +11,20 @@ const modalEliminar = document.getElementById("modalEliminar");
 let filaEditando = null;
 let filaAEliminar = null;
 
+<<<<<<< HEAD
 // ================================
 // FUNCIONES DE AYUDA
 // ================================
+=======
+// Abrir modal de agregar propiedad
+document.addEventListener("click", (event) => {
+    const openButton = event.target.closest("[data-open-modal]");
+
+    if (!openButton) return;
+
+    const modalId = openButton.dataset.openModal;
+    const modal = document.getElementById(modalId);
+>>>>>>> 0fca288bcdc01bd89b89505f27697010667e2024
 
 function abrirModal(modal) {
     if (!modal) {
@@ -88,6 +99,7 @@ document.addEventListener("click", (event) => {
 document.addEventListener("click", (event) => {
     const botonCerrar = event.target.closest("[data-close-modal]");
 
+<<<<<<< HEAD
     if (!botonCerrar) return;
 
     const modal = botonCerrar.closest("dialog");
@@ -116,10 +128,44 @@ document.addEventListener("click", (event) => {
     filaEditando = botonEditar.closest("[data-property-row]");
 
     if (!filaEditando) {
+=======
+    modalEliminar.close();
+});
+
+
+
+// Abrir modal de agregar agente
+document.addEventListener("click", (event) => {
+    const openButton = event.target.closest("[data-open-modal]");
+
+    if (!openButton) return;
+
+    const modalId = openButton.dataset.openModal;
+    const modal = document.getElementById(modalId);
+
+    if (!modal) {
+        console.error("No existe un modal con el id:", modalId);
+        return;
+    }
+
+    modal.showModal();
+});
+
+// Abrir modal de editar agente
+document.addEventListener("click", (event) => {
+    const editButton = event.target.closest("[data-edit]");
+
+    if (!editButton) return;
+
+    const fila = editButton.closest("[data-property-row]");
+
+    if (!fila) {
+>>>>>>> 0fca288bcdc01bd89b89505f27697010667e2024
         console.error("No encontré la fila. Agrega data-property-row al article.");
         return;
     }
 
+<<<<<<< HEAD
     const titulo = filaEditando.querySelector("h3")?.textContent.trim() || "";
 
     const idTexto = filaEditando.querySelector(".info_propiedad p")?.textContent.trim() || "";
@@ -210,3 +256,15 @@ if (botonConfirmarEliminar) {
         cerrarModal(modalEliminar);
     });
 }
+=======
+    modalEditar.querySelector("[name='id_agente']").value = fila.dataset.id;
+
+    modalEditar.querySelector("[name='nombre_agente']").value = fila.dataset.nombre;
+
+    modalEditar.querySelector("[name='phone']").value = fila.dataset.telefono;
+
+    modalEditar.querySelector("[name='correo']").value = fila.dataset.correo; 
+
+    modalEditar.showModal();
+});
+>>>>>>> 0fca288bcdc01bd89b89505f27697010667e2024
