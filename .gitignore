@@ -1,2 +1,4 @@
 # Configuración local con contraseñas
 config/database.php
+Uploads/propiedades/*
+uploads/agentes/*

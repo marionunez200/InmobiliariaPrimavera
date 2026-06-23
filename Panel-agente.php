@@ -243,8 +243,7 @@ $ultimosAgentes = array_slice($agentes, 0, 4);
 
 <!-- MODAL AGREGAR AGENTE -->
 <dialog class="modal" id="modalAgregar">
-    <form class="modal-content" action="guardar-agente.php" method="POST">
-
+    <form class="modal-content" action="guardar-agente.php" method="POST" enctype="multipart/form-data">
         <div class="modal-header">
             <h2>Agregar agente</h2>
 
@@ -293,11 +292,24 @@ $ultimosAgentes = array_slice($agentes, 0, 4);
 
             <label>
                 Foto del agente
-                <input 
-                    type="text" 
-                    name="foto_url" 
-                    placeholder="Imagenes/agente1.webp"
-                >
+                            
+                <div class="upload-box" id="dropAgenteAgregar">
+                    <input 
+                        type="file" 
+                        name="foto_agente" 
+                        id="inputAgenteAgregar"
+                        class="upload-input"
+                        accept="image/*"
+                    >
+                            
+                    <label for="inputAgenteAgregar" class="upload-label">
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                        <strong>Arrastra la foto aquí</strong>
+                        <span>o haz clic para seleccionarla</span>
+                    </label>
+                </div>
+                            
+                <div class="lista-archivos" id="previewAgenteAgregar"></div>
             </label>
 
         </div>
@@ -317,8 +329,7 @@ $ultimosAgentes = array_slice($agentes, 0, 4);
 
 <!-- MODAL EDITAR AGENTE -->
 <dialog class="modal" id="modalEditar">
-    <form class="modal-content" action="guardar-agente.php" method="POST">
-
+    <form class="modal-content" action="guardar-agente.php" method="POST" enctype="multipart/form-data">
         <input type="hidden" name="id" id="edit_id">
 
         <div class="modal-header">
@@ -367,14 +378,35 @@ $ultimosAgentes = array_slice($agentes, 0, 4);
                 </select>
             </label>
 
+            <div class="imagenes-actuales-box">
+                <p class="imagenes-actuales-title">Foto actual del agente</p>
+
+                <div 
+                    class="lista-archivos" 
+                    id="fotoActualAgenteEditar"
+                ></div>
+            </div>
+
             <label>
-                Foto del agente
-                <input 
-                    type="text" 
-                    name="foto_url"
-                    id="edit_foto_url"
-                    placeholder="Imagenes/agente1.webp"
-                >
+                Cambiar foto del agente
+
+                <div class="upload-box" id="dropAgenteEditar">
+                    <input 
+                        type="file" 
+                        name="foto_agente" 
+                        id="inputAgenteEditar"
+                        class="upload-input"
+                        accept="image/*"
+                    >
+
+                    <label for="inputAgenteEditar" class="upload-label">
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                        <strong>Arrastra la nueva foto aquí</strong>
+                        <span>o haz clic para seleccionarla</span>
+                    </label>
+                </div>
+
+                <div class="lista-archivos" id="previewAgenteEditar"></div>
             </label>
 
         </div>
@@ -431,30 +463,55 @@ const modalAgregar = document.getElementById('modalAgregar');
 const modalEditar = document.getElementById('modalEditar');
 const modalEliminar = document.getElementById('modalEliminar');
 
-document.addEventListener('click', (event) => {
-    const openButton = event.target.closest('[data-open-modal]');
+function ponerValorSeguro(id, valor) {
+    const input = document.getElementById(id);
 
-    if (!openButton) return;
+    if (!input) {
+        return;
+    }
 
-    const modal = document.getElementById(openButton.dataset.openModal);
+    input.value = valor ?? '';
+}
 
+function abrirModal(modal) {
     if (modal) {
         modal.showModal();
     }
-});
+}
 
-document.addEventListener('click', (event) => {
-    const closeButton = event.target.closest('[data-close-modal]');
-
-    if (!closeButton) return;
-
-    const modal = closeButton.closest('dialog');
-
+function cerrarModal(modal) {
     if (modal) {
         modal.close();
     }
+}
+
+// Abrir modal agregar
+document.addEventListener('click', (event) => {
+    const openButton = event.target.closest('[data-open-modal]');
+
+    if (!openButton) {
+        return;
+    }
+
+    const modal = document.getElementById(openButton.dataset.openModal);
+
+    abrirModal(modal);
 });
 
+// Cerrar modal
+document.addEventListener('click', (event) => {
+    const closeButton = event.target.closest('[data-close-modal]');
+
+    if (!closeButton) {
+        return;
+    }
+
+    const modal = closeButton.closest('dialog');
+
+    cerrarModal(modal);
+});
+
+// Cerrar al dar clic afuera
 document.querySelectorAll('dialog').forEach((modal) => {
     modal.addEventListener('click', (event) => {
         if (event.target === modal) {
@@ -463,33 +520,334 @@ document.querySelectorAll('dialog').forEach((modal) => {
     });
 });
 
+// Mostrar foto actual del agente
+function renderizarFotoActualAgente(fotoUrl, nombreAgente) {
+    const contenedor = document.getElementById('fotoActualAgenteEditar');
+
+    if (!contenedor) {
+        return;
+    }
+
+    contenedor.innerHTML = '';
+
+    const foto = fotoUrl || 'Imagenes/agente1.webp';
+    const nombreArchivo = foto.split('/').pop();
+
+    const card = document.createElement('div');
+    card.className = 'archivo-preview archivo-existente';
+
+    card.innerHTML = `
+        <img src="${foto}" alt="${nombreAgente || 'Agente'}">
+
+        <div class="archivo-info">
+            <span class="archivo-nombre" title="${nombreArchivo}">
+                ${nombreArchivo}
+            </span>
+
+            <span class="archivo-peso">
+                Foto actual
+            </span>
+        </div>
+    `;
+
+    contenedor.appendChild(card);
+}
+
+// Editar agente
 document.addEventListener('click', (event) => {
     const editButton = event.target.closest('[data-edit]');
 
-    if (!editButton) return;
+    if (!editButton) {
+        return;
+    }
 
-    const agente = JSON.parse(editButton.dataset.agente);
+    let agente = {};
 
-    document.getElementById('edit_id').value = agente.id ?? '';
-    document.getElementById('edit_nombre').value = agente.nombre ?? '';
-    document.getElementById('edit_telefono').value = agente.telefono ?? '';
-    document.getElementById('edit_email').value = agente.email ?? '';
-    document.getElementById('edit_foto_url').value = agente.foto_url ?? '';
-    document.getElementById('edit_activo').value = agente.activo ?? 1;
+    try {
+        agente = JSON.parse(editButton.dataset.agente);
+    } catch (error) {
+        console.error('Error leyendo data-agente:', error);
+        return;
+    }
 
-    modalEditar.showModal();
+    ponerValorSeguro('edit_id', agente.id);
+    ponerValorSeguro('edit_nombre', agente.nombre);
+    ponerValorSeguro('edit_telefono', agente.telefono);
+    ponerValorSeguro('edit_email', agente.email);
+    ponerValorSeguro('edit_activo', agente.activo ?? 1);
+
+    renderizarFotoActualAgente(agente.foto_url, agente.nombre);
+
+    const previewEditar = document.getElementById('previewAgenteEditar');
+    const inputEditar = document.getElementById('inputAgenteEditar');
+
+    if (previewEditar) {
+        previewEditar.innerHTML = '';
+    }
+
+    if (inputEditar) {
+        inputEditar.value = '';
+    }
+
+    abrirModal(modalEditar);
 });
 
+// Eliminar agente
 document.addEventListener('click', (event) => {
     const deleteButton = event.target.closest('[data-delete]');
 
-    if (!deleteButton) return;
+    if (!deleteButton) {
+        return;
+    }
 
-    document.getElementById('delete_id').value = deleteButton.dataset.id;
+    ponerValorSeguro('delete_id', deleteButton.dataset.id);
 
-    modalEliminar.showModal();
+    abrirModal(modalEliminar);
 });
-</script>
 
+// Subida de foto tipo archivo mini
+function formatearPesoAgente(bytes) {
+    if (bytes < 1024) {
+        return bytes + ' B';
+    }
+
+    if (bytes < 1024 * 1024) {
+        return (bytes / 1024).toFixed(1) + ' KB';
+    }
+
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+}
+
+function configurarFotoAgente(dropId, inputId, previewId) {
+    const dropzone = document.getElementById(dropId);
+    const input = document.getElementById(inputId);
+    const preview = document.getElementById(previewId);
+
+    if (!dropzone || !input || !preview) {
+        return;
+    }
+
+    function mostrarPreview(file) {
+        preview.innerHTML = '';
+
+        if (!file || !file.type.startsWith('image/')) {
+            return;
+        }
+
+        const reader = new FileReader();
+
+        reader.onload = (event) => {
+            const card = document.createElement('div');
+            card.className = 'archivo-preview';
+
+            card.innerHTML = `
+                <img src="${event.target.result}" alt="${file.name}">
+
+                <div class="archivo-info">
+                    <span class="archivo-nombre" title="${file.name}">
+                        ${file.name}
+                    </span>
+
+                    <span class="archivo-peso">
+                        ${formatearPesoAgente(file.size)}
+                    </span>
+
+                    <button type="button" class="archivo-quitar">
+                        Quitar
+                    </button>
+                </div>
+            `;
+
+            preview.appendChild(card);
+        };
+
+        reader.readAsDataURL(file);
+    }
+
+    input.addEventListener('change', () => {
+        mostrarPreview(input.files[0]);
+    });
+
+    preview.addEventListener('click', (event) => {
+        const botonQuitar = event.target.closest('.archivo-quitar');
+
+        if (!botonQuitar) {
+            return;
+        }
+
+        input.value = '';
+        preview.innerHTML = '';
+    });
+
+    dropzone.addEventListener('dragover', (event) => {
+        event.preventDefault();
+        dropzone.classList.add('dragover');
+    });
+
+    dropzone.addEventListener('dragleave', () => {
+        dropzone.classList.remove('dragover');
+    });
+
+    dropzone.addEventListener('drop', (event) => {
+        event.preventDefault();
+        dropzone.classList.remove('dragover');
+
+        const file = event.dataTransfer.files[0];
+
+        if (!file || !file.type.startsWith('image/')) {
+            return;
+        }
+
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+
+        input.files = dataTransfer.files;
+
+        mostrarPreview(file);
+    });
+}
+
+configurarFotoAgente('dropAgenteAgregar', 'inputAgenteAgregar', 'previewAgenteAgregar');
+configurarFotoAgente('dropAgenteEditar', 'inputAgenteEditar', 'previewAgenteEditar');
+</script>
+<script>
+function formatearPesoAgente(bytes) {
+    if (bytes < 1024) {
+        return bytes + ' B';
+    }
+
+    if (bytes < 1024 * 1024) {
+        return (bytes / 1024).toFixed(1) + ' KB';
+    }
+
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+}
+
+function renderizarFotoActualAgente(fotoUrl, nombreAgente) {
+    const contenedor = document.getElementById('fotoActualAgenteEditar');
+
+    if (!contenedor) {
+        return;
+    }
+
+    contenedor.innerHTML = '';
+
+    const foto = fotoUrl || 'Imagenes/agente1.webp';
+    const nombre = foto.split('/').pop();
+
+    const card = document.createElement('div');
+    card.className = 'archivo-preview archivo-existente';
+
+    card.innerHTML = `
+        <img src="${foto}" alt="${nombreAgente || 'Agente'}">
+
+        <div class="archivo-info">
+            <span class="archivo-nombre" title="${nombre}">
+                ${nombre}
+            </span>
+
+            <span class="archivo-peso">
+                Foto actual
+            </span>
+        </div>
+    `;
+
+    contenedor.appendChild(card);
+}
+
+function configurarFotoAgente(dropId, inputId, previewId) {
+    const dropzone = document.getElementById(dropId);
+    const input = document.getElementById(inputId);
+    const preview = document.getElementById(previewId);
+
+    if (!dropzone || !input || !preview) {
+        return;
+    }
+
+    function mostrarPreview(file) {
+        preview.innerHTML = '';
+
+        if (!file || !file.type.startsWith('image/')) {
+            return;
+        }
+
+        const reader = new FileReader();
+
+        reader.onload = (event) => {
+            const card = document.createElement('div');
+            card.className = 'archivo-preview';
+
+            card.innerHTML = `
+                <img src="${event.target.result}" alt="${file.name}">
+
+                <div class="archivo-info">
+                    <span class="archivo-nombre" title="${file.name}">
+                        ${file.name}
+                    </span>
+
+                    <span class="archivo-peso">
+                        ${formatearPesoAgente(file.size)}
+                    </span>
+
+                    <button type="button" class="archivo-quitar">
+                        Quitar
+                    </button>
+                </div>
+            `;
+
+            preview.appendChild(card);
+        };
+
+        reader.readAsDataURL(file);
+    }
+
+    input.addEventListener('change', () => {
+        const file = input.files[0];
+
+        mostrarPreview(file);
+    });
+
+    preview.addEventListener('click', (event) => {
+        const botonQuitar = event.target.closest('.archivo-quitar');
+
+        if (!botonQuitar) {
+            return;
+        }
+
+        input.value = '';
+        preview.innerHTML = '';
+    });
+
+    dropzone.addEventListener('dragover', (event) => {
+        event.preventDefault();
+        dropzone.classList.add('dragover');
+    });
+
+    dropzone.addEventListener('dragleave', () => {
+        dropzone.classList.remove('dragover');
+    });
+
+    dropzone.addEventListener('drop', (event) => {
+        event.preventDefault();
+        dropzone.classList.remove('dragover');
+
+        const file = event.dataTransfer.files[0];
+
+        if (!file || !file.type.startsWith('image/')) {
+            return;
+        }
+
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+
+        input.files = dataTransfer.files;
+
+        mostrarPreview(file);
+    });
+}
+
+configurarFotoAgente('dropAgenteAgregar', 'inputAgenteAgregar', 'previewAgenteAgregar');
+configurarFotoAgente('dropAgenteEditar', 'inputAgenteEditar', 'previewAgenteEditar');
+</script>
 </body>
 </html>

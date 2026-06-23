@@ -85,6 +85,33 @@ $stmt = $pdo->query("
 
 $propiedades = $stmt->fetchAll();
 
+$imagenesPorPropiedad = [];
+
+$idsPropiedades = array_column($propiedades, 'id');
+
+if (!empty($idsPropiedades)) {
+    $placeholders = implode(',', array_fill(0, count($idsPropiedades), '?'));
+
+    $stmtImagenesPanel = $pdo->prepare("
+        SELECT 
+            id,
+            propiedad_id,
+            imagen_url,
+            texto_alternativo,
+            es_principal,
+            orden
+        FROM imagenes_propiedades
+        WHERE propiedad_id IN ($placeholders)
+        ORDER BY propiedad_id ASC, es_principal DESC, orden ASC, id ASC
+    ");
+
+    $stmtImagenesPanel->execute($idsPropiedades);
+
+    foreach ($stmtImagenesPanel->fetchAll() as $imagen) {
+        $imagenesPorPropiedad[(int)$imagen['propiedad_id']][] = $imagen;
+    }
+}
+
 $ultimasPropiedades = array_slice($propiedades, 0, 4);
 ?>
 
@@ -225,6 +252,15 @@ $ultimasPropiedades = array_slice($propiedades, 0, 4);
                         'terreno_m2' => $propiedad['terreno_m2'],
                         'construccion_m2' => $propiedad['construccion_m2'],
                         'imagen_url' => $propiedad['imagen_principal'],
+                        'imagenes' => array_map(function ($imagen) {
+
+                        return [
+                            'id' => (int)$imagen['id'],
+                            'url' => $imagen['imagen_url'],
+                            'nombre' => basename((string)$imagen['imagen_url']),
+                            'es_principal' => (int)$imagen['es_principal'],
+                        ];
+                    }, $imagenesPorPropiedad[(int)$propiedad['id']] ?? []),
                     ], JSON_UNESCAPED_UNICODE);
                 ?>
 
@@ -317,8 +353,7 @@ $ultimasPropiedades = array_slice($propiedades, 0, 4);
 
 <!-- MODAL AGREGAR PROPIEDAD -->
 <dialog class="modal" id="modalAgregar">
-    <form class="modal-content" action="guardar-propiedad.php" method="POST">
-
+    <form class="modal-content" action="guardar-propiedad.php" method="POST" enctype="multipart/form-data">
         <div class="modal-header">
             <h2>Agregar propiedad</h2>
 
@@ -424,8 +459,26 @@ $ultimasPropiedades = array_slice($propiedades, 0, 4);
             </label>
 
             <label>
-                Imagen principal
-                <input type="text" name="imagen_url" placeholder="Imagenes/casa1.jpg">
+                Imágenes de la propiedad
+
+                <div class="upload-box" id="dropAgregar">
+                    <input 
+                        type="file" 
+                        name="imagenes[]" 
+                        id="inputImagenesAgregar"
+                        class="upload-input"
+                        accept="image/*"
+                        multiple
+                    >
+
+                    <label for="inputImagenesAgregar" class="upload-label">
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                        <strong>Arrastra imágenes aquí</strong>
+                        <span>o haz clic para seleccionarlas</span>
+                    </label>
+                </div>
+
+                <div class="lista-archivos" id="previewAgregar"></div>
             </label>
 
             <label>
@@ -460,9 +513,9 @@ $ultimasPropiedades = array_slice($propiedades, 0, 4);
 
 <!-- MODAL EDITAR PROPIEDAD -->
 <dialog class="modal" id="modalEditar">
-    <form class="modal-content" action="guardar-propiedad.php" method="POST">
-
+<form class="modal-content" action="guardar-propiedad.php" method="POST" enctype="multipart/form-data">
         <input type="hidden" name="id" id="edit_id">
+        <input type="hidden" name="imagen_principal_id" id="imagen_principal_id">
 
         <div class="modal-header">
             <h2>Editar propiedad</h2>
@@ -567,10 +620,42 @@ $ultimasPropiedades = array_slice($propiedades, 0, 4);
                 Construcción m²
                 <input type="number" name="construccion_m2" id="edit_construccion_m2" step="0.01">
             </label>
+            <div class="imagenes-actuales-box">
+                <p class="imagenes-actuales-title">Imágenes ya subidas</p>
 
+                <div 
+                    class="lista-archivos" 
+                    id="imagenesActualesEditar"
+                ></div>
+            </div>
             <label>
-                Imagen principal
-                <input type="text" name="imagen_url" id="edit_imagen_url" placeholder="Imagenes/casa1.jpg">
+                Agregar más imágenes
+
+                <div class="upload-box" id="dropEditar">
+                    <input 
+                        type="file" 
+                        name="imagenes[]" 
+                        id="inputImagenesEditar"
+                        class="upload-input"
+                        accept="image/*"
+                        multiple
+                    >
+
+                    <label for="inputImagenesEditar" class="upload-label">
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                        <strong>Arrastra imágenes aquí</strong>
+                        <span>o haz clic para seleccionarlas</span>
+                    </label>
+                </div>
+
+                <div class="lista-archivos" id="previewEditar"></div>
+            </label>
+            <label class="checkbox-reemplazar">
+                <input type="checkbox" name="reemplazar_imagenes" value="1">
+                Reemplazar imágenes anteriores
+            </label>
+
+                <div class="preview-imagenes" id="previewAgregar"></div>
             </label>
 
             <label>
@@ -674,6 +759,26 @@ document.querySelectorAll('dialog').forEach((modal) => {
     });
 });
 
+function ponerValorSeguro(id, valor) {
+    const input = document.getElementById(id);
+
+    if (!input) {
+        return;
+    }
+
+    input.value = valor ?? '';
+}
+
+function ponerCheckSeguro(id, valor) {
+    const input = document.getElementById(id);
+
+    if (!input) {
+        return;
+    }
+
+    input.checked = Number(valor) === 1;
+}
+
 document.addEventListener('click', (event) => {
     const editButton = event.target.closest('[data-edit]');
 
@@ -681,25 +786,42 @@ document.addEventListener('click', (event) => {
 
     const propiedad = JSON.parse(editButton.dataset.propiedad);
 
-    document.getElementById('edit_id').value = propiedad.id ?? '';
-    document.getElementById('edit_agente_id').value = propiedad.agente_id ?? '';
-    document.getElementById('edit_titulo').value = propiedad.titulo ?? '';
-    document.getElementById('edit_tipo_operacion').value = propiedad.tipo_operacion ?? 'venta';
-    document.getElementById('edit_tipo_propiedad').value = propiedad.tipo_propiedad ?? 'casa';
-    document.getElementById('edit_ciudad').value = propiedad.ciudad ?? 'ciudad_obregon';
-    document.getElementById('edit_direccion_completa').value = propiedad.direccion_completa ?? '';
-    document.getElementById('edit_precio').value = propiedad.precio ?? '';
-    document.getElementById('edit_moneda').value = propiedad.moneda ?? 'MXN';
-    document.getElementById('edit_estado_publicacion').value = propiedad.estado_publicacion ?? 'activo';
-    document.getElementById('edit_recamaras').value = propiedad.recamaras ?? 0;
-    document.getElementById('edit_banos').value = propiedad.banos ?? 0;
-    document.getElementById('edit_estacionamientos').value = propiedad.estacionamientos ?? 0;
-    document.getElementById('edit_terreno_m2').value = propiedad.terreno_m2 ?? '';
-    document.getElementById('edit_construccion_m2').value = propiedad.construccion_m2 ?? '';
-    document.getElementById('edit_imagen_url').value = propiedad.imagen_url ?? '';
-    document.getElementById('edit_google_maps_url').value = propiedad.google_maps_url ?? '';
-    document.getElementById('edit_descripcion').value = propiedad.descripcion ?? '';
-    document.getElementById('edit_destacada').checked = Number(propiedad.destacada) === 1;
+    ponerValorSeguro('edit_id', propiedad.id);
+    ponerValorSeguro('edit_agente_id', propiedad.agente_id);
+    ponerValorSeguro('edit_titulo', propiedad.titulo);
+    ponerValorSeguro('edit_tipo_operacion', propiedad.tipo_operacion || 'venta');
+    ponerValorSeguro('edit_tipo_propiedad', propiedad.tipo_propiedad || 'casa');
+    ponerValorSeguro('edit_ciudad', propiedad.ciudad || 'ciudad_obregon');
+    ponerValorSeguro('edit_direccion_completa', propiedad.direccion_completa);
+    ponerValorSeguro('edit_precio', propiedad.precio);
+    ponerValorSeguro('edit_moneda', propiedad.moneda || 'MXN');
+    ponerValorSeguro('edit_estado_publicacion', propiedad.estado_publicacion || 'activo');
+    ponerValorSeguro('edit_recamaras', propiedad.recamaras || 0);
+    ponerValorSeguro('edit_banos', propiedad.banos || 0);
+    ponerValorSeguro('edit_estacionamientos', propiedad.estacionamientos || 0);
+    ponerValorSeguro('edit_terreno_m2', propiedad.terreno_m2);
+    ponerValorSeguro('edit_construccion_m2', propiedad.construccion_m2);
+    ponerValorSeguro('edit_google_maps_url', propiedad.google_maps_url);
+    ponerValorSeguro('edit_descripcion', propiedad.descripcion);
+
+    ponerCheckSeguro('edit_destacada', propiedad.destacada);
+
+    renderizarImagenesActuales(propiedad.imagenes ?? []);
+
+    const previewEditar = document.getElementById('previewEditar');
+    const inputImagenesEditar = document.getElementById('inputImagenesEditar');
+
+    if (previewEditar) {
+        previewEditar.innerHTML = '';
+    }
+
+    if (inputImagenesEditar) {
+        inputImagenesEditar.value = '';
+    }
+
+    document.querySelectorAll('input[name="eliminar_imagenes[]"]').forEach((input) => {
+        input.remove();
+    });
 
     modalEditar.showModal();
 });
@@ -714,6 +836,268 @@ document.addEventListener('click', (event) => {
     modalEliminar.showModal();
 });
 </script>
+<script>
+function configurarUploadMini(dropId, inputId, previewId) {
+    const dropzone = document.getElementById(dropId);
+    const input = document.getElementById(inputId);
+    const preview = document.getElementById(previewId);
 
+    if (!dropzone || !input || !preview) {
+        return;
+    }
+
+    let archivosSeleccionados = [];
+
+    function formatearPeso(bytes) {
+        if (bytes < 1024) {
+            return bytes + ' B';
+        }
+
+        if (bytes < 1024 * 1024) {
+            return (bytes / 1024).toFixed(1) + ' KB';
+        }
+
+        return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+    }
+
+    function actualizarInputFiles() {
+        const dataTransfer = new DataTransfer();
+
+        archivosSeleccionados.forEach((file) => {
+            dataTransfer.items.add(file);
+        });
+
+        input.files = dataTransfer.files;
+    }
+
+    function renderizarArchivos() {
+        preview.innerHTML = '';
+
+        archivosSeleccionados.forEach((file, index) => {
+            if (!file.type.startsWith('image/')) {
+                return;
+            }
+
+            const reader = new FileReader();
+
+            reader.onload = (event) => {
+                const card = document.createElement('div');
+                card.className = 'archivo-preview';
+
+                card.innerHTML = `
+                    <img src="${event.target.result}" alt="${file.name}">
+
+                    <div class="archivo-info">
+                        <span class="archivo-nombre" title="${file.name}">
+                            ${file.name}
+                        </span>
+
+                        <span class="archivo-peso">
+                            ${formatearPeso(file.size)}
+                        </span>
+
+                        <button type="button" class="archivo-quitar" data-index="${index}">
+                            Quitar
+                        </button>
+                    </div>
+                `;
+
+                preview.appendChild(card);
+            };
+
+            reader.readAsDataURL(file);
+        });
+
+        actualizarInputFiles();
+    }
+
+    function agregarArchivos(files) {
+        const nuevosArchivos = Array.from(files).filter((file) => {
+            return file.type.startsWith('image/');
+        });
+
+        archivosSeleccionados = archivosSeleccionados.concat(nuevosArchivos);
+
+        renderizarArchivos();
+    }
+
+    input.addEventListener('change', () => {
+        agregarArchivos(input.files);
+    });
+
+    preview.addEventListener('click', (event) => {
+        const botonQuitar = event.target.closest('.archivo-quitar');
+
+        if (!botonQuitar) {
+            return;
+        }
+
+        const index = Number(botonQuitar.dataset.index);
+
+        archivosSeleccionados.splice(index, 1);
+
+        renderizarArchivos();
+    });
+
+    dropzone.addEventListener('dragover', (event) => {
+        event.preventDefault();
+        dropzone.classList.add('dragover');
+    });
+
+    dropzone.addEventListener('dragleave', () => {
+        dropzone.classList.remove('dragover');
+    });
+
+    dropzone.addEventListener('drop', (event) => {
+        event.preventDefault();
+        dropzone.classList.remove('dragover');
+
+        agregarArchivos(event.dataTransfer.files);
+    });
+}
+
+configurarUploadMini('dropAgregar', 'inputImagenesAgregar', 'previewAgregar');
+configurarUploadMini('dropEditar', 'inputImagenesEditar', 'previewEditar');
+</script>
+<script>
+    function renderizarImagenesActuales(imagenes) {
+    const contenedor = document.getElementById('imagenesActualesEditar');
+    const inputPrincipal = document.getElementById('imagen_principal_id');
+
+    if (!contenedor) {
+        return;
+    }
+
+    contenedor.innerHTML = '';
+
+    if (inputPrincipal) {
+        inputPrincipal.value = '';
+    }
+
+    if (!imagenes || imagenes.length === 0) {
+        contenedor.innerHTML = '<p class="sin-imagenes">Esta propiedad no tiene imágenes guardadas.</p>';
+        return;
+    }
+
+    imagenes.forEach((imagen) => {
+        const card = document.createElement('div');
+        card.className = 'archivo-preview archivo-existente';
+
+        if (Number(imagen.es_principal) === 1) {
+            card.classList.add('imagen-principal-activa');
+
+            if (inputPrincipal) {
+                inputPrincipal.value = imagen.id;
+            }
+        }
+
+        const badgePrincipal = Number(imagen.es_principal) === 1
+            ? '<span class="archivo-principal">Principal</span>'
+            : '<span class="archivo-principal oculto">Principal</span>';
+
+        card.innerHTML = `
+            <img src="${imagen.url}" alt="${imagen.nombre}">
+
+            <div class="archivo-info">
+                <span class="archivo-nombre" title="${imagen.nombre}">
+                    ${imagen.nombre}
+                </span>
+
+                <span class="archivo-peso">
+                    Imagen guardada
+                </span>
+
+                ${badgePrincipal}
+
+                <button 
+                    type="button" 
+                    class="archivo-principal-btn" 
+                    data-id="${imagen.id}"
+                >
+                    Hacer principal
+                </button>
+
+                <button 
+                    type="button" 
+                    class="archivo-quitar quitar-imagen-existente" 
+                    data-id="${imagen.id}"
+                >
+                    Quitar
+                </button>
+            </div>
+        `;
+
+        contenedor.appendChild(card);
+    });
+}
+
+document.addEventListener('click', (event) => {
+    const botonQuitar = event.target.closest('.quitar-imagen-existente');
+
+    if (!botonQuitar) {
+        return;
+    }
+
+    const idImagen = botonQuitar.dataset.id;
+    const formEditar = document.querySelector('#modalEditar form');
+
+    if (!formEditar) {
+        return;
+    }
+
+    const inputHidden = document.createElement('input');
+    inputHidden.type = 'hidden';
+    inputHidden.name = 'eliminar_imagenes[]';
+    inputHidden.value = idImagen;
+
+    formEditar.appendChild(inputHidden);
+
+    const card = botonQuitar.closest('.archivo-preview');
+
+    if (card) {
+        card.remove();
+    }
+});
+
+document.addEventListener('click', (event) => {
+    const botonPrincipal = event.target.closest('.archivo-principal-btn');
+
+    if (!botonPrincipal) {
+        return;
+    }
+
+    const idImagen = botonPrincipal.dataset.id;
+    const inputPrincipal = document.getElementById('imagen_principal_id');
+    const contenedor = document.getElementById('imagenesActualesEditar');
+
+    if (!inputPrincipal || !contenedor) {
+        return;
+    }
+
+    inputPrincipal.value = idImagen;
+
+    contenedor.querySelectorAll('.archivo-preview').forEach((card) => {
+        card.classList.remove('imagen-principal-activa');
+
+        const badge = card.querySelector('.archivo-principal');
+
+        if (badge) {
+            badge.classList.add('oculto');
+        }
+    });
+
+    const cardSeleccionada = botonPrincipal.closest('.archivo-preview');
+
+    if (cardSeleccionada) {
+        cardSeleccionada.classList.add('imagen-principal-activa');
+
+        const badge = cardSeleccionada.querySelector('.archivo-principal');
+
+        if (badge) {
+            badge.classList.remove('oculto');
+        }
+    }
+});
+</script>
 </body>
 </html>
