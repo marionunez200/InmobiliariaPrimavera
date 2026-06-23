@@ -1,14 +1,14 @@
 
 /* Imagenes de la propiedad */
-.propiedad_imagenes {
+
+.propiedad_imagenes{
+    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
 }
 
-
-.imagen_principal {
+.imagen_principal{
     width: 70vw;
     height: 600px;
 
@@ -17,60 +17,73 @@
 
     border-radius: 10px;
     margin-top: 15px;
-    margin-bottom: 5px;
+    margin-bottom: 15px;
 
     display: block;
 }
 
-
 .contenedor_miniaturas{
+    width: 70vw;
     position: relative;
-    display: flex;
-    align-items: center;
+    margin: auto;
 }
 
 .miniaturas{
+    width: 100%;
     display: flex;
-    justify-content: center;
     gap: 10px;
-    margin-top: 10px;
+
     overflow-x: auto;
-    padding-bottom: 30px;
+    overflow-y: hidden;
+
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+}
+
+.miniaturas::-webkit-scrollbar{
+    display: none;
 }
 
 .miniaturas img{
-    width: 200px;
-    height: 160px;
-    object-fit: cover;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: 0.3s;
-}
+    flex-shrink: 0;
 
-.miniaturas img:hover{
-    transform: scale(1.05);
+    width: 180px;
+    height: 120px;
+
+    object-fit: cover;
+    border-radius: 10px;
 }
 
 .boton{
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
+
     width: 45px;
     height: 45px;
-    border-radius: 50%;
-    background: white;
+
     border: none;
-    box-shadow: 0 0 10px rgba(0,0,0,.2);
+    border-radius: 50%;
+
+    background: rgba(18,37,72,.95);
+    color: white;
+
+    font-size: 22px;
     cursor: pointer;
+
     z-index: 100;
 }
 
+.boton:hover{
+    background: #122548;
+}
+
 .boton_izquierda{
-    left: -20px;
+    left: 0;
 }
 
 .boton_derecha{
-    right: -20px;
+    right: 0;
 }
 
 /* Información de la propiedad */

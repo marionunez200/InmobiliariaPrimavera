@@ -86,15 +86,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
 
             <div class="login-container">
-                <h1 id="login-title">Iniciar sesión</h1>
+                    <h1 id="login-title">Iniciar sesión</h1>
 
-                <?php if ($error !== ''): ?>
-                    <p class="login-error">
-                        <?= e($error) ?>
-                    </p>
-                <?php endif; ?>
-
-                <form action="Login.php" method="POST" class="login-form">
+                    <?php if ($error !== ''): ?>
+                        <div class="mensaje_error">
+                            <i class="fa-solid fa-circle-exclamation"></i>
+                            <span><?= e($error) ?></span>
+                        </div>
+                    <?php endif; ?>
+                    
+                    <form action="Login.php" method="POST" class="login-form">
 
                     <div class="form-group floating-group">
                         <input 

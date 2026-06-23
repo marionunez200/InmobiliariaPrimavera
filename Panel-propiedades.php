@@ -7,6 +7,13 @@ if (session_status() === PHP_SESSION_NONE) {
 
 $pdo = db();
 
+if (!function_exists('e')) {
+    function e(string $value): string
+    {
+        return htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+    }
+}
+
 /* ================================
    MODAL DE ÉXITO
 ================================ */
@@ -274,13 +281,14 @@ $ultimasPropiedades = array_slice($propiedades, 0, 4);
                 <span>Acciones</span>
             </div>
 
-            <?php if (empty($propiedades)): ?>
-                <p>No hay propiedades registradas.</p>
-            <?php endif; ?>
+            <div class="contenedor_agentes">
+                <?php if (empty($propiedades)): ?>
+                    <p>No hay propiedades registradas.</p>
+                <?php endif; ?>
 
-            <?php foreach ($propiedades as $propiedad): ?>
-                <?php
-                    $imagen = $propiedad['imagen_principal'] ?: 'Imagenes/casa1.jpg';
+                <?php foreach ($propiedades as $propiedad): ?>
+                    <?php
+                        $imagen = $propiedad['imagen_principal'] ?: 'Imagenes/casa1.jpg';
 
                     $imagenesJson = array_map(function ($imagenItem) {
                         return [
@@ -342,26 +350,29 @@ $ultimasPropiedades = array_slice($propiedades, 0, 4);
                     </span>
 
                     <div class="acciones">
-                        <button 
-                            class="editar" 
+                        <button
+                            class="editar"
                             type="button"
                             data-edit
-                            data-propiedad='<?= e((string)$propiedadJson) ?>'
+                            data-propiedad='<?= e((string)($propiedadJson ?: "{}")) ?>'
                         >
                             Editar
                         </button>
 
-                        <button 
-                            class="eliminar" 
+                        <button
+                            class="eliminar"
                             type="button"
-                            onclick="abrirModalEliminar(<?= e((string)$propiedad['id']) ?>)"
+                            data-delete
+                            data-id="<?= e((string)$propiedad['id']) ?>"
                         >
                             Eliminar
                         </button>
                     </div>
                 </article>
 
-            <?php endforeach; ?>
+                <?php endforeach; ?>
+
+            </div>
         </section>
 
         <section class="cards_propiedades">
@@ -1076,6 +1087,16 @@ function abrirModalEliminar(idPropiedad) {
     inputEliminar.value = idPropiedad;
     modalEliminarPropiedad.showModal();
 }
+
+document.addEventListener('click', (event) => {
+    const deleteButton = event.target.closest('[data-delete]');
+
+    if (!deleteButton) {
+        return;
+    }
+
+    abrirModalEliminar(deleteButton.dataset.id);
+});
 
 /* Upload mini archivos */
 function configurarUploadMini(dropId, inputId, previewId) {
