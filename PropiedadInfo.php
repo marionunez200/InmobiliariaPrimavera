@@ -131,7 +131,7 @@ $mapsUrl = !empty($propiedad['google_maps_url'])
     <meta property="og:type" content="website">
     <meta property="og:locale" content="es_MX">
 
-    <link rel="stylesheet" href="./CSS/propiedadInfo.css">
+    <link rel="stylesheet" href="./CSS/propiedadinfo.css">
 </head>
 
 <body>
@@ -449,21 +449,19 @@ const miniaturas = document.getElementById('miniaturas');
 const btnIzquierda = document.getElementById('btnMiniaturasIzquierda');
 const btnDerecha = document.getElementById('btnMiniaturasDerecha');
 
-if (miniaturas && btnIzquierda && btnDerecha) {
-    btnIzquierda.addEventListener('click', () => {
-        miniaturas.scrollBy({
-            left: -180,
-            behavior: 'smooth'
-        });
+btnIzquierda.addEventListener('click', () => {
+    miniaturas.scrollBy({
+        left: -500,
+        behavior: 'smooth'
     });
+});
 
-    btnDerecha.addEventListener('click', () => {
-        miniaturas.scrollBy({
-            left: 180,
-            behavior: 'smooth'
-        });
+btnDerecha.addEventListener('click', () => {
+    miniaturas.scrollBy({
+        left: 500,
+        behavior: 'smooth'
     });
-}
+});
 </script>
 </body>
 </html>
