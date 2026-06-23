@@ -621,7 +621,9 @@ body {
 
 .about-img {
     width: 100%;
+    max-width: 70vw;
     height: auto;
+    max-height: 500px;
 
     display: block;
 
@@ -631,7 +633,7 @@ body {
 
 .about-content {
     width: 100%;
-    max-width: 420px;
+    max-width: 720px;
 
     padding: 3rem;
 
@@ -653,7 +655,7 @@ body {
 
     color: #122548;
     font-family: 'Montserrat', sans-serif;
-    font-size: 1rem;
+    font-size: 1.12rem;
     line-height: 1.35;
 }
 
