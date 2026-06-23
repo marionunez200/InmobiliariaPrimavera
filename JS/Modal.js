@@ -11,20 +11,9 @@ const modalEliminar = document.getElementById("modalEliminar");
 let filaEditando = null;
 let filaAEliminar = null;
 
-<<<<<<< HEAD
 // ================================
 // FUNCIONES DE AYUDA
 // ================================
-=======
-// Abrir modal de agregar propiedad
-document.addEventListener("click", (event) => {
-    const openButton = event.target.closest("[data-open-modal]");
-
-    if (!openButton) return;
-
-    const modalId = openButton.dataset.openModal;
-    const modal = document.getElementById(modalId);
->>>>>>> 0fca288bcdc01bd89b89505f27697010667e2024
 
 function abrirModal(modal) {
     if (!modal) {
@@ -78,7 +67,7 @@ function ponerValor(modal, nombreInput, valor) {
 }
 
 // ================================
-// ABRIR MODAL AGREGAR
+// ABRIR MODALES GENERALES
 // ================================
 
 document.addEventListener("click", (event) => {
@@ -99,7 +88,6 @@ document.addEventListener("click", (event) => {
 document.addEventListener("click", (event) => {
     const botonCerrar = event.target.closest("[data-close-modal]");
 
-<<<<<<< HEAD
     if (!botonCerrar) return;
 
     const modal = botonCerrar.closest("dialog");
@@ -107,17 +95,17 @@ document.addEventListener("click", (event) => {
     cerrarModal(modal);
 });
 
-// Cerrar modal al hacer click fuera del contenido
+// Cerrar modal al hacer clic fuera del contenido
 document.querySelectorAll("dialog").forEach((modal) => {
     modal.addEventListener("click", (event) => {
         if (event.target === modal) {
-            modal.close();
+            cerrarModal(modal);
         }
     });
 });
 
 // ================================
-// MODAL EDITAR
+// MODAL EDITAR PROPIEDAD
 // ================================
 
 document.addEventListener("click", (event) => {
@@ -128,44 +116,15 @@ document.addEventListener("click", (event) => {
     filaEditando = botonEditar.closest("[data-property-row]");
 
     if (!filaEditando) {
-=======
-    modalEliminar.close();
-});
-
-
-
-// Abrir modal de agregar agente
-document.addEventListener("click", (event) => {
-    const openButton = event.target.closest("[data-open-modal]");
-
-    if (!openButton) return;
-
-    const modalId = openButton.dataset.openModal;
-    const modal = document.getElementById(modalId);
-
-    if (!modal) {
-        console.error("No existe un modal con el id:", modalId);
-        return;
-    }
-
-    modal.showModal();
-});
-
-// Abrir modal de editar agente
-document.addEventListener("click", (event) => {
-    const editButton = event.target.closest("[data-edit]");
-
-    if (!editButton) return;
-
-    const fila = editButton.closest("[data-property-row]");
-
-    if (!fila) {
->>>>>>> 0fca288bcdc01bd89b89505f27697010667e2024
         console.error("No encontré la fila. Agrega data-property-row al article.");
         return;
     }
 
-<<<<<<< HEAD
+    if (!modalEditar) {
+        console.error("No existe el modal de editar.");
+        return;
+    }
+
     const titulo = filaEditando.querySelector("h3")?.textContent.trim() || "";
 
     const idTexto = filaEditando.querySelector(".info_propiedad p")?.textContent.trim() || "";
@@ -188,7 +147,10 @@ document.addEventListener("click", (event) => {
     abrirModal(modalEditar);
 });
 
-// Guardar cambios de editar
+// ================================
+// GUARDAR CAMBIOS DE EDITAR
+// ================================
+
 const formularioEditar = modalEditar?.querySelector("form");
 
 if (formularioEditar) {
@@ -244,6 +206,10 @@ document.addEventListener("click", (event) => {
     abrirModal(modalEliminar);
 });
 
+// ================================
+// CONFIRMAR ELIMINAR
+// ================================
+
 const botonConfirmarEliminar = document.getElementById("confirmarEliminar");
 
 if (botonConfirmarEliminar) {
@@ -256,15 +222,3 @@ if (botonConfirmarEliminar) {
         cerrarModal(modalEliminar);
     });
 }
-=======
-    modalEditar.querySelector("[name='id_agente']").value = fila.dataset.id;
-
-    modalEditar.querySelector("[name='nombre_agente']").value = fila.dataset.nombre;
-
-    modalEditar.querySelector("[name='phone']").value = fila.dataset.telefono;
-
-    modalEditar.querySelector("[name='correo']").value = fila.dataset.correo; 
-
-    modalEditar.showModal();
-});
->>>>>>> 0fca288bcdc01bd89b89505f27697010667e2024
