@@ -272,94 +272,97 @@ $ultimasPropiedades = array_slice($propiedades, 0, 4);
                 <span>Acciones</span>
             </div>
 
-            <?php if (empty($propiedades)): ?>
-                <p>No hay propiedades registradas.</p>
-            <?php endif; ?>
+            <div class="contenedor_agentes">
+                <?php if (empty($propiedades)): ?>
+                    <p>No hay propiedades registradas.</p>
+                <?php endif; ?>
 
-            <?php foreach ($propiedades as $propiedad): ?>
-                <?php
-                    $imagen = $propiedad['imagen_principal'] ?: 'Imagenes/casa1.jpg';
+                <?php foreach ($propiedades as $propiedad): ?>
+                    <?php
+                        $imagen = $propiedad['imagen_principal'] ?: 'Imagenes/casa1.jpg';
 
-                    $propiedadJson = json_encode([
-                        'id' => $propiedad['id'],
-                        'agente_id' => $propiedad['agente_id'],
-                        'titulo' => $propiedad['titulo'],
-                        'descripcion' => $propiedad['descripcion'],
-                        'precio' => $propiedad['precio'],
-                        'moneda' => $propiedad['moneda'],
-                        'tipo_operacion' => $propiedad['tipo_operacion'],
-                        'tipo_propiedad' => $propiedad['tipo_propiedad'],
-                        'estado_publicacion' => $propiedad['estado_publicacion'],
-                        'destacada' => $propiedad['destacada'],
-                        'ciudad' => $propiedad['ciudad'],
-                        'direccion_completa' => $propiedad['direccion_completa'],
-                        'google_maps_url' => $propiedad['google_maps_url'],
-                        'recamaras' => $propiedad['recamaras'],
-                        'banos' => $propiedad['banos'],
-                        'estacionamientos' => $propiedad['estacionamientos'],
-                        'terreno_m2' => $propiedad['terreno_m2'],
-                        'construccion_m2' => $propiedad['construccion_m2'],
-                        'imagen_url' => $propiedad['imagen_principal'],
-                        'imagenes' => array_map(function ($imagen) {
+                        $propiedadJson = json_encode([
+                            'id' => $propiedad['id'],
+                            'agente_id' => $propiedad['agente_id'],
+                            'titulo' => $propiedad['titulo'],
+                            'descripcion' => $propiedad['descripcion'],
+                            'precio' => $propiedad['precio'],
+                            'moneda' => $propiedad['moneda'],
+                            'tipo_operacion' => $propiedad['tipo_operacion'],
+                            'tipo_propiedad' => $propiedad['tipo_propiedad'],
+                            'estado_publicacion' => $propiedad['estado_publicacion'],
+                            'destacada' => $propiedad['destacada'],
+                            'ciudad' => $propiedad['ciudad'],
+                            'direccion_completa' => $propiedad['direccion_completa'],
+                            'google_maps_url' => $propiedad['google_maps_url'],
+                            'recamaras' => $propiedad['recamaras'],
+                            'banos' => $propiedad['banos'],
+                            'estacionamientos' => $propiedad['estacionamientos'],
+                            'terreno_m2' => $propiedad['terreno_m2'],
+                            'construccion_m2' => $propiedad['construccion_m2'],
+                            'imagen_url' => $propiedad['imagen_principal'],
+                            'imagenes' => array_map(function ($imagen) {
 
-                        return [
-                            'id' => (int)$imagen['id'],
-                            'url' => $imagen['imagen_url'],
-                            'nombre' => basename((string)$imagen['imagen_url']),
-                            'es_principal' => (int)$imagen['es_principal'],
-                        ];
-                    }, $imagenesPorPropiedad[(int)$propiedad['id']] ?? []),
-                    ], JSON_UNESCAPED_UNICODE);
-                ?>
+                            return [
+                                'id' => (int)$imagen['id'],
+                                'url' => $imagen['imagen_url'],
+                                'nombre' => basename((string)$imagen['imagen_url']),
+                                'es_principal' => (int)$imagen['es_principal'],
+                            ];
+                        }, $imagenesPorPropiedad[(int)$propiedad['id']] ?? []),
+                        ], JSON_UNESCAPED_UNICODE);
+                    ?>
 
-                <article class="detalles_fila" data-property-row>
-                    <div class="info_propiedad">
-                        <img src="<?= e((string)$imagen) ?>" alt="<?= e((string)$propiedad['titulo']) ?>">
-                        <div>
-                            <h3><?= e((string)$propiedad['titulo']) ?></h3>
-                            <p>ID: <?= e((string)$propiedad['id']) ?></p>
+                    <article class="detalles_fila" data-property-row>
+                        <div class="info_propiedad">
+                            <img src="<?= e((string)$imagen) ?>" alt="<?= e((string)$propiedad['titulo']) ?>">
+                            <div>
+                                <h3><?= e((string)$propiedad['titulo']) ?></h3>
+                                <p>ID: <?= e((string)$propiedad['id']) ?></p>
+                            </div>
                         </div>
-                    </div>
 
-                    <span class="text_dentro">
-                        <?= e(ciudadPanelTexto($propiedad['ciudad'])) ?>
-                    </span>
+                        <span class="text_dentro">
+                            <?= e(ciudadPanelTexto($propiedad['ciudad'])) ?>
+                        </span>
 
-                    <span class="text_dentro">
-                        <?= e(tipoPanelTexto($propiedad['tipo_propiedad'])) ?>
-                    </span>
+                        <span class="text_dentro">
+                            <?= e(tipoPanelTexto($propiedad['tipo_propiedad'])) ?>
+                        </span>
 
-                    <span class="text_dentro">
-                        $<?= number_format((float)$propiedad['precio'], 0) ?>
-                        <?= e((string)$propiedad['moneda']) ?>
-                    </span>
+                        <span class="text_dentro">
+                            $<?= number_format((float)$propiedad['precio'], 0) ?>
+                            <?= e((string)$propiedad['moneda']) ?>
+                        </span>
 
-                    <span class="text_dentro">
-                        <?= e((string)$propiedad['estado_publicacion']) ?>
-                    </span>
+                        <span class="text_dentro">
+                            <?= e((string)$propiedad['estado_publicacion']) ?>
+                        </span>
 
-                    <div class="acciones">
-                        <button 
-                            class="editar" 
-                            type="button"
-                            data-edit
-                            data-propiedad='<?= e((string)$propiedadJson) ?>'
-                        >
-                            Editar
-                        </button>
+                        <div class="acciones">
+                            <button 
+                                class="editar" 
+                                type="button"
+                                data-edit
+                                data-propiedad='<?= e((string)$propiedadJson) ?>'
+                            >
+                                Editar
+                            </button>
 
-                        <button 
-                            class="eliminar" 
-                            type="button"
-                            data-delete
-                            data-id="<?= e((string)$propiedad['id']) ?>"
-                        >
-                            Eliminar
-                        </button>
-                    </div>
-                </article>
+                            <button 
+                                class="eliminar" 
+                                type="button"
+                                data-delete
+                                data-id="<?= e((string)$propiedad['id']) ?>"
+                            >
+                                Eliminar
+                            </button>
+                        </div>
+                    </article>
 
-            <?php endforeach; ?>
+                <?php endforeach; ?>
+
+            </div>
 
         </section>
 

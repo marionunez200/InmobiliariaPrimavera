@@ -28,6 +28,12 @@ body{
     height: 600px;
 }
 
+.detalles_propiedad {
+    height: 600px;
+    display: flex;
+    flex-direction: column;
+}
+
 .contenedor_agentes {
     height: calc(100% - 80px);
     overflow-y: auto;
