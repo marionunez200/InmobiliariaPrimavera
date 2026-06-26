@@ -334,6 +334,14 @@ $mapsUrl = !empty($propiedad['google_maps_url'])
 
     </section>
 
+    <button
+        class="imprimir"
+        type="button"
+        onclick="window.open('ImprimirPropiedadInfo.php?id=<?= $id ?>', '_blank')">
+        <i class="fa-solid fa-print"></i>
+        Imprimir ficha
+    </button>
+
     <section class="maps">
         <h1>Encuentra la propiedad</h1>
 
@@ -462,6 +470,7 @@ btnDerecha.addEventListener('click', () => {
         behavior: 'smooth'
     });
 });
+
 </script>
 </body>
 </html>
