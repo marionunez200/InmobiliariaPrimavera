@@ -239,7 +239,7 @@ $propiedades = $stmt->fetchAll();
     </section>
 
     <section class="catalogo">
-        <<div class="catalogo-grid">
+        <div class="catalogo-grid">
 
             <?php if (empty($propiedades)): ?>
                 <p>No hay propiedades disponibles con esos filtros.</p>
