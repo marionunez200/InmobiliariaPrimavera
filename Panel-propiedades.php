@@ -15,7 +15,7 @@ if (!function_exists('e')) {
 }
 
 /* ================================
-   MODAL DE ÉXITO
+    MODAL DE ÉXITO
 ================================ */
 
 $modalExitoTitulo = '';
@@ -29,7 +29,7 @@ if (!empty($_SESSION['modal_exito'])) {
 }
 
 /* ================================
-   FUNCIONES
+    FUNCIONES
 ================================ */
 
 function ciudadPanelTexto(?string $ciudad): string
@@ -55,7 +55,7 @@ function tipoPanelTexto(?string $tipo): string
 }
 
 /* ================================
-   DATOS GENERALES
+    DATOS GENERALES
 ================================ */
 
 $buscar = trim($_GET['buscar'] ?? '');
@@ -80,7 +80,7 @@ $totalAgentesActivos = (int)$pdo->query("
 ")->fetchColumn();
 
 /* ================================
-   CONSULTA PROPIEDADES
+    CONSULTA PROPIEDADES
 ================================ */
 
 $sql = "
@@ -101,24 +101,40 @@ $sql = "
 $params = [];
 
 if ($buscar !== '') {
-    $sql .= "
-        WHERE 
-            p.titulo LIKE ?
-            OR p.direccion_completa LIKE ?
-            OR p.ciudad LIKE ?
-            OR p.tipo_propiedad LIKE ?
-            OR p.tipo_operacion LIKE ?
-    ";
 
-    $like = '%' . $buscar . '%';
+    if (strtolower($buscar) === 'activo') {
 
-    $params = [
-        $like,
-        $like,
-        $like,
-        $like,
-        $like
-    ];
+        $sql .= " WHERE p.estado_publicacion = 'activo'";
+
+    } elseif (strtolower($buscar) === 'inactivo') {
+
+        $sql .= " WHERE p.estado_publicacion = 'inactivo'";
+
+    } else {
+
+        $sql .= "
+            WHERE
+                p.titulo LIKE ?
+                OR p.direccion_completa LIKE ?
+                OR p.ciudad LIKE ?
+                OR p.tipo_propiedad LIKE ?
+                OR p.tipo_operacion LIKE ?
+                OR p.estado_publicacion LIKE ?
+                OR a.nombre LIKE ?
+        ";
+
+        $like = '%' . $buscar . '%';
+
+        $params = [
+            $like,
+            $like,
+            $like,
+            $like,
+            $like,
+            $like,
+            $like
+        ];
+    }
 }
 
 $sql .= "
@@ -131,7 +147,7 @@ $stmt->execute($params);
 $propiedades = $stmt->fetchAll();
 
 /* ================================
-   IMÁGENES POR PROPIEDAD
+    IMÁGENES POR PROPIEDAD
 ================================ */
 
 $imagenesPorPropiedad = [];
@@ -161,7 +177,23 @@ if (!empty($idsPropiedades)) {
     }
 }
 
-$ultimasPropiedades = array_slice($propiedades, 0, 4);
+$stmtUltimas = $pdo->query("
+    SELECT
+        p.*,
+        (
+            SELECT ip.imagen_url
+            FROM imagenes_propiedades ip
+            WHERE ip.propiedad_id = p.id
+            ORDER BY ip.es_principal DESC, ip.orden ASC, ip.id ASC
+            LIMIT 1
+        ) AS imagen_principal
+    FROM propiedades p
+    ORDER BY p.creado_en DESC, p.id DESC
+    LIMIT 4
+");
+
+$ultimasPropiedades = $stmtUltimas->fetchAll();
+
 ?>
 
 <!DOCTYPE html>
