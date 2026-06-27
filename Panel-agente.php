@@ -80,8 +80,15 @@ if ($buscar !== '') {
 }
 
 $agentes = $stmt->fetchAll();
-$ultimosAgentes = array_slice($agentes, 0, 4);
-?>
+
+$stmtUltimos = $pdo->query("
+    SELECT *
+    FROM agentes
+    ORDER BY creado_en DESC, id DESC
+    LIMIT 4
+");
+
+$ultimosAgentes = $stmtUltimos->fetchAll();?>
 
 <!DOCTYPE html>
 <html lang="es-MX">
