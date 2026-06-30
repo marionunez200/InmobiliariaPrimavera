@@ -223,7 +223,7 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
 
     <header class="admin-header">
         <div class="contenedor-logo">
-            <a href="/Panel-propiedades.php">
+            <a href="Panel-agente.php">
                 <img class="logo-panel" src="Imagenes/Logosolo.png" alt="Logo de Primavera inmobiliaria">
             </a>
         </div>

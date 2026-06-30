@@ -118,7 +118,7 @@ $ultimosAgentes = $stmtUltimos->fetchAll();?>
 
     <header class="admin-header">
         <div class="contenedor-logo">
-            <a href="/Panel-agente.php">
+            <a href="Panel-propiedades.php">
                 <img class="logo-panel" src="Imagenes/Logosolo.png" alt="Logo Primavera inmobiliaria">
             </a>
         </div>
