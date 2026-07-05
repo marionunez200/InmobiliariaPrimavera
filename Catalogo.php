@@ -110,6 +110,7 @@ $propiedades = $stmt->fetchAll();
     <link rel="stylesheet" href="./CSS/Footer.css">
     <link rel="stylesheet" href="./CSS/header.css">
     <link rel="stylesheet" href="./CSS/catalogo.css">
+    <link rel="stylesheet" href="./CSS/burbuja.css">
 
     <link 
         rel="stylesheet" 
@@ -312,6 +313,48 @@ $propiedades = $stmt->fetchAll();
         </div>
     </section>
 
+    <div class="chat-widget" id="chatWidget">
+
+        <div class="chat-card" id="chatCard">
+
+            <div class="chat-texto">
+                <h3>¿No encontraste lo que buscabas?</h3>
+
+                <p>
+                    Contáctame y con gusto te ayudaré a encontrar
+                    la propiedad ideal para ti.
+                </p>
+
+                <div class="asesor">
+                    <img src="Uploads/agentes/agente-6a3aea4d4bf61.webp" alt="Asesora">
+
+                    <div>
+                        <strong>María Fernanda</strong>
+                        <span>Asesora inmobiliaria</span>
+                    </div>
+                </div>
+
+                <a
+                    href="https://wa.me/526441234567"
+                    target="_blank"
+                    class="btn-whatsapp"
+                >
+                    <i class="fa-brands fa-whatsapp"></i>
+                    Enviar mensaje
+                </a>
+            </div>
+        </div>
+        
+        <div class="mensaje-burbuja hover">
+            👋 Estoy aquí para ayudarte
+        </div>
+
+        <button class="burbuja" id="abrirChat">
+            <img src="Uploads/agentes/agente-6a3aea4d4bf61.webp" alt="Asesora">
+        </button>
+
+    </div>
+
 </main>
 
 <footer class="site-footer">
@@ -462,6 +505,34 @@ $propiedades = $stmt->fetchAll();
             menu.classList.toggle("active");
         });
     }
+
+    const chatCard = document.getElementById("chatCard");
+    const abrirChat = document.getElementById("abrirChat");
+
+    // Se abre automáticamente después de 4 segundos
+    setTimeout(() => {
+        chatCard.classList.add("activo");
+    }, 4000);
+
+    // Abrir manualmente
+    abrirChat.addEventListener("click", () => {
+        chatCard.classList.toggle("activo");
+    });
+
+    // Cerrar
+    cerrarChat.addEventListener("click", () => {
+        chatCard.classList.remove("activo");
+    });
+
+    const mensajeBurbuja = document.querySelector(".mensaje-burbuja");
+
+    abrirChat.addEventListener("click", () => {
+        chatCard.classList.toggle("activo");
+
+        if(mensajeBurbuja){
+            mensajeBurbuja.style.display = "none";
+        }
+});
 
 </script>
 </body>

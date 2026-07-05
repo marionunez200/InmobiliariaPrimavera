@@ -168,6 +168,7 @@
 
     .movil {
         display: block;
+        transition: 0.5s;
     }
     
     .navbar-logo{
