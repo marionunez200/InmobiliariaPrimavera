@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 require_once __DIR__ . '/Config/database.php';
 
 $pdo = db();

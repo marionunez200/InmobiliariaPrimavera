@@ -1,2 +1,10 @@
 Política de privacidad | Primavera inmobiliaria
 Consulta cómo Primavera inmobiliaria recopila, utiliza y protege la información enviada por los usuarios del sitio web.
+
+Primavera inmobiliaria | Catálogo de propiedades
+Encuentra casas, terrenos, departamentos y locales comerciales en venta y renta en Sonora.
+./CSS/catalogo.css
+./CSS/burbuja.css
+
+Primavera inmobiliaria | Casas y propiedades en venta y renta en Sonora
+Encuentra casas, terrenos, departamentos y locales comerciales en venta y renta en Sonora. Propiedades disponibles en Ciudad Obregón, San Carlos y Guaymas.

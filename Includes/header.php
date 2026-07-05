@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $titulo = $titulo ?? "Primavera inmobiliaria";
 $descripcion = $descripcion ?? "";
 $cssPaginas = $cssPaginas ?? [];

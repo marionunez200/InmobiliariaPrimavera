@@ -1,4 +1,4 @@
-﻿<footer class="site-footer">
+<footer class="site-footer">
         <div class="footer-container">
 
             <div class="footer-logo">

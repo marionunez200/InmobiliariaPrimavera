@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 require_once __DIR__ . '/Config/database.php';
 
 $pdo = db();
@@ -89,84 +89,13 @@ $stmt->execute($params);
 $propiedades = $stmt->fetchAll();
 ?>
 
-<!DOCTYPE html>
-<html lang="es-MX">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <title>Primavera inmobiliaria | Catálogo de propiedades</title>
+<?php
+$titulo = "Primavera inmobiliaria | Catálogo de propiedades";
+$descripcion = "Encuentra casas, terrenos, departamentos y locales comerciales en venta y renta en Sonora.";
+$cssPaginas = ["CSS/catalogo.css", "CSS/burbuja.css"];
 
-    <meta 
-        name="description" 
-        content="Encuentra casas, terrenos, departamentos y locales comerciales en venta y renta en Sonora."
-    >
-
-    <meta name="robots" content="index, follow">
-    <meta name="theme-color" content="#ffffff">
-
-    <link rel="canonical" href="https://www.inmobiliariaprimavera.com/catalogo">
-
-    <link rel="stylesheet" href="./CSS/Footer.css">
-    <link rel="stylesheet" href="./CSS/header.css">
-    <link rel="stylesheet" href="./CSS/catalogo.css">
-    <link rel="stylesheet" href="./CSS/burbuja.css">
-
-    <link 
-        rel="stylesheet" 
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-    >
-</head>
-
-<body style="margin:0">
-
-    <header class="site-header">
-
-        <a href="index.html" class="navbar-logo movil">
-            <img class="logo" src="Imagenes/Logosolo.png" alt="Logo de Primavera inmobiliaria">
-        </a>
-
-        <button class="menu-toggle" id="menu-toggle">
-            <i class="fa-solid fa-bars"></i>
-        </button>
-
-        <nav class="navbar" id="navbar">
-
-            <div class="navbar-left">
-
-                <a href="index.php">Inicio</a>
-
-                <div>
-                    <a href="catalogo.php">Venta</a>
-                    <ul class="submenu">
-                        <li><a href="catalogo.php">Casas en venta</a></li>
-                        <li><a href="catalogo.php">Departamentos en venta</a></li>
-                        <li><a href="catalogo.php">Locales comerciales en venta</a></li>
-                        <li><a href="catalogo.php">Terrenos en venta</a></li>
-                    </ul>
-                </div>
-
-                <div>
-                    <a href="catalogo.php">Renta</a>
-                    <ul class="submenu">
-                        <li><a href="catalogo.php">Casas en renta</a></li>
-                        <li><a href="catalogo.php">Departamentos en renta</a></li>
-                        <li><a href="catalogo.php">Locales comerciales en renta</a></li>
-                    </ul>
-                </div>
-
-            </div>
-
-            <a href="index.php" class="navbar-logo pc">
-                <img class="logo" src="Imagenes/Logosolo.png" alt="Logo de Primavera inmobiliaria">
-            </a>
-
-            <div class="navbar-right">
-                <a href="Contacto.php">Contacto</a>
-            </div>
-
-        </nav>
-    </header>
+require 'Includes/header.php';
+?>
 
 <main class="site-main">
 
@@ -357,87 +286,8 @@ $propiedades = $stmt->fetchAll();
 
 </main>
 
-<footer class="site-footer">
+<?php require 'Includes/footer.php'; ?>
 
-    <div class="footer-container">
-
-        <div class="footer-logo">
-            <a href="index.php" aria-label="Ir al inicio">
-                <img src="Imagenes/Logosolo.png" alt="Logo de Primavera inmobiliaria">
-            </a>
-        </div>
-
-        <nav class="footer-info" aria-label="Enlaces de información">
-            <h2 class="footer-title">Información</h2>
-
-            <ul class="footer-links">
-                <li><a href="Politicas-privacidad.php" class="footer-link">Aviso de privacidad</a></li>
-                <li><a href="Terminos-condiciones.php" class="footer-link">Términos y condiciones</a></li>
-                <li><a href="Catalogo.php" class="footer-link">Todas las propiedades</a></li>
-                <li><a href="Contacto.php" class="footer-link">Contacto</a></li>
-            </ul>
-        </nav>
-
-        <address class="footer-contacto">
-            <h2 class="footer-title">Contacto</h2>
-
-            <p class="footer-text">Ejército Nacional 1101 entre 5 de Febrero y Jalisco. Fracc. Primavera</p>
-
-            <p class="footer-text">
-                <a class="footer-text" href="tel:+526441435244">(644) 143 5244</a>
-            </p>
-
-            <p class="footer-text">
-                <a class="footer-text" href="mailto:sucorreo@gmail.com">sucorreo@gmail.com</a>
-            </p>
-        </address>
-
-        <div class="footer-redes">
-            <h2 class="footer-title">Redes sociales</h2>
-        
-            <div class="social-list">
-
-                <a 
-                    href="https://www.facebook.com/share/14eyn1t5H3f/?mibextid=wwXIfr" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    aria-label="Facebook de Primavera inmobiliaria"
-                    class="social-link"
-                >
-                    <span class="social-icon facebook">
-                        <i class="fa-brands fa-facebook-f"></i>
-                    </span>
-                    <span class="social-user">Primavera Inmobiliaria</span>
-                </a>
-            
-                <a 
-                    href="https://www.instagram.com/primavera.inmobiliariasc?igsh=dGZoajhrYjJpYXR6" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    aria-label="Instagram de Primavera inmobiliaria"
-                    class="social-link"
-                >
-                    <span class="social-icon instagram">
-                        <i class="fa-brands fa-instagram"></i>
-                    </span>
-                    <span class="social-user">@primavera.inmobiliariasc</span>
-                </a>
-
-            </div>
-        </div>
-
-    </div>
-
-    <div class="footer-bottom">
-        <p>&copy; 2027 Primavera inmobiliaria. Todos los derechos reservados.</p>
-
-        <p>
-            Desarrollado por 
-            <a href="contacto-desarrolladores.php">ULSA North West</a>
-        </p>
-    </div>
-
-</footer>
 <script>
     const precioMin = document.getElementById('precioMin');
     const precioMax = document.getElementById('precioMax');
@@ -535,5 +385,4 @@ $propiedades = $stmt->fetchAll();
 });
 
 </script>
-</body>
-</html>
+

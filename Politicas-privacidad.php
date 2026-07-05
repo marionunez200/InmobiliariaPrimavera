@@ -1,4 +1,4 @@
-﻿<?php
+<?php
     $titulo = "Política de privacidad | Primavera inmobiliaria";
     $descripcion = "Consulta cómo Primavera inmobiliaria recopila, utiliza y protege la información enviada por los usuarios del sitio web.";
     $cssPaginas = ["CSS/politicas.css"];
