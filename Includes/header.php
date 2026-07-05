@@ -46,6 +46,15 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 <body>
 
 <header class="site-header">
+
+    <a href="index.html" class="navbar-logo movil">
+        <img class="logo" src="Imagenes/Logosolo.png" alt="Logo de Primavera inmobiliaria">
+    </a>
+    
+    <button class="menu-toggle" id="menu-toggle">
+        <i class="fa-solid fa-bars"></i>
+    </button>
+
     <nav class="navbar">
         <div class="navbar-left">
             <a href="index.php">Inicio</a>

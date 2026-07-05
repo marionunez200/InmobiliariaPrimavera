@@ -4,6 +4,7 @@
     $cssPaginas = ["CSS/politicas.css"];
     require 'Includes/header.php';
 ?>
+
 <main class="legal-page">
 
     <article class="legal-content">
