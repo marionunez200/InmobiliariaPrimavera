@@ -251,6 +251,60 @@
     margin-bottom: 30px;
 }
 
+.form-contacto label{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:8px;
+    gap:8px;
+
+    color:#122548;
+    font-weight:600;
+    font-family:'Montserrat', sans-serif;
+    padding-bottom:8px;
+}
+
+.form-contacto input,
+.form-contacto textarea{
+    width:90%;
+
+    padding:14px 16px;
+
+    border:2px solid #d7ccb3;
+    border-radius:12px;
+
+    font-size:16px;
+    font-family:'Montserrat', sans-serif;
+
+    background:white;
+
+    transition:.25s;
+}
+
+.form-contacto button{
+    margin-top:10px;
+
+    padding:15px;
+
+    border:none;
+    border-radius:30px;
+
+    background:#122548;
+    color:#fff5e0;
+
+    font-size:16px;
+    font-weight:700;
+    font-family:'Montserrat', sans-serif;
+
+    cursor:pointer;
+
+    transition:.25s;
+}
+
+.form-contacto button:hover{
+    background:#183462;
+    transform:translateY(-2px);
+}
 
 /* Responsive - Teléfono */
 
