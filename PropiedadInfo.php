@@ -330,6 +330,8 @@ $mapsUrl = !empty($propiedad['google_maps_url'])
                 <?php endif; ?>
             </div>
 
+            <p><strong>Contáctanos</strong></p>
+
             <form action="guardar-mensaje.php" method="POST" class="form-contacto">
                 <input
                     type="hidden"
