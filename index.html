@@ -37,7 +37,16 @@
 <body>
 
     <header class="site-header">
-        <nav class="navbar">
+
+        <a href="index.html" class="navbar-logo movil">
+            <img class="logo" src="Imagenes/Logosolo.png" alt="Logo de Primavera inmobiliaria">
+        </a>
+
+        <button class="menu-toggle" id="menu-toggle">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+
+        <nav class="navbar" id="navbar">
 
             <div class="navbar-left">
 
@@ -64,7 +73,7 @@
 
             </div>
 
-            <a href="index.html" class="navbar-logo">
+            <a href="index.html" class="navbar-logo pc">
                 <img class="logo" src="Imagenes/Logosolo.png" alt="Logo de Primavera inmobiliaria">
             </a>
 
@@ -350,6 +359,19 @@
         </div>
 
     </footer>
+
+    <script>
+
+    const menu = document.getElementById("navbar");
+    const boton = document.getElementById("menu-toggle");
+
+    if (menu && boton) {
+        boton.addEventListener("click", () => {
+            menu.classList.toggle("active");
+        });
+    }
+
+    </script>
 
 </body>
 </html>

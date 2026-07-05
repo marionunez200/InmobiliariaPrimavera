@@ -29,44 +29,54 @@
     <link rel="stylesheet" href="./CSS/catalogo.css">
 </head>
 <body style="margin:0">
-<header class="site-header">
-        <nav class="navbar">
+    <header class="site-header">
+
+        <a href="index.html" class="navbar-logo movil">
+            <img class="logo" src="Imagenes/Logosolo.png" alt="Logo de Primavera inmobiliaria">
+        </a>
+
+        <button class="menu-toggle" id="menu-toggle">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+
+        <nav class="navbar" id="navbar">
 
             <div class="navbar-left">
 
                 <a href="index.html">Inicio</a>
 
                 <div>
-                    <a href="#">Venta</a>
+                    <a href="catalogo.php">Venta</a>
                     <ul class="submenu">
-                        <li><a href="#">Casas en venta</a></li>
-                        <li><a href="#">Departamentos en venta</a></li>
-                        <li><a href="#">Locales comerciales en venta</a></li>
-                        <li><a href="#">Terrenos en venta</a></li>
+                        <li><a href="catalogo.php">Casas en venta</a></li>
+                        <li><a href="catalogo.php">Departamentos en venta</a></li>
+                        <li><a href="catalogo.php">Locales comerciales en venta</a></li>
+                        <li><a href="catalogo.php">Terrenos en venta</a></li>
                     </ul>
                 </div>
-                
+
                 <div>
-                    <a href="#">Renta</a>
+                    <a href="catalogo.php">Renta</a>
                     <ul class="submenu">
-                        <li><a href="#">Casas en renta</a></li>
-                        <li><a href="#">Departamentos en renta</a></li>
-                        <li><a href="#">Locales comerciales en renta</a></li>
+                        <li><a href="catalogo.php">Casas en renta</a></li>
+                        <li><a href="catalogo.php">Departamentos en renta</a></li>
+                        <li><a href="catalogo.php">Locales comerciales en renta</a></li>
                     </ul>
                 </div>
 
             </div>
 
-            <a href="index.html" class="navbar-logo">
-                <img class="logo" src="Imagenes/Logosolo.png" alt="Logo">
+            <a href="index.html" class="navbar-logo pc">
+                <img class="logo" src="Imagenes/Logosolo.png" alt="Logo de Primavera inmobiliaria">
             </a>
 
             <div class="navbar-right">
-                <a href="contacto.html">Contacto</a>
+                <a href="Contacto.html">Contacto</a>
             </div>
 
         </nav>
-</header>
+    </header>
+    
 <main class="site-main">
         <!-- Filtro de propiedades -->
         <section class="filtro">
