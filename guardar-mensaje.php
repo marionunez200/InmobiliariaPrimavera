@@ -53,5 +53,5 @@ $stmt->execute([
     ':mensaje' => $mensaje
 ]);
 
-header("Location: gracias.php");
+header("Location: PropiedadInfo.php?id=" . $propiedad_id . "&mensaje=1");
 exit;

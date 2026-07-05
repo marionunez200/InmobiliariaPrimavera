@@ -145,6 +145,7 @@ $ultimosAgentes = $stmtUltimos->fetchAll();?>
         <nav class="admin-opciones">
             <a href="Panel-propiedades.php">Propiedades</a>
             <a href="Panel-agente.php">Agentes</a>
+            <a href="Panel-mensajes.php">Mensajes</a>
         </nav>
     
         <button class="cerrar-sesion" type="button" onclick="location.href='login.php'">

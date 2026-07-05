@@ -121,6 +121,7 @@ CREATE TABLE mensajes_contacto (
     estado_mensaje ENUM('nuevo', 'leido', 'contactado', 'cerrado') DEFAULT 'nuevo',
 
     creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    completado_en DATETIME NULL,
 
     CONSTRAINT fk_mensajes_propiedades
         FOREIGN KEY (propiedad_id)
@@ -128,7 +129,6 @@ CREATE TABLE mensajes_contacto (
         ON UPDATE CASCADE
         ON DELETE SET NULL
 ) ENGINE=InnoDB;
-
 
 CREATE INDEX idx_propiedades_agente
 ON propiedades(agente_id);
