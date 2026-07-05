@@ -110,6 +110,7 @@ $propiedades = $stmt->fetchAll();
     <link rel="stylesheet" href="./CSS/Footer.css">
     <link rel="stylesheet" href="./CSS/header.css">
     <link rel="stylesheet" href="./CSS/catalogo.css">
+    <link rel="stylesheet" href="./CSS/burbuja.css">
 
     <link 
         rel="stylesheet" 
@@ -119,44 +120,53 @@ $propiedades = $stmt->fetchAll();
 
 <body style="margin:0">
 
-<header class="site-header">
-    <nav class="navbar">
+    <header class="site-header">
 
-        <div class="navbar-left">
-
-            <a href="index.php">Inicio</a>
-
-            <div>
-                <a href="Catalogo.php?tipo_operacion=venta">Venta</a>
-                <ul class="submenu">
-                    <li><a href="Catalogo.php?tipo_operacion=venta&tipo_propiedad=casa">Casas en venta</a></li>
-                    <li><a href="Catalogo.php?tipo_operacion=venta&tipo_propiedad=departamento">Departamentos en venta</a></li>
-                    <li><a href="Catalogo.php?tipo_operacion=venta&tipo_propiedad=local_comercial">Locales comerciales en venta</a></li>
-                    <li><a href="Catalogo.php?tipo_operacion=venta&tipo_propiedad=terreno">Terrenos en venta</a></li>
-                </ul>
-            </div>
-
-            <div>
-                <a href="Catalogo.php?tipo_operacion=renta">Renta</a>
-                <ul class="submenu">
-                    <li><a href="Catalogo.php?tipo_operacion=renta&tipo_propiedad=casa">Casas en renta</a></li>
-                    <li><a href="Catalogo.php?tipo_operacion=renta&tipo_propiedad=departamento">Departamentos en renta</a></li>
-                    <li><a href="Catalogo.php?tipo_operacion=renta&tipo_propiedad=local_comercial">Locales comerciales en renta</a></li>
-                </ul>
-            </div>
-
-        </div>
-
-        <a href="index.php" class="navbar-logo">
+        <a href="index.html" class="navbar-logo movil">
             <img class="logo" src="Imagenes/Logosolo.png" alt="Logo de Primavera inmobiliaria">
         </a>
 
-        <div class="navbar-right">
-            <a href="Contacto.php">Contacto</a>
-        </div>
+        <button class="menu-toggle" id="menu-toggle">
+            <i class="fa-solid fa-bars"></i>
+        </button>
 
-    </nav>
-</header>
+        <nav class="navbar" id="navbar">
+
+            <div class="navbar-left">
+
+                <a href="index.php">Inicio</a>
+
+                <div>
+                    <a href="catalogo.php">Venta</a>
+                    <ul class="submenu">
+                        <li><a href="catalogo.php">Casas en venta</a></li>
+                        <li><a href="catalogo.php">Departamentos en venta</a></li>
+                        <li><a href="catalogo.php">Locales comerciales en venta</a></li>
+                        <li><a href="catalogo.php">Terrenos en venta</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <a href="catalogo.php">Renta</a>
+                    <ul class="submenu">
+                        <li><a href="catalogo.php">Casas en renta</a></li>
+                        <li><a href="catalogo.php">Departamentos en renta</a></li>
+                        <li><a href="catalogo.php">Locales comerciales en renta</a></li>
+                    </ul>
+                </div>
+
+            </div>
+
+            <a href="index.php" class="navbar-logo pc">
+                <img class="logo" src="Imagenes/Logosolo.png" alt="Logo de Primavera inmobiliaria">
+            </a>
+
+            <div class="navbar-right">
+                <a href="Contacto.php">Contacto</a>
+            </div>
+
+        </nav>
+    </header>
 
 <main class="site-main">
 
@@ -303,6 +313,48 @@ $propiedades = $stmt->fetchAll();
         </div>
     </section>
 
+    <div class="chat-widget" id="chatWidget">
+
+        <div class="chat-card" id="chatCard">
+
+            <div class="chat-texto">
+                <h3>¿No encontraste lo que buscabas?</h3>
+
+                <p>
+                    Contáctame y con gusto te ayudaré a encontrar
+                    la propiedad ideal para ti.
+                </p>
+
+                <div class="asesor">
+                    <img src="Uploads/agentes/agente-6a3aea4d4bf61.webp" alt="Asesora">
+
+                    <div>
+                        <strong>María Fernanda</strong>
+                        <span>Asesora inmobiliaria</span>
+                    </div>
+                </div>
+
+                <a
+                    href="https://wa.me/526441234567"
+                    target="_blank"
+                    class="btn-whatsapp"
+                >
+                    <i class="fa-brands fa-whatsapp"></i>
+                    Enviar mensaje
+                </a>
+            </div>
+        </div>
+        
+        <div class="mensaje-burbuja hover">
+            👋 Estoy aquí para ayudarte
+        </div>
+
+        <button class="burbuja" id="abrirChat">
+            <img src="Uploads/agentes/agente-6a3aea4d4bf61.webp" alt="Asesora">
+        </button>
+
+    </div>
+
 </main>
 
 <footer class="site-footer">
@@ -405,17 +457,17 @@ $propiedades = $stmt->fetchAll();
         }).format(valor);
     }
                 
-    function actualizarSlider() {
-        let min = parseInt(precioMin.value);
-        let max = parseInt(precioMax.value);
+    function actualizarSlider(evento = null) {
+        let min = parseInt(precioMin.value, 10);
+        let max = parseInt(precioMax.value, 10);
                 
         if (max - min < diferenciaMinima) {
-            if (event.target === precioMin) {
-                precioMin.value = max - diferenciaMinima;
-                min = parseInt(precioMin.value);
+            if (evento?.target === precioMin) {
+                precioMin.value = String(max - diferenciaMinima);
+                min = parseInt(precioMin.value, 10);
             } else {
-                precioMax.value = min + diferenciaMinima;
-                max = parseInt(precioMax.value);
+                precioMax.value = String(min + diferenciaMinima);
+                max = parseInt(precioMax.value, 10);
             }
         }
                 
@@ -425,21 +477,63 @@ $propiedades = $stmt->fetchAll();
         const minPorcentaje = (min / precioMin.max) * 100;
         const maxPorcentaje = (max / precioMax.max) * 100;
                 
-        sliderTrack.style.background = `
-            linear-gradient(
-                to right,
-                #ddd ${minPorcentaje}%,
-                #0f5132 ${minPorcentaje}%,
-                #0f5132 ${maxPorcentaje}%,
-                #ddd ${maxPorcentaje}%
-            )
-        `;
+        if (sliderTrack) {
+            sliderTrack.style.background = `
+                linear-gradient(
+                    to right,
+                    #ddd ${minPorcentaje}%,
+                    #0f5132 ${minPorcentaje}%,
+                    #0f5132 ${maxPorcentaje}%,
+                    #ddd ${maxPorcentaje}%
+                )
+            `;
+        }
     }
                 
-    precioMin.addEventListener('input', actualizarSlider);
-    precioMax.addEventListener('input', actualizarSlider);
+    if (precioMin && precioMax) {
+        precioMin.addEventListener('input', (evento) => actualizarSlider(evento));
+        precioMax.addEventListener('input', (evento) => actualizarSlider(evento));
+    }
                 
     actualizarSlider();
+
+    const menu = document.getElementById("navbar");
+    const boton = document.getElementById("menu-toggle");
+
+    if (menu && boton) {
+        boton.addEventListener("click", () => {
+            menu.classList.toggle("active");
+        });
+    }
+
+    const chatCard = document.getElementById("chatCard");
+    const abrirChat = document.getElementById("abrirChat");
+
+    // Se abre automáticamente después de 4 segundos
+    setTimeout(() => {
+        chatCard.classList.add("activo");
+    }, 4000);
+
+    // Abrir manualmente
+    abrirChat.addEventListener("click", () => {
+        chatCard.classList.toggle("activo");
+    });
+
+    // Cerrar
+    cerrarChat.addEventListener("click", () => {
+        chatCard.classList.remove("activo");
+    });
+
+    const mensajeBurbuja = document.querySelector(".mensaje-burbuja");
+
+    abrirChat.addEventListener("click", () => {
+        chatCard.classList.toggle("activo");
+
+        if(mensajeBurbuja){
+            mensajeBurbuja.style.display = "none";
+        }
+});
+
 </script>
 </body>
 </html>

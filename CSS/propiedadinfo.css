@@ -250,3 +250,179 @@
     text-align: center;
     margin-bottom: 30px;
 }
+
+.form-contacto label{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:8px;
+    gap:8px;
+
+    color:#122548;
+    font-weight:600;
+    font-family:'Montserrat', sans-serif;
+    padding-bottom:8px;
+}
+
+.form-contacto input,
+.form-contacto textarea{
+    width:90%;
+
+    padding:14px 16px;
+
+    border:2px solid #d7ccb3;
+    border-radius:12px;
+
+    font-size:16px;
+    font-family:'Montserrat', sans-serif;
+
+    background:white;
+
+    transition:.25s;
+}
+
+.form-contacto button{
+    margin-top:10px;
+
+    padding:15px;
+
+    border:none;
+    border-radius:30px;
+
+    background:#122548;
+    color:#fff5e0;
+
+    font-size:16px;
+    font-weight:700;
+    font-family:'Montserrat', sans-serif;
+
+    cursor:pointer;
+
+    transition:.25s;
+}
+
+.form-contacto button:hover{
+    background:#183462;
+    transform:translateY(-2px);
+}
+
+/* Responsive - Teléfono */
+
+@media (max-width: 768px){
+
+    /* Imágenes */
+
+    .imagen_principal{
+        width: 95%;
+        height: 260px;
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+
+    .contenedor_miniaturas{
+        width: 95%;
+    }
+
+    .miniaturas{
+        gap: 8px;
+    }
+
+    .miniaturas img{
+        width: 120px;
+        height: 80px;
+    }
+
+    .boton{
+        width: 38px;
+        height: 38px;
+        font-size: 18px;
+    }
+
+    .boton{
+        display: none;
+    }
+
+    /* Información */
+
+    .propiedad{
+        width: 95%;
+        margin: 40px auto;
+        flex-direction: column;
+        gap: 40px;
+        align-items: stretch;
+    }
+
+    .info_propiedad h1{
+        font-size: 1.8rem;
+        text-align: center;
+    }
+
+    .ubicacion_precio{
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
+        text-align: center;
+        font-size: 1.1rem;
+    }
+
+    .caracteristicas{
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .caracteristicas li{
+        font-size: 1rem;
+        margin-bottom: 14px;
+    }
+
+    .caracteristicas img{
+        width: 22px;
+        height: 22px;
+    }
+
+    /* Card del agente */
+
+    .info_agente{
+        width: 100%;
+        max-width: 340px;
+        margin: 0 auto;
+    }
+
+    .info_agente img{
+        width: 120px;
+        height: 120px;
+    }
+
+    .info_agente h2{
+        font-size: 1.4rem;
+    }
+
+    .info_agente a,
+    .info_agente p{
+        font-size: 1rem;
+    }
+
+    .info_agente .telefono{
+        font-size: 1.2rem;
+    }
+
+    /* Botón imprimir */
+
+    .imprimir{
+        width: 170px;
+        padding: 10px 18px;
+    }
+
+    /* Maps */
+
+    .maps h1{
+        font-size: 1.8rem;
+        margin-bottom: 2rem;
+    }
+
+    .maps iframe{
+        width: 95%;
+        height: 300px;
+    }
+
+}

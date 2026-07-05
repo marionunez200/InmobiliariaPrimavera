@@ -330,6 +330,53 @@ $mapsUrl = !empty($propiedad['google_maps_url'])
                 <?php endif; ?>
             </div>
 
+            <form action="guardar-mensaje.php" method="POST" class="form-contacto">
+                <input
+                    type="hidden"
+                    name="propiedad_id"
+                    value="<?= $propiedad['id'] ?? '' ?>"
+                >
+
+                <label>
+                    Nombre
+                    <input
+                        type="text"
+                        name="nombre"
+                        required
+                    >
+                </label>
+
+                <label>
+                    Teléfono
+                    <input
+                        type="tel"
+                        name="telefono"
+                        required
+                    >
+                </label>
+
+                <label>
+                    Correo electrónico
+                    <input
+                        type="email"
+                        name="email"
+                        required
+                    >
+                </label>
+
+                <label>
+                    Mensaje
+                    <textarea
+                        name="mensaje"
+                        rows="5"
+                        required
+                    ></textarea>
+                </label>
+
+                <button type="submit">
+                    Enviar mensaje
+                </button>
+            </form>
         </aside>
 
     </section>
