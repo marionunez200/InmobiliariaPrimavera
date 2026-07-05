@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once __DIR__ . '/Config/database.php';
 
 $pdo = db();
@@ -141,7 +141,7 @@ $mapsUrl = !empty($propiedad['google_maps_url'])
 
         <div class="navbar-left">
 
-            <a href="index.html">Inicio</a>
+            <a href="index.php">Inicio</a>
 
             <div>
                 <a href="Catalogo.php?tipo_operacion=venta">Venta</a>
@@ -164,12 +164,12 @@ $mapsUrl = !empty($propiedad['google_maps_url'])
 
         </div>
 
-        <a href="index.html" class="navbar-logo">
+        <a href="index.php" class="navbar-logo">
             <img class="logo" src="Imagenes/Logosolo.png" alt="Logo">
         </a>
 
         <div class="navbar-right">
-            <a href="Contacto.html">Contacto</a>
+            <a href="Contacto.php">Contacto</a>
         </div>
 
     </nav>
@@ -363,7 +363,7 @@ $mapsUrl = !empty($propiedad['google_maps_url'])
     <div class="footer-container">
 
         <div class="footer-logo">
-            <a href="index.html" aria-label="Ir al inicio">
+            <a href="index.php" aria-label="Ir al inicio">
                 <img src="Imagenes/Logosolo.png" alt="Logo de Primavera inmobiliaria">
             </a>
         </div>
@@ -372,10 +372,10 @@ $mapsUrl = !empty($propiedad['google_maps_url'])
             <h2 class="footer-title">Información</h2>
 
             <ul class="footer-links">
-                <li><a href="Politicas-privacidad.html" class="footer-link">Aviso de privacidad</a></li>
-                <li><a href="terminos-condiciones.html" class="footer-link">Términos y condiciones</a></li>
+                <li><a href="Politicas-privacidad.php" class="footer-link">Aviso de privacidad</a></li>
+                <li><a href="terminos-condiciones.php" class="footer-link">Términos y condiciones</a></li>
                 <li><a href="Catalogo.php" class="footer-link">Todas las propiedades</a></li>
-                <li><a href="Contacto.html" class="footer-link">Contacto</a></li>
+                <li><a href="Contacto.php" class="footer-link">Contacto</a></li>
             </ul>
         </nav>
 
@@ -438,7 +438,7 @@ $mapsUrl = !empty($propiedad['google_maps_url'])
 
         <p>
             Desarrollado por 
-            <a href="contacto-desarrolladores.html">ULSA North West</a>
+            <a href="contacto-desarrolladores.php">ULSA North West</a>
         </p>
     </div>
 

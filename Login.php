@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once __DIR__ . '/Config/database.php';
 
 if (session_status() === PHP_SESSION_NONE) {
@@ -123,7 +123,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
 
                     <div class="Login-buttons">
-                        <a href="index.html" class="back-link">Volver</a>
+                        <a href="index.php" class="back-link">Volver</a>
                         <button type="submit">Acceder</button>
                     </div>
 
