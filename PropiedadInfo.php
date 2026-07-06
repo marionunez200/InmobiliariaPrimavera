@@ -520,6 +520,69 @@ btnDerecha.addEventListener('click', () => {
     });
 });
 
+document.addEventListener("DOMContentLoaded", () => {
+
+    const modal = document.getElementById("modalMensajeEnviado");
+
+    if (!modal) return;
+
+    modal.showModal();
+
+    document
+        .getElementById("cerrarModalMensaje")
+        .addEventListener("click", () => {
+
+            modal.close();
+
+            const url = new URL(window.location);
+            url.searchParams.delete("mensaje");
+            window.history.replaceState({}, "", url);
+
+        });
+
+    modal.addEventListener("click", (e) => {
+
+        if (e.target === modal) {
+
+            modal.close();
+
+            const url = new URL(window.location);
+            url.searchParams.delete("mensaje");
+            window.history.replaceState({}, "", url);
+
+        }
+
+    });
+
+});
 </script>
+
+<?php if (isset($_GET['mensaje']) && $_GET['mensaje'] == 1): ?>
+
+<dialog id="modalMensajeEnviado" class="modal-exito">
+
+    <div class="modal-exito-content">
+
+        <div class="modal-exito-icon">
+            <i class="fa-solid fa-circle-check"></i>
+        </div>
+
+        <h2>¡Mensaje enviado!</h2>
+
+        <p>
+            Gracias por contactarnos.<br>
+            Un asesor de Inmobiliaria Primavera se comunicará contigo lo antes posible.
+        </p>
+
+        <button id="cerrarModalMensaje">
+            Aceptar
+        </button>
+
+    </div>
+
+</dialog>
+
+<?php endif; ?>
+
 </body>
 </html>

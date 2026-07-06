@@ -1484,3 +1484,40 @@ MODAL DE ÉXITO
 .contenedor_mensajes::-webkit-scrollbar-thumb:hover{
     background: #17305e;
 }
+
+.acciones-confirmacion{
+    display:flex;
+    justify-content:center;
+    gap:15px;
+    margin-top:25px;
+}
+
+.btn-cancelar,
+.btn-confirmar{
+    padding:12px 28px;
+    border:none;
+    border-radius:30px;
+    font-family:'Montserrat',sans-serif;
+    font-weight:700;
+    cursor:pointer;
+    transition:.25s;
+}
+
+.btn-cancelar{
+    background:#d6d6d6;
+    color:#122548;
+}
+
+.btn-cancelar:hover{
+    background:#c5c5c5;
+}
+
+.btn-confirmar{
+    background:#16a34a;
+    color:#fff5e0;
+}
+
+.btn-confirmar:hover{
+    background:#15803d;
+    transform:scale(1.05);
+}
