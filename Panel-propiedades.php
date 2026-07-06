@@ -503,11 +503,6 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
             </label>
 
             <label>
-                Dirección completa
-                <input type="text" name="direccion_completa" placeholder="Calle, número, colonia" required>
-            </label>
-
-            <label>
                 Precio
                 <input type="number" name="precio" placeholder="2500000" step="0.01" required>
             </label>
@@ -574,9 +569,27 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
             </div>
 
             <label>
-                Google Maps URL
-                <input type="text" name="google_maps_url" placeholder="https://maps.google.com/...">
+                Dirección completa
+                <input
+                    type="text"
+                    name="direccion_completa"
+                    id="direccionAgregar"
+                    placeholder="Calle, número, colonia"
+                    required>
             </label>
+
+            <input
+                type="hidden"
+                name="google_maps_url"
+                id="googleMapsAgregar">
+
+            <div class="mapa-preview">
+                <iframe
+                    id="iframeAgregar"
+                    loading="lazy"
+                    allowfullscreen>
+                </iframe>
+            </div>
 
             <label class="checkbox-reemplazar">
                 <input type="checkbox" name="destacada" value="1">
@@ -667,11 +680,6 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
             </label>
 
             <label>
-                Dirección completa
-                <input type="text" name="direccion_completa" id="edit_direccion_completa" required>
-            </label>
-
-            <label>
                 Precio
                 <input type="number" name="precio" id="edit_precio" step="0.01" required>
             </label>
@@ -752,9 +760,26 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
             </label>
 
             <label>
-                Google Maps URL
-                <input type="text" name="google_maps_url" id="edit_google_maps_url">
+                Dirección completa
+                <input
+                    type="text"
+                    name="direccion_completa"
+                    id="edit_direccion_completa"
+                    required>
             </label>
+
+            <input
+                type="hidden"
+                name="google_maps_url"
+                id="edit_google_maps_url">
+
+            <div class="mapa-preview">
+                <iframe
+                    id="iframeEditar"
+                    loading="lazy"
+                    allowfullscreen>
+                </iframe>
+            </div>
 
             <label class="checkbox-reemplazar">
                 <input type="checkbox" name="destacada" id="edit_destacada" value="1">
@@ -1089,6 +1114,12 @@ document.addEventListener('click', (event) => {
 
     renderizarImagenesActuales(propiedad.imagenes ?? []);
 
+    actualizarMapa(
+        direccionEditar,
+        googleEditar,
+        iframeEditar
+    );
+
     const previewEditar = document.getElementById('previewEditar');
     const inputImagenesEditar = document.getElementById('inputImagenesEditar');
 
@@ -1278,6 +1309,60 @@ document.addEventListener('DOMContentLoaded', () => {
             cerrarExito();
         }
     });
+});
+
+function actualizarMapa(inputDireccion, inputHidden, iframe){
+
+    const direccion = inputDireccion.value.trim();
+
+    if(direccion === ""){
+        iframe.removeAttribute("src");
+        inputHidden.value = "";
+        return;
+    }
+
+    const url = "https://www.google.com/maps?q=" +
+                encodeURIComponent(direccion) +
+                "&output=embed";
+
+    iframe.src = url;
+    inputHidden.value = url;
+}
+
+/* ================================
+   MAPA - AGREGAR PROPIEDAD
+================================ */
+
+const direccionAgregar = document.getElementById("direccionAgregar");
+const iframeAgregar = document.getElementById("iframeAgregar");
+const googleAgregar = document.getElementById("googleMapsAgregar");
+
+direccionAgregar.addEventListener("input", () => {
+
+    actualizarMapa(
+        direccionAgregar,
+        googleAgregar,
+        iframeAgregar
+    );
+
+});
+
+/* ================================
+   MAPA - EDITAR PROPIEDAD
+================================ */
+
+const direccionEditar = document.getElementById("edit_direccion_completa");
+const iframeEditar = document.getElementById("iframeEditar");
+const googleEditar = document.getElementById("edit_google_maps_url");
+
+direccionEditar.addEventListener("input", () => {
+
+    actualizarMapa(
+        direccionEditar,
+        googleEditar,
+        iframeEditar
+    );
+
 });
 </script>
 </body>
