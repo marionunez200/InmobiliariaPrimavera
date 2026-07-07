@@ -141,6 +141,11 @@ address.footer-contacto {
     flex-shrink: 0;
 }
 
+.social-icon.whatsapp{
+    background-color: #25D366;
+    color: white;
+}
+
 .facebook {
     background-color: #3b5998;
 }

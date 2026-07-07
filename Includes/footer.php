@@ -23,10 +23,8 @@
 
                 <p class="footer-text">Ejército Nacional 1101 entre 5 de Febrero y Jalisco. Fracc. Primavera</p>
                 <p class="footer-text">
+                    <i class="fa-solid fa-phone"></i>
                     <a class="footer-text" href="tel:+526441435244">(644) 143 5244</a>
-                </p>
-                <p class="footer-text">
-                    <a class="footer-text" href="mailto:sucorreo@gmail.com">sucorreo@gmail.com</a>
                 </p>
             </address>
 
@@ -34,6 +32,18 @@
                 <h2 class="footer-title">Redes sociales</h2>
             
                 <div class="social-list">
+                    <a
+                        href="https://wa.me/526441435244"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="social-link"
+                    >
+                        <span class="social-icon whatsapp">
+                            <i class="fa-brands fa-whatsapp"></i>
+                        </span>
+                        <span class="social-user">(644) 143 5244</span>
+                    </a>
+
                     <a 
                         href="https://www.facebook.com/share/14eyn1t5H3f/?mibextid=wwXIfr" 
                         target="_blank" 
