@@ -17,9 +17,10 @@ function ciudadDetalleTexto(?string $ciudad): string
 function operacionDetalleTexto(?string $operacion): string
 {
     return match ($operacion) {
-        'venta' => 'VENTA',
-        'renta' => 'RENTA',
-        default => ''
+        'venta'    => 'Venta',
+        'renta'    => 'Renta',
+        'traspaso' => 'Traspaso',
+        default    => ''
     };
 }
 

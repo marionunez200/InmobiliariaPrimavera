@@ -59,20 +59,30 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
         <div class="navbar-left">
             <a href="index.php">Inicio</a>
             <div>
-                <a href="catalogo.php">Venta</a>
+                <a href="catalogo.php?tipo_operacion=venta">Venta</a>
                 <ul class="submenu">
-                    <li><a href="catalogo.php">Casas en venta</a></li>
-                    <li><a href="catalogo.php">Departamentos en venta</a></li>
-                    <li><a href="catalogo.php">Locales comerciales en venta</a></li>
-                    <li><a href="catalogo.php">Terrenos en venta</a></li>
+                    <li><a href="catalogo.php?tipo_operacion=venta&categoria=2">Casas en venta</a></li>
+                    <li><a href="catalogo.php?tipo_operacion=venta&categoria=3">Departamentos en venta</a></li>
+                    <li><a href="catalogo.php?tipo_operacion=venta&categoria=4">Locales comerciales en venta</a></li>
+                    <li><a href="catalogo.php?tipo_operacion=venta&categoria=5">Terrenos en venta</a></li>
                 </ul>
             </div>
+
             <div>
-                <a href="catalogo.php">Renta</a>
+                <a href="catalogo.php?tipo_operacion=renta">Renta</a>
                 <ul class="submenu">
-                    <li><a href="catalogo.php">Casas en renta</a></li>
-                    <li><a href="catalogo.php">Departamentos en renta</a></li>
-                    <li><a href="catalogo.php">Locales comerciales en renta</a></li>
+                    <li><a href="catalogo.php?tipo_operacion=renta&categoria=2">Casas en renta</a></li>
+                    <li><a href="catalogo.php?tipo_operacion=renta&categoria=3">Departamentos en renta</a></li>
+                    <li><a href="catalogo.php?tipo_operacion=renta&categoria=4">Locales comerciales en renta</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <a href="catalogo.php?tipo_operacion=traspaso">Traspaso</a>
+                <ul class="submenu">
+                    <li><a href="catalogo.php?tipo_operacion=traspaso&categoria=2">Casas en traspaso</a></li>
+                    <li><a href="catalogo.php?tipo_operacion=traspaso&categoria=3">Departamentos en traspaso</a></li>
+                    <li><a href="catalogo.php?tipo_operacion=traspaso&categoria=4">Locales comerciales en traspaso</a></li>
                 </ul>
             </div>
         </div>

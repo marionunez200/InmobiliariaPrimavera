@@ -504,6 +504,7 @@ $categorias = $stmtCategorias->fetchAll();
                 <select name="tipo_operacion" required>
                     <option value="venta">Venta</option>
                     <option value="renta">Renta</option>
+                    <option value="traspaso">Traspaso</option>
                 </select>
             </label>
 
@@ -697,6 +698,7 @@ $categorias = $stmtCategorias->fetchAll();
                 <select name="tipo_operacion" id="edit_tipo_operacion" required>
                     <option value="venta">Venta</option>
                     <option value="renta">Renta</option>
+                    <option value="traspaso">Traspaso</option>
                 </select>
             </label>
 

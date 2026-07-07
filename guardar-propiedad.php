@@ -329,7 +329,7 @@ if ($direccion_completa === '') {
     die('La dirección completa es obligatoria.');
 }
 
-if (!in_array($tipo_operacion, ['venta', 'renta'], true)) {
+if (!in_array($tipo_operacion, ['venta', 'renta', 'traspaso'], true)) {
     die('Tipo de operación inválido.');
 }
 

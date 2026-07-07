@@ -104,6 +104,7 @@ $descripcion = "Encuentra casas, terrenos, departamentos y locales comerciales e
 $cssPaginas = ["CSS/catalogo.css", "CSS/burbuja.css"];
 
 require 'Includes/header.php';
+
 ?>
 
 <main class="site-main">
@@ -127,6 +128,7 @@ require 'Includes/header.php';
                     <option value="">Cualquiera</option>
                     <option value="venta" <?= selectedOption($tipoOperacion, 'venta') ?>>Venta</option>
                     <option value="renta" <?= selectedOption($tipoOperacion, 'renta') ?>>Renta</option>
+                    <option value="traspaso" <?= selectedOption($tipoOperacion, 'traspaso') ?>>Traspaso</option>
                 </select>
 
                 <label for="categoria">Categoría:</label>
