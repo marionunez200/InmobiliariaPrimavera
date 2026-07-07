@@ -363,7 +363,7 @@ require_once ROOT_PATH . 'Includes/header.php';
 
         const datos = new FormData(formulario);
 
-        fetch("catalogo-filtrado.php?" + new URLSearchParams(datos))
+        fetch("<?= BASE_URL ?>Usuario/catalogo-filtrado.php?" + new URLSearchParams(datos))
             .then(response => response.text())
             .then(html => {
                 catalogo.innerHTML = html;

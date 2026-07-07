@@ -1,6 +1,8 @@
 
 <?php
-require_once __DIR__ . '/Config/database.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
+
+require_once ROOT_PATH . '/Config/database.php';
 
 $pdo = db();
 
@@ -120,7 +122,7 @@ if ($propiedad['tipo_operacion'] === 'renta') {
 
     <img
         class="propiedad-img"
-        src="<?= e($imagen) ?>"
+        src="<?= BASE_URL ?><?= e($imagen) ?>"
         alt="<?= e($titulo) ?>"
     >
 
@@ -137,7 +139,7 @@ if ($propiedad['tipo_operacion'] === 'renta') {
 
         <a
             class="propiedad_detalles"
-            href="PropiedadInfo.php?id=<?= e($propiedad['id']) ?>"
+            href="<?= BASE_URL ?>Usuario/PropiedadInfo.php?id=<?= e($propiedad['id']) ?>"
         >
             Ver detalles
         </a>
