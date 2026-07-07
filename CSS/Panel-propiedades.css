@@ -1419,6 +1419,22 @@ MODAL DE ÉXITO
     background: #0c1a33;
 }
 
+.plus {
+    background: #122548;
+    color:#fff5e0;
+    margin-left: 8px;
+    border-radius: 20px;
+}
+
+.plus:hover {
+    background: gray;
+    color:#5a5a5a;
+    margin-left: 8px;
+    border-radius: 20px;
+    transition: 0.2s;
+}
+
+
 .contenedor_agentes {
     max-height: 520px;
     overflow-y: auto;
