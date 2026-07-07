@@ -6,5 +6,5 @@ define('BASE_URL', '/');
 
 // 2. RUTA PARA EL SERVIDOR (Para PHP: require, require_once, include)
 // __DIR__ detecta automáticamente que estás en 'C:\xampp\htdocs'
-define('ROOT_PATH', __DIR__ . '');
+define('ROOT_PATH', __DIR__ . '/');
 ?>

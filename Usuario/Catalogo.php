@@ -106,7 +106,7 @@ $titulo = "Primavera inmobiliaria | Catálogo de propiedades";
 $descripcion = "Encuentra casas, terrenos, departamentos y locales comerciales en venta y renta en Sonora.";
 $cssPaginas = [BASE_URL . 'CSS/catalogo.css', BASE_URL . 'CSS/burbuja.css'];
 
-require_once ROOT_PATH . 'Includes/header.php';
+require_once ROOT_PATH . '/Includes/header.php';
 
 ?>
 
@@ -301,7 +301,7 @@ require_once ROOT_PATH . 'Includes/header.php';
 
 </main>
 
-<?php require_once ROOT_PATH . 'Includes/footer.php'; ?>
+<?php require_once ROOT_PATH . '/Includes/footer.php'; ?>
 
 <script>
 
