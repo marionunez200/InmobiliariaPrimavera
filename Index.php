@@ -1,9 +1,11 @@
 <?php
+require_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
+
 $titulo = "Primavera inmobiliaria | Casas y propiedades en venta y renta en Sonora";
 $descripcion = "Encuentra casas, terrenos, departamentos y locales comerciales en venta y renta en Sonora. Propiedades disponibles en Ciudad Obregón, San Carlos y Guaymas.";
-$cssPaginas = ["CSS/index.css"];
+$cssPaginas = [BASE_URL . "CSS/index.css"];
 
-require 'Includes/header.php';
+require_once ROOT_PATH . '/Includes/header.php';
 ?>
 
     <main class="main-content">
@@ -20,7 +22,7 @@ require 'Includes/header.php';
                         Casas, terrenos y propiedades en venta y renta en Sonora
                     </h1>
                 
-                    <form class="search-form" action="catalogo.php" method="get">
+                    <form class="search-form" action="<?= BASE_URL ?>Usuario/Catalogo.php" method="get">
                         <div class="select-wrapper">
                             <select name="ubicacion" id="ubicacion" aria-label="Selecciona una ubicación">
                                 <option value="">Seleccione ubicación...</option>
@@ -55,24 +57,24 @@ require 'Includes/header.php';
                     para compra, renta e inversión inmobiliaria.
                 </p>
 
-                <a href="catalogo.php" class="view-all-button">
+                <a href="<?= BASE_URL ?>Usuario/Catalogo.php" class="view-all-button">
                     Ver propiedades
                 </a>
             </div>
 
             <div class="categories-grid">
 
-                <a href="catalogo.php" class="category-card card-casa movcard">
+                <a href="<?= BASE_URL ?>Usuario/Catalogo.php" class="category-card card-casa movcard">
                     <h3>Casas en venta</h3>
                     <p>Disponibles: x</p>
                 </a>
 
-                <a href="catalogo.php" class="category-card card-terreno movcard">
+                <a href="<?= BASE_URL ?>Usuario/Catalogo.php" class="category-card card-terreno movcard">
                     <h3>Terrenos en venta</h3>
                     <p>Disponibles: x</p>
                 </a>
 
-                <a href="catalogo.php" class="category-card card-renta movcard">
+                <a href="<?= BASE_URL ?>Usuario/Catalogo.php" class="category-card card-renta movcard">
                     <h3>Propiedades en renta</h3>
                     <p>Disponibles: x</p>
                 </a>
@@ -91,36 +93,36 @@ require 'Includes/header.php';
             <div class="cities-carousel">
                 <div class="cities-track">
                 
-                    <a href="catalogo.php" class="city-card city-obregon">
+                    <a href="<?= BASE_URL ?>Usuario/Catalogo.php" class="city-card city-obregon">
                         <h3>Obregón</h3>
                     </a>
                 
-                    <a href="catalogo.php" class="city-card city-san-carlos">
+                    <a href="<?= BASE_URL ?>Usuario/Catalogo.php" class="city-card city-san-carlos">
                         <h3>San Carlos</h3>
                     </a>
                 
-                    <a href="catalogo.php" class="city-card city-guaymas">
+                    <a href="<?= BASE_URL ?>Usuario/Catalogo.php" class="city-card city-guaymas">
                         <h3>Guaymas</h3>
                     </a>
                 
-                    <a href="catalogo.php" class="city-card city-navojoa">
+                    <a href="<?= BASE_URL ?>Usuario/Catalogo.php" class="city-card city-navojoa">
                         <h3>Navojoa</h3>
                     </a>
                 
                     <!-- Se repiten para que el carrusel sea infinito -->
-                    <a href="catalogo.php" class="city-card city-obregon">
+                    <a href="<?= BASE_URL ?>Usuario/Catalogo.php" class="city-card city-obregon">
                         <h3>Obregón</h3>
                     </a>
                 
-                    <a href="catalogo.php" class="city-card city-san-carlos">
+                    <a href="<?= BASE_URL ?>Usuario/Catalogo.php" class="city-card city-san-carlos">
                         <h3>San Carlos</h3>
                     </a>
                 
-                    <a href="catalogo.php" class="city-card city-guaymas">
+                    <a href="<?= BASE_URL ?>Usuario/Catalogo.php" class="city-card city-guaymas">
                         <h3>Guaymas</h3>
                     </a>
                 
-                    <a href="catalogo.php" class="city-card city-navojoa">
+                    <a href="<?= BASE_URL ?>Usuario/Catalogo.php" class="city-card city-navojoa">
                         <h3>Navojoa</h3>
                     </a>
                 
@@ -133,7 +135,7 @@ require 'Includes/header.php';
 
             <div class="about-image">
                 <img 
-                    src="./Imagenes/Quienes_somos.jpeg" 
+                    src="<?= BASE_URL ?>Imagenes/Quienes_somos.jpeg"
                     alt="Equipo de Primavera inmobiliaria atendiendo clientes"
                     class="about-img"
                 >
@@ -204,4 +206,4 @@ require 'Includes/header.php';
 
     </main>
 
-<?php require 'includes/footer.php'; ?>
+<?php require_once ROOT_PATH . '/Includes/footer.php'; ?>

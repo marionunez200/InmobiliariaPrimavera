@@ -1,8 +1,11 @@
 <?php
+    require_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
+
     $titulo = "Política de privacidad | Primavera inmobiliaria";
     $descripcion = "Consulta cómo Primavera inmobiliaria recopila, utiliza y protege la información enviada por los usuarios del sitio web.";
-    $cssPaginas = ["CSS/politicas.css"];
-    require 'Includes/header.php';
+    $cssPaginas = [BASE_URL . "CSS/politicas.css"];
+
+    require_once ROOT_PATH . '/Includes/header.php';
 ?>
 
 <main class="legal-page">
@@ -119,4 +122,4 @@
     </article>
 
 </main>
-<?php require 'Includes/footer.php'; ?>
+<?php require_once ROOT_PATH . '/Includes/footer.php'; ?>

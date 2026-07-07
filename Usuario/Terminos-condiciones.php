@@ -1,9 +1,11 @@
 ﻿<?php 
+require_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
+
 $titulo = "Términos y condiciones - Primavera inmobiliaria";
 $descripcion = "Consulta los términos y condiciones de uso del sitio web de Primavera inmobiliaria.";
-$cssPaginas = ["CSS/terminos.css"];
+$cssPaginas = [BASE_URL . "CSS/terminos.css"];
 
-require 'Includes/header.php'; ?>
+require_once ROOT_PATH . '/Includes/header.php'; ?>
 <main class="legal-page">
 
     <article class="legal-content">
@@ -90,7 +92,7 @@ require 'Includes/header.php'; ?>
 
 </main>
 
-<?php require 'Includes/footer.php'; ?>
+<?php require_once ROOT_PATH . '/Includes/footer.php'; ?>
 
     <script>
         const menu = document.getElementById("navbar");

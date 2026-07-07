@@ -1,5 +1,7 @@
 <?php
-require_once __DIR__ . '/Config/database.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
+
+require_once ROOT_PATH . '/Config/database.php';
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -65,10 +67,10 @@ $mensajes = $stmt->fetchAll();
     <meta name="robots" content="noindex, nofollow">
     <meta name="theme-color" content="#ffffff">
 
-    <link rel="stylesheet" href="./CSS/Panel-mensajes.css">
-    <link rel="stylesheet" href="./CSS/Admin.header.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>CSS/Panel-mensajes.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>CSS/Admin.header.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="icon" href="<?= BASE_URL ?>favicon.ico" type="image/x-icon">
 </head>
 
 <body>
@@ -77,8 +79,8 @@ $mensajes = $stmt->fetchAll();
 
     <header class="admin-header">
         <div class="contenedor-logo">
-            <a href="Panel-propiedades.php">
-                <img class="logo-panel" src="Imagenes/Logosolo.png" alt="Logo Primavera inmobiliaria">
+            <a href="<?= BASE_URL ?>Admin/Panel-propiedades.php">
+                <img class="logo-panel" src="<?= BASE_URL ?>Imagenes/Logosolo.png" alt="Logo Primavera inmobiliaria">
             </a>
         </div>
 
@@ -99,9 +101,9 @@ $mensajes = $stmt->fetchAll();
         <div class="admin-logo"></div>
     
         <nav class="admin-opciones">
-            <a href="Panel-propiedades.php">Propiedades</a>
-            <a href="Panel-agente.php">Agentes</a>
-            <a href="Panel-mensajes.php">Mensajes</a>
+            <a href="<?= BASE_URL ?>Admin/Panel-propiedades.php">Propiedades</a>
+            <a href="<?= BASE_URL ?>Admin/Panel-agente.php">Agentes</a>
+            <a href="<?= BASE_URL ?>Admin/Panel-mensajes.php">Mensajes</a>
         </nav>
     
         <button class="cerrar-sesion" type="button" onclick="location.href='login.php'">
@@ -165,7 +167,7 @@ $mensajes = $stmt->fetchAll();
 
                                 <img
                                     class="mini_propiedad"
-                                    src="<?= e($mensaje['imagen_url'] ?: 'Imagenes/sin-imagen.webp') ?>"
+                                    src="<?= e($mensaje['imagen_url'] ? BASE_URL . $mensaje['imagen_url'] : BASE_URL . 'Imagenes/sin-imagen.webp') ?>"
                                     alt="<?= e($mensaje['titulo']) ?>">
 
                                 <div>
@@ -216,7 +218,7 @@ $mensajes = $stmt->fetchAll();
 
                                 <?php if($mensaje['estado_mensaje'] != 'cerrado'): ?>
 
-                                    <form action="marcar-hecho.php" method="POST">
+                                    <form action="<?= BASE_URL ?>Backend/marcar-hecho.php" method="POST">
 
                                         <input
                                             type="hidden"

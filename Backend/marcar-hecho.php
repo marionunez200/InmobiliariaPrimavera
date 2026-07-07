@@ -1,7 +1,10 @@
 
 <?php
 
-require_once "Config/database.php";
+if (!defined('BASE_URL')) {
+    require_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
+}
+require_once ROOT_PATH . '/Config/database.php';
 
 $pdo = db();
 
@@ -16,5 +19,5 @@ WHERE id = :id
 
 $stmt->execute(['id' => $id]);
 
-header("Location: Panel-mensajes.php");
+header("Location: " . BASE_URL . "Admin/Panel-mensajes.php");
 exit;

@@ -1,5 +1,6 @@
 ﻿<?php
-require_once __DIR__ . '/Config/database.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
+require_once ROOT_PATH . '/Config/database.php';
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -39,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['admin_email'] = $usuario['email'];
             $_SESSION['admin_rol'] = $usuario['rol'];
 
-            header('Location: Panel-propiedades.php');
+            header('Location: ' . BASE_URL . 'Admin/Panel-propiedades.php');
             exit;
         } else {
             $error = 'Usuario, correo o contraseña incorrectos.';
@@ -64,9 +65,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="robots" content="noindex, nofollow">
     <meta name="theme-color" content="#ffffff">
 
-    <link rel="stylesheet" href="./CSS/Login.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>CSS/Login.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="icon" href="./favicon.ico" type="image/x-icon">
+    <link rel="icon" href="<?= BASE_URL ?>favicon.ico" type="image/x-icon">
 </head>
 
 <body class="bodymagin">
@@ -76,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <div class="login-brand">
                 <img 
-                    src="./Imagenes/Logosolo.png" 
+                    src="<?= BASE_URL ?>Imagenes/Logosolo.png" 
                     alt="Logo de Primavera inmobiliaria" 
                     class="login-logo"
                 >
@@ -95,7 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </div>
                     <?php endif; ?>
                     
-                    <form action="Login.php" method="POST" class="login-form">
+                    <form action="<?= BASE_URL ?>Admin/Login.php" method="POST" class="login-form">
 
                     <div class="form-group floating-group">
                         <input 
@@ -123,7 +124,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
 
                     <div class="Login-buttons">
-                        <a href="index.php" class="back-link">Volver</a>
+                        <a href="<?= BASE_URL ?>index.php" class="back-link">Volver</a>
                         <button type="submit">Acceder</button>
                     </div>
 

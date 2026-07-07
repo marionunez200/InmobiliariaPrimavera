@@ -1,5 +1,7 @@
 <?php
-require_once __DIR__ . '/Config/database.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
+
+require_once ROOT_PATH . '/Config/database.php';
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -27,7 +29,7 @@ try {
         'mensaje' => 'El agente fue marcado como inactivo correctamente.'
     ];
     
-    header('Location: Panel-agente.php');
+    header('Location: ' . BASE_URL . 'Admin/Panel-agente.php');
     exit;
 
 } catch (Exception $e) {

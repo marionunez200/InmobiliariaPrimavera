@@ -1,5 +1,7 @@
 <?php
-require_once __DIR__ . '/Config/database.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
+
+require_once ROOT_PATH . '/Config/database.php';
 
 $pdo = db();
 
@@ -106,8 +108,8 @@ $mapsUrl = !empty($propiedad['google_maps_url'])
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <link rel="stylesheet" href="./CSS/Footer.css">
-    <link rel="stylesheet" href="./CSS/header.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>CSS/Footer.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>CSS/header.css">
 
     <title><?= e((string)$propiedad['titulo']) ?> | Primavera inmobiliaria</title>
 
@@ -120,7 +122,7 @@ $mapsUrl = !empty($propiedad['google_maps_url'])
     <meta name="theme-color" content="#ffffff">
 
     <link rel="canonical" href="https://www.inmobiliariaprimavera.com/">
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="icon" href="<?= BASE_URL ?>favicon.ico" type="image/x-icon">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
@@ -131,7 +133,7 @@ $mapsUrl = !empty($propiedad['google_maps_url'])
     <meta property="og:type" content="website">
     <meta property="og:locale" content="es_MX">
 
-    <link rel="stylesheet" href="./CSS/propiedadinfo.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>CSS/propiedadinfo.css">
 </head>
 
 <body>
@@ -141,35 +143,35 @@ $mapsUrl = !empty($propiedad['google_maps_url'])
 
         <div class="navbar-left">
 
-            <a href="index.php">Inicio</a>
+            <a href="<?= BASE_URL ?>index.php">Inicio</a>
 
             <div>
-                <a href="Catalogo.php?tipo_operacion=venta">Venta</a>
+                <a href="<?= BASE_URL ?>Usuario/Catalogo.php?tipo_operacion=venta">Venta</a>
                 <ul class="submenu">
-                    <li><a href="Catalogo.php?tipo_operacion=venta&tipo_propiedad=casa">Casas en venta</a></li>
-                    <li><a href="Catalogo.php?tipo_operacion=venta&tipo_propiedad=departamento">Departamentos en venta</a></li>
-                    <li><a href="Catalogo.php?tipo_operacion=venta&tipo_propiedad=local_comercial">Locales comerciales en venta</a></li>
-                    <li><a href="Catalogo.php?tipo_operacion=venta&tipo_propiedad=terreno">Terrenos en venta</a></li>
+                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo.php?tipo_operacion=venta&tipo_propiedad=casa">Casas en venta</a></li>
+                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo.php?tipo_operacion=venta&tipo_propiedad=departamento">Departamentos en venta</a></li>
+                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo.php?tipo_operacion=venta&tipo_propiedad=local_comercial">Locales comerciales en venta</a></li>
+                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo.php?tipo_operacion=venta&tipo_propiedad=terreno">Terrenos en venta</a></li>
                 </ul>
             </div>
 
             <div>
-                <a href="Catalogo.php?tipo_operacion=renta">Renta</a>
+                <a href="<?= BASE_URL ?>Usuario/Catalogo.php?tipo_operacion=renta">Renta</a>
                 <ul class="submenu">
-                    <li><a href="Catalogo.php?tipo_operacion=renta&tipo_propiedad=casa">Casas en renta</a></li>
-                    <li><a href="Catalogo.php?tipo_operacion=renta&tipo_propiedad=departamento">Departamentos en renta</a></li>
-                    <li><a href="Catalogo.php?tipo_operacion=renta&tipo_propiedad=local_comercial">Locales comerciales en renta</a></li>
+                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo.php?tipo_operacion=renta&tipo_propiedad=casa">Casas en renta</a></li>
+                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo.php?tipo_operacion=renta&tipo_propiedad=departamento">Departamentos en renta</a></li>
+                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo.php?tipo_operacion=renta&tipo_propiedad=local_comercial">Locales comerciales en renta</a></li>
                 </ul>
             </div>
 
         </div>
 
-        <a href="index.php" class="navbar-logo">
-            <img class="logo" src="Imagenes/Logosolo.png" alt="Logo">
+        <a href="<?= BASE_URL ?>index.php" class="navbar-logo">
+            <img class="logo" src="<?= BASE_URL ?>Imagenes/Logosolo.png" alt="Logo">
         </a>
 
         <div class="navbar-right">
-            <a href="Contacto.php">Contacto</a>
+            <a href="<?= BASE_URL ?>Usuario/Contacto.php">Contacto</a>
         </div>
 
     </nav>
@@ -332,7 +334,7 @@ $mapsUrl = !empty($propiedad['google_maps_url'])
 
             <p><strong>Contáctanos</strong></p>
 
-            <form action="guardar-mensaje.php" method="POST" class="form-contacto">
+            <form action="<?= BASE_URL ?>Backend/guardar-mensaje.php" method="POST" class="form-contacto">
                 <input
                     type="hidden"
                     name="propiedad_id"
@@ -412,8 +414,8 @@ $mapsUrl = !empty($propiedad['google_maps_url'])
     <div class="footer-container">
 
         <div class="footer-logo">
-            <a href="index.php" aria-label="Ir al inicio">
-                <img src="Imagenes/Logosolo.png" alt="Logo de Primavera inmobiliaria">
+            <a href="<?= BASE_URL ?>index.php" aria-label="Ir al inicio">
+                <img src="<?= BASE_URL ?>Imagenes/Logosolo.png" alt="Logo de Primavera inmobiliaria">
             </a>
         </div>
 
@@ -421,10 +423,10 @@ $mapsUrl = !empty($propiedad['google_maps_url'])
             <h2 class="footer-title">Información</h2>
 
             <ul class="footer-links">
-                <li><a href="Politicas-privacidad.php" class="footer-link">Aviso de privacidad</a></li>
-                <li><a href="terminos-condiciones.php" class="footer-link">Términos y condiciones</a></li>
-                <li><a href="Catalogo.php" class="footer-link">Todas las propiedades</a></li>
-                <li><a href="Contacto.php" class="footer-link">Contacto</a></li>
+                <li><a href="<?= BASE_URL ?>Usuario/Politicas-privacidad.php" class="footer-link">Aviso de privacidad</a></li>
+                <li><a href="<?= BASE_URL ?>Usuario/Terminos-condiciones.php" class="footer-link">Términos y condiciones</a></li>
+                <li><a href="<?= BASE_URL ?>Usuario/Catalogo.php" class="footer-link">Todas las propiedades</a></li>
+                <li><a href="<?= BASE_URL ?>Usuario/Contacto.php" class="footer-link">Contacto</a></li>
             </ul>
         </nav>
 
@@ -487,7 +489,7 @@ $mapsUrl = !empty($propiedad['google_maps_url'])
 
         <p>
             Desarrollado por 
-            <a href="contacto-desarrolladores.php">ULSA North West</a>
+            <a href="<?= BASE_URL ?>contacto-desarrolladores.php">ULSA North West</a>
         </p>
     </div>
 

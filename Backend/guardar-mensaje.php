@@ -1,11 +1,13 @@
 <?php
-
-require_once __DIR__ . '/Config/database.php';
+if (!defined('BASE_URL')) {
+    require_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
+}
+require_once ROOT_PATH . '/Config/database.php';
 
 $pdo = db();
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header("Location: index.php");
+    header("Location: " . BASE_URL . "index.php");
     exit;
 }
 
@@ -53,5 +55,5 @@ $stmt->execute([
     ':mensaje' => $mensaje
 ]);
 
-header("Location: PropiedadInfo.php?id=" . $propiedad_id . "&mensaje=1");
+header("Location: " . BASE_URL . "Usuario/PropiedadInfo.php?id=" . $propiedad_id . "&mensaje=1");
 exit;

@@ -1,5 +1,8 @@
 <?php
-require_once __DIR__ . '/Config/database.php';
+if (!defined('BASE_URL')) {
+    require_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
+}
+require_once ROOT_PATH . '/Config/database.php';
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -51,7 +54,7 @@ function guardarImagenesPropiedad(PDO $pdo, int $propiedad_id, string $titulo, b
         return;
     }
 
-    $carpetaUploads = __DIR__ . '/Uploads/propiedades/';
+    $carpetaUploads = ROOT_PATH . '/Uploads/propiedades/';
 
     if (!is_dir($carpetaUploads)) {
         mkdir($carpetaUploads, 0777, true);
@@ -71,7 +74,7 @@ function guardarImagenesPropiedad(PDO $pdo, int $propiedad_id, string $titulo, b
             $ruta = (string)$imagen['imagen_url'];
 
             if (str_starts_with($ruta, 'Uploads/propiedades/')) {
-                $rutaServidor = __DIR__ . '/' . $ruta;
+                $rutaServidor = ROOT_PATH . '/' . $ruta;
 
                 if (is_file($rutaServidor)) {
                     unlink($rutaServidor);
@@ -446,7 +449,7 @@ try {
             : 'La propiedad se agregó correctamente al catálogo.'
     ];
 
-    header('Location: Panel-propiedades.php');
+    header('Location: ' . BASE_URL . 'Admin/Panel-propiedades.php');
     exit;
 
 } catch (Exception $e) {

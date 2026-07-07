@@ -1,6 +1,9 @@
 <?php
-require_once __DIR__ . '/Config/database.php';
+if (!defined('BASE_URL')) {
+    require_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
+}
 
+require_once ROOT_PATH . '/Config/database.php';
 $pdo = db();
 
 function limpiarTexto(?string $texto): string
@@ -92,15 +95,15 @@ $propiedades = $stmt->fetchAll();
 <?php
 $titulo = "Primavera inmobiliaria | Catálogo de propiedades";
 $descripcion = "Encuentra casas, terrenos, departamentos y locales comerciales en venta y renta en Sonora.";
-$cssPaginas = ["CSS/catalogo.css", "CSS/burbuja.css"];
+$cssPaginas = [BASE_URL . 'CSS/catalogo.css', BASE_URL . 'CSS/burbuja.css'];
 
-require 'Includes/header.php';
+require_once ROOT_PATH . 'Includes/header.php';
 ?>
 
 <main class="site-main">
 
     <section class="filtro">
-        <form class="filtro-form" action="Catalogo.php" method="GET" aria-label="Formulario de filtrado de propiedades">
+        <form class="filtro-form" action="<?= BASE_URL ?>Usuario/Catalogo.php" method="GET" aria-label="Formulario de filtrado de propiedades">
 
             <div class="filtro-group-top">
 
@@ -207,7 +210,7 @@ require 'Includes/header.php';
             
                     <img 
                         class="propiedad-img" 
-                        src="<?= e($imagen) ?>" 
+                        src="<?= BASE_URL ?><?= e($imagen) ?>"
                         alt="<?= e($titulo) ?>"
                     >
             
@@ -228,7 +231,7 @@ require 'Includes/header.php';
             
                         <a 
                             class="propiedad_detalles" 
-                            href="PropiedadInfo.php?id=<?= e((string)$propiedad['id']) ?>"
+                            href="<?= BASE_URL ?>Usuario/PropiedadInfo.php?id=<?= e((string)$propiedad['id']) ?>"
                         >
                             Ver detalles
                         </a>
@@ -255,7 +258,7 @@ require 'Includes/header.php';
                 </p>
 
                 <div class="asesor">
-                    <img src="Uploads/agentes/agente-6a3aea4d4bf61.webp" alt="Asesora">
+                    <img src="<?= BASE_URL ?>Uploads/agentes/agente-6a3aea4d4bf61.webp" alt="Asesora">
 
                     <div>
                         <strong>María Fernanda</strong>
@@ -279,14 +282,14 @@ require 'Includes/header.php';
         </div>
 
         <button class="burbuja" id="abrirChat">
-            <img src="Uploads/agentes/agente-6a3aea4d4bf61.webp" alt="Asesora">
+            <img src="<?= BASE_URL ?>Uploads/agentes/agente-6a3aea4d4bf61.webp" alt="Asesora">
         </button>
 
     </div>
 
 </main>
 
-<?php require 'Includes/footer.php'; ?>
+<?php require_once ROOT_PATH . 'Includes/footer.php'; ?>
 
 <script>
     const precioMin = document.getElementById('precioMin');

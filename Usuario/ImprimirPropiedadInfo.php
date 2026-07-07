@@ -1,5 +1,9 @@
 <?php
-require_once __DIR__ . '/Config/database.php';
+if (!defined('BASE_URL')) {
+    require_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
+}
+
+require_once ROOT_PATH . '/Config/database.php';
 
 $pdo = db();
 
@@ -136,7 +140,7 @@ Primavera Inmobiliaria
 </title>
 
 <link rel="stylesheet"
-href="./CSS/imprimir.css">
+href="<?= BASE_URL ?>CSS/imprimir.css">
 
 <link
 rel="stylesheet"
@@ -153,7 +157,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
     <div class="logo">
 
         <img
-        src="Imagenes/Logosolo.png"
+        src="<?= BASE_URL ?>Imagenes/Logosolo.png"
         alt="Primavera">
 
         <div>
@@ -401,7 +405,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
 
         <img
 
-        src="Imagenes/Logosolo.png"
+        src="<?= BASE_URL ?>Imagenes/Logosolo.png"
 
         alt="Primavera">
 

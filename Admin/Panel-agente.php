@@ -1,5 +1,6 @@
 <?php
-require_once __DIR__ . '/Config/database.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
+require_once ROOT_PATH . '/Config/database.php';
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -106,10 +107,10 @@ $ultimosAgentes = $stmtUltimos->fetchAll();?>
     <meta name="robots" content="noindex, nofollow">
     <meta name="theme-color" content="#ffffff">
 
-    <link rel="stylesheet" href="./CSS/Panel-propiedades.css">
-    <link rel="stylesheet" href="./CSS/Admin.header.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>CSS/Panel-propiedades.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>CSS/Admin.header.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="icon" href="<?= BASE_URL ?>favicon.ico" type="image/x-icon">
 </head>
 
 <body>
@@ -118,8 +119,8 @@ $ultimosAgentes = $stmtUltimos->fetchAll();?>
 
     <header class="admin-header">
         <div class="contenedor-logo">
-            <a href="Panel-propiedades.php">
-                <img class="logo-panel" src="Imagenes/Logosolo.png" alt="Logo Primavera inmobiliaria">
+            <a href="<?= BASE_URL ?>Admin/Panel-propiedades.php">
+                <img class="logo-panel" src="<?= BASE_URL ?>Imagenes/Logosolo.png" alt="Logo Primavera inmobiliaria">
             </a>
         </div>
 
@@ -143,12 +144,12 @@ $ultimosAgentes = $stmtUltimos->fetchAll();?>
         <div class="admin-logo"></div>
     
         <nav class="admin-opciones">
-            <a href="Panel-propiedades.php">Propiedades</a>
-            <a href="Panel-agente.php">Agentes</a>
-            <a href="Panel-mensajes.php">Mensajes</a>
+            <a href="<?= BASE_URL ?>Admin/Panel-propiedades.php">Propiedades</a>
+            <a href="<?= BASE_URL ?>Admin/Panel-agente.php">Agentes</a>
+            <a href="<?= BASE_URL ?>Admin/Panel-mensajes.php">Mensajes</a>
         </nav>
     
-        <button class="cerrar-sesion" type="button" onclick="location.href='login.php'">
+        <button class="cerrar-sesion" type="button" onclick="location.href='<?= BASE_URL ?>Admin/Login.php'">
             Cerrar sesión
         </button>
     </aside>
@@ -179,7 +180,7 @@ $ultimosAgentes = $stmtUltimos->fetchAll();?>
             <div class="contenedor-busqueda">
                 <h2>Agentes inmobiliarios</h2>
 
-                <form method="GET" action="Panel-agente.php" class="busqueda">
+                <form method="GET" action="<?= BASE_URL ?>Admin/Panel-agente.php" class="busqueda">
                     <input 
                         type="search" 
                         name="buscar"
@@ -208,7 +209,7 @@ $ultimosAgentes = $stmtUltimos->fetchAll();?>
 
                 <?php foreach ($agentes as $agente): ?>
                     <?php
-                        $foto = $agente['foto_url'] ?: 'Imagenes/agente1.webp';
+                        $foto = $agente['foto_url'] ? BASE_URL . $agente['foto_url'] : BASE_URL . 'Imagenes/agente1.webp';
 
                         $agenteJson = json_encode([
                             'id' => $agente['id'],
@@ -275,7 +276,7 @@ $ultimosAgentes = $stmtUltimos->fetchAll();?>
 
             <div class="contenedor_cards">
                 <?php foreach ($ultimosAgentes as $agente): ?>
-                    <?php $foto = $agente['foto_url'] ?: 'Imagenes/agente1.webp'; ?>
+                    <?php $foto = $agente['foto_url'] ? BASE_URL . $agente['foto_url'] : BASE_URL . 'Imagenes/agente1.webp'; ?>
 
                     <a class="card_link" href="#">
                         <article class="propiedad-card">
@@ -304,7 +305,7 @@ $ultimosAgentes = $stmtUltimos->fetchAll();?>
 
 <!-- MODAL AGREGAR AGENTE -->
 <dialog class="modal" id="modalAgregar">
-    <form class="modal-content" action="guardar-agente.php" method="POST" enctype="multipart/form-data">
+    <form class="modal-content" action="<?= BASE_URL ?>Backend/guardar-agente.php" method="POST" enctype="multipart/form-data">
         <div class="modal-header">
             <h2>Agregar agente</h2>
 
@@ -390,7 +391,7 @@ $ultimosAgentes = $stmtUltimos->fetchAll();?>
 
 <!-- MODAL EDITAR AGENTE -->
 <dialog class="modal" id="modalEditar">
-    <form class="modal-content" action="guardar-agente.php" method="POST" enctype="multipart/form-data">
+    <form class="modal-content" action="<?= BASE_URL ?>Backend/guardar-agente.php" method="POST" enctype="multipart/form-data">
         <input type="hidden" name="id" id="edit_id">
 
         <div class="modal-header">
@@ -487,7 +488,7 @@ $ultimosAgentes = $stmtUltimos->fetchAll();?>
 
 <!-- MODAL ELIMINAR AGENTE -->
 <dialog class="modal modal-small" id="modalEliminar">
-    <form class="modal-content" action="eliminar-agente.php" method="POST">
+    <form class="modal-content" action="<?= BASE_URL ?>Backend/eliminar-agente.php" method="POST">
 
         <input type="hidden" name="id" id="delete_id">
 

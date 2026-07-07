@@ -1,5 +1,7 @@
 <?php
-require_once __DIR__ . '/Config/database.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
+
+require_once ROOT_PATH . '/Config/database.php';
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -26,7 +28,7 @@ try {
         'mensaje' => 'La propiedad fue eliminada correctamente.'
     ];
 
-    header('Location: Panel-propiedades.php');
+    header('Location: ' . BASE_URL . 'Admin/Panel-propiedades.php');
     exit;
 
 } catch (Exception $e) {

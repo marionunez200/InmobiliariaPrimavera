@@ -1,5 +1,7 @@
 <?php
-require_once __DIR__ . '/Config/database.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
+
+require_once ROOT_PATH . '/Config/database.php';
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -211,10 +213,10 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
     <meta name="robots" content="noindex, nofollow">
     <meta name="theme-color" content="#ffffff">
 
-    <link rel="stylesheet" href="./CSS/panel-propiedades.css">
-    <link rel="stylesheet" href="./CSS/Admin.header.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>CSS/panel-propiedades.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>CSS/Admin.header.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="icon" href="<?= BASE_URL ?>favicon.ico" type="image/x-icon">
 </head>
 
 <body>
@@ -223,8 +225,8 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
 
     <header class="admin-header">
         <div class="contenedor-logo">
-            <a href="Panel-agente.php">
-                <img class="logo-panel" src="Imagenes/Logosolo.png" alt="Logo de Primavera inmobiliaria">
+            <a href="<?= BASE_URL ?>Admin/Panel-agente.php">
+                <img class="logo-panel" src="<?= BASE_URL ?>Imagenes/Logosolo.png" alt="Logo de Primavera inmobiliaria">
             </a>
         </div>
 
@@ -248,9 +250,9 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
         <div class="admin-logo"></div>
     
         <nav class="admin-opciones">
-            <a href="Panel-propiedades.php">Propiedades</a>
-            <a href="Panel-agente.php">Agentes</a>
-            <a href="Panel-mensajes.php">Mensajes</a>
+            <a href="<?= BASE_URL ?>Admin/Panel-propiedades.php">Propiedades</a>
+            <a href="<?= BASE_URL ?>Admin/Panel-agente.php">Agentes</a>
+            <a href="<?= BASE_URL ?>Admin/Panel-mensajes.php">Mensajes</a>
         </nav>
     
         <button class="cerrar-sesion" type="button" onclick="location.href='login.php'">
@@ -291,7 +293,7 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
             <div class="contenedor-busqueda">
                 <h2>Propiedades</h2>
 
-                <form method="GET" action="Panel-propiedades.php" class="busqueda">
+                <form method="GET" action="<?= BASE_URL ?>Admin/Panel-propiedades.php" class="busqueda">
                     <input 
                         type="search" 
                         name="buscar"
@@ -321,7 +323,7 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
 
                 <?php foreach ($propiedades as $propiedad): ?>
                     <?php
-                        $imagen = $propiedad['imagen_principal'] ?: 'Imagenes/casa1.jpg';
+                        $imagen = $propiedad['imagen_principal'] ? BASE_URL . $propiedad['imagen_principal' ] : BASE_URL . 'Imagenes/casa1.jpg';
 
                     $imagenesJson = array_map(function ($imagenItem) {
                         return [
@@ -415,9 +417,9 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
 
             <div class="contenedor_cards">
                 <?php foreach ($ultimasPropiedades as $propiedad): ?>
-                    <?php $imagen = $propiedad['imagen_principal'] ?: 'Imagenes/casa1.jpg'; ?>
+                    <?php $imagen = $propiedad['imagen_principal'] ? BASE_URL . $propiedad['imagen_principal' ] : BASE_URL . 'Imagenes/casa1.jpg'; ?>
 
-                    <a class="card_link" href="PropiedadInfo.php?id=<?= e((string)$propiedad['id']) ?>">
+                    <a class="card_link" href="<?= BASE_URL ?>Usuario/PropiedadInfo.php?id=<?= e((string)$propiedad['id']) ?>">
                         <article class="propiedad-card">
                             <img 
                                 class="propiedad-img" 
@@ -444,7 +446,7 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
 
 <!-- MODAL AGREGAR PROPIEDAD -->
 <dialog class="modal" id="modalAgregar">
-    <form class="modal-content" action="guardar-propiedad.php" method="POST" enctype="multipart/form-data">
+    <form class="modal-content" action="<?= BASE_URL ?>Backend/guardar-propiedad.php" method="POST" enctype="multipart/form-data">
 
         <div class="modal-header">
             <h2>Agregar propiedad</h2>
@@ -605,7 +607,7 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
 
 <!-- MODAL EDITAR PROPIEDAD -->
 <dialog class="modal" id="modalEditar">
-    <form class="modal-content" action="guardar-propiedad.php" method="POST" enctype="multipart/form-data">
+    <form class="modal-content" action="<?= BASE_URL ?>Backend/guardar-propiedad.php" method="POST" enctype="multipart/form-data">
 
         <input type="hidden" name="id" id="edit_id">
         <input type="hidden" name="imagen_principal_id" id="imagen_principal_id">
@@ -783,7 +785,7 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
 
 <!-- MODAL ELIMINAR PROPIEDAD -->
 <dialog class="modal modal-small" id="modalEliminar">
-    <form class="modal-content" action="eliminar-propiedad.php" method="POST">
+    <form class="modal-content" action="<?= BASE_URL ?>Backend/eliminar-propiedad.php" method="POST">
 
         <input type="hidden" name="id" id="delete_id">
 

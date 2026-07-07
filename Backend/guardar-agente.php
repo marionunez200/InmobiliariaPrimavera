@@ -1,5 +1,7 @@
 <?php
-require_once __DIR__ . '/Config/database.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
+
+require_once ROOT_PATH . '/Config/database.php';
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -40,7 +42,7 @@ function subirFotoAgente(?string $fotoActual = null): ?string
         throw new Exception('Solo se permiten imágenes JPG, JPEG, PNG o WEBP.');
     }
 
-    $carpetaUploads = __DIR__ . '/Uploads/agentes/';
+    $carpetaUploads = ROOT_PATH . '/Uploads/agentes/';
 
     if (!is_dir($carpetaUploads)) {
         mkdir($carpetaUploads, 0777, true);
@@ -49,7 +51,7 @@ function subirFotoAgente(?string $fotoActual = null): ?string
     $nombreNuevo = 'agente-' . uniqid() . '.' . $extension;
 
     $rutaServidor = $carpetaUploads . $nombreNuevo;
-    $rutaBaseDatos = 'Uploads/agentes/' . $nombreNuevo;
+    $rutaBaseDatos = BASE_URL . 'Uploads/agentes/' . $nombreNuevo;
 
     if (!move_uploaded_file($tmpName, $rutaServidor)) {
         throw new Exception('No se pudo guardar la foto en Uploads/agentes.');
@@ -59,7 +61,7 @@ function subirFotoAgente(?string $fotoActual = null): ?string
         $fotoActual &&
         str_starts_with($fotoActual, 'Uploads/agentes/')
     ) {
-        $rutaFotoAnterior = __DIR__ . '/' . $fotoActual;
+        $rutaFotoAnterior = ROOT_PATH . '/' . $fotoActual;
 
         if (is_file($rutaFotoAnterior)) {
             unlink($rutaFotoAnterior);
@@ -149,7 +151,7 @@ try {
             : 'El agente se agregó correctamente al panel.'
     ];
     
-    header('Location: Panel-agente.php');
+    header('Location: ' . BASE_URL . 'Admin/Panel-agente.php');
     exit;
 
 } catch (Exception $e) {
