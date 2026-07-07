@@ -9,6 +9,16 @@
     src: url('../Font/sole-serif-display-bold.otf') format('opentype');
 }
 
+body{
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+}
+
+.site-main{
+    flex:1;
+}
+
 /* Filtros */
 
 .filtro {
