@@ -22,18 +22,19 @@ require_once ROOT_PATH . '/Includes/header.php';
                         Casas, terrenos y propiedades en venta y renta en Sonora
                     </h1>
                 
-                    <form class="search-form" action="<?= BASE_URL ?>Usuario/Catalogo.php" method="get">
+                    <form class="search-form" action="<?= BASE_URL ?>Usuario/Catalogo.php" method="GET">
                         <div class="select-wrapper">
-                            <select name="ubicacion" id="ubicacion" aria-label="Selecciona una ubicación">
+                            <select name="ciudad" id="ciudad" aria-label="Selecciona una ubicación">
                                 <option value="">Seleccione ubicación...</option>
-                                <option value="ciudad-obregon">Ciudad Obregón</option>
-                                <option value="san-carlos">San Carlos</option>
+                                <option value="ciudad_obregon">Ciudad Obregón</option>
+                                <option value="navojoa">Navojoa</option>
+                                <option value="san_carlos">San Carlos</option>
                                 <option value="guaymas">Guaymas</option>
                             </select>
-                        
+
                             <i class="fa-solid fa-chevron-down"></i>
                         </div>
-                    
+
                         <button type="submit" class="form-boton">
                             Buscar
                         </button>

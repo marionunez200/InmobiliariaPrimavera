@@ -52,7 +52,17 @@ $cssPaginas = $cssPaginas ?? [];
             <a href="<?= BASE_URL ?>index.php">Inicio</a>
             
             <div>
-                <a href="<?= BASE_URL ?>Usuario/Catalogo.php">Venta</a>
+                <a href="<?= BASE_URL ?>Usuario/Catalogo.php?tipo_operacion=venta">Venta</a>
+                <ul class="submenu">
+                    <li><a href="catalogo.php?tipo_operacion=venta&categoria=2">Casas en venta</a></li>
+                    <li><a href="catalogo.php?tipo_operacion=venta&categoria=3">Departamentos en venta</a></li>
+                    <li><a href="catalogo.php?tipo_operacion=venta&categoria=4">Locales comerciales en venta</a></li>
+                    <li><a href="catalogo.php?tipo_operacion=venta&categoria=5">Terrenos en venta</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <a href="catalogo.php?tipo_operacion=renta">Renta</a>
                 <ul class="submenu">
                     <li><a href="<?= BASE_URL ?>Usuario/Catalogo.php">Casas en venta</a></li>
                     <li><a href="<?= BASE_URL ?>Usuario/Catalogo.php">Departamentos en venta</a></li>
@@ -61,12 +71,13 @@ $cssPaginas = $cssPaginas ?? [];
                 </ul>
             </div>
             
+
             <div>
-                <a href="<?= BASE_URL ?>Usuario/Catalogo.php">Renta</a>
+                <a href="<?= BASE_URL ?>Usuario/Catalogo.php?tipo_operacion=traspaso">Traspaso</a>
                 <ul class="submenu">
-                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo.php">Casas en renta</a></li>
-                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo.php">Departamentos en renta</a></li>
-                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo.php">Locales comerciales en renta</a></li>
+                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo.php?tipo_operacion=traspaso&categoria=2">Casas en traspaso</a></li>
+                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo.php?tipo_operacion=traspaso&categoria=3">Departamentos en traspaso</a></li>
+                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo.php?tipo_operacion=traspaso&categoria=4">Locales comerciales en traspaso</a></li>
                 </ul>
             </div>
         </div>

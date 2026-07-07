@@ -218,19 +218,18 @@ $mensajes = $stmt->fetchAll();
 
                                 <?php if($mensaje['estado_mensaje'] != 'cerrado'): ?>
 
-                                    <form action="<?= BASE_URL ?>Backend/marcar-hecho.php" method="POST">
-
+                                    <form action="<?= BASE_URL ?>Backend/marcar-hecho.php" method="POST" class="form-hecho">
                                         <input
                                             type="hidden"
                                             name="id"
                                             value="<?= e($mensaje['id']) ?>">
 
                                         <button
-                                            type="submit"
-                                            class="hecho">
+                                            type="button"
+                                            class="hecho"
+                                            data-confirmar-hecho>
                                             Hecho
                                         </button>
-
                                     </form>
 
                                 <?php endif; ?>
@@ -282,6 +281,42 @@ $mensajes = $stmt->fetchAll();
     </div>
 
 </dialog>
+
+        <dialog id="modalConfirmarHecho" class="modal-exito">
+
+            <div class="modal-exito-content">
+
+                <div class="modal-exito-icon">
+                    <i class="fa-solid fa-circle-check"></i>
+                </div>
+
+                <h2>¿Marcar como hecho?</h2>
+
+                <p>
+                    El mensaje cambiará a estado <strong>"Hecho"</strong>.
+                </p>
+
+                <div class="acciones-confirmacion">
+
+                    <button
+                        type="button"
+                        class="btn-cancelar"
+                        id="cancelarHecho">
+                        Cancelar
+                    </button>
+
+                    <button
+                        type="button"
+                        class="btn-confirmar"
+                        id="confirmarHecho">
+                        Sí, marcar
+                    </button>
+
+                </div>
+
+            </div>
+
+        </dialog>
 
 <script>
 
@@ -508,6 +543,36 @@ document.addEventListener('DOMContentLoaded', () => {
             cerrarExito();
         }
     });
+});
+
+const modalConfirmarHecho = document.getElementById("modalConfirmarHecho");
+
+let formularioHecho = null;
+
+document.querySelectorAll("[data-confirmar-hecho]").forEach((boton) => {
+
+    boton.addEventListener("click", () => {
+
+        formularioHecho = boton.closest("form");
+
+        modalConfirmarHecho.showModal();
+
+    });
+
+});
+
+document.getElementById("cancelarHecho").addEventListener("click", () => {
+
+    modalConfirmarHecho.close();
+
+});
+
+document.getElementById("confirmarHecho").addEventListener("click", () => {
+
+    if(formularioHecho){
+        formularioHecho.submit();
+    }
+
 });
 </script>
 </body>

@@ -16,17 +16,6 @@ function ciudadDetalleTexto(?string $ciudad): string
     };
 }
 
-function tipoDetalleTexto(?string $tipo): string
-{
-    return match ($tipo) {
-        'casa' => 'Casa',
-        'departamento' => 'Departamento',
-        'local_comercial' => 'Local comercial',
-        'terreno' => 'Terreno',
-        default => 'Propiedad'
-    };
-}
-
 function operacionDetalleTexto(?string $operacion): string
 {
     return match ($operacion) {
@@ -45,12 +34,16 @@ if (!$id || !is_numeric($id)) {
 $stmt = $pdo->prepare("
     SELECT
         p.*,
+        c.nombre AS categoria_nombre,
         a.nombre AS agente_nombre,
         a.telefono AS agente_telefono,
         a.email AS agente_email,
         a.foto_url AS agente_foto
     FROM propiedades p
-    LEFT JOIN agentes a ON p.agente_id = a.id
+    LEFT JOIN categorias_propiedad c
+        ON c.id = p.categoria_id
+    LEFT JOIN agentes a
+        ON p.agente_id = a.id
     WHERE p.id = ?
     LIMIT 1
 ");
@@ -90,7 +83,7 @@ if ($propiedad['tipo_operacion'] === 'renta') {
 $telefonoLimpio = preg_replace('/\D+/', '', (string)($propiedad['agente_telefono'] ?? ''));
 
 $ciudadTexto = ciudadDetalleTexto($propiedad['ciudad']);
-$tipoTexto = tipoDetalleTexto($propiedad['tipo_propiedad']);
+$tipoTexto = $propiedad['categoria_nombre'] ?? 'Propiedad';
 $operacionTexto = operacionDetalleTexto($propiedad['tipo_operacion']);
 
 $fotoAgente = $propiedad['agente_foto'] ?: 'Imagenes/agente1.webp';
@@ -147,20 +140,22 @@ $mapsUrl = !empty($propiedad['google_maps_url'])
 
             <div>
                 <a href="<?= BASE_URL ?>Usuario/Catalogo.php?tipo_operacion=venta">Venta</a>
+
                 <ul class="submenu">
-                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo.php?tipo_operacion=venta&tipo_propiedad=casa">Casas en venta</a></li>
-                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo.php?tipo_operacion=venta&tipo_propiedad=departamento">Departamentos en venta</a></li>
-                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo.php?tipo_operacion=venta&tipo_propiedad=local_comercial">Locales comerciales en venta</a></li>
-                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo.php?tipo_operacion=venta&tipo_propiedad=terreno">Terrenos en venta</a></li>
+                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo.php?tipo_operacion=venta&categoria=1">Casas en venta</a></li>
+                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo.php?tipo_operacion=venta&categoria=2">Departamentos en venta</a></li>
+                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo.php?tipo_operacion=venta&categoria=4">Locales comerciales en venta</a></li>
+                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo.php?tipo_operacion=venta&categoria=3">Terrenos en venta</a></li>
                 </ul>
             </div>
 
             <div>
                 <a href="<?= BASE_URL ?>Usuario/Catalogo.php?tipo_operacion=renta">Renta</a>
+
                 <ul class="submenu">
-                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo.php?tipo_operacion=renta&tipo_propiedad=casa">Casas en renta</a></li>
-                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo.php?tipo_operacion=renta&tipo_propiedad=departamento">Departamentos en renta</a></li>
-                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo.php?tipo_operacion=renta&tipo_propiedad=local_comercial">Locales comerciales en renta</a></li>
+                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo.php?tipo_operacion=renta&categoria=1">Casas en renta</a></li>
+                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo.php?tipo_operacion=renta&categoria=2">Departamentos en renta</a></li>
+                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo.php?tipo_operacion=renta&categoria=4">Locales comerciales en renta</a></li>
                 </ul>
             </div>
 
@@ -522,6 +517,69 @@ btnDerecha.addEventListener('click', () => {
     });
 });
 
+document.addEventListener("DOMContentLoaded", () => {
+
+    const modal = document.getElementById("modalMensajeEnviado");
+
+    if (!modal) return;
+
+    modal.showModal();
+
+    document
+        .getElementById("cerrarModalMensaje")
+        .addEventListener("click", () => {
+
+            modal.close();
+
+            const url = new URL(window.location);
+            url.searchParams.delete("mensaje");
+            window.history.replaceState({}, "", url);
+
+        });
+
+    modal.addEventListener("click", (e) => {
+
+        if (e.target === modal) {
+
+            modal.close();
+
+            const url = new URL(window.location);
+            url.searchParams.delete("mensaje");
+            window.history.replaceState({}, "", url);
+
+        }
+
+    });
+
+});
 </script>
+
+<?php if (isset($_GET['mensaje']) && $_GET['mensaje'] == 1): ?>
+
+<dialog id="modalMensajeEnviado" class="modal-exito">
+
+    <div class="modal-exito-content">
+
+        <div class="modal-exito-icon">
+            <i class="fa-solid fa-circle-check"></i>
+        </div>
+
+        <h2>¡Mensaje enviado!</h2>
+
+        <p>
+            Gracias por contactarnos.<br>
+            Un asesor de Inmobiliaria Primavera se comunicará contigo lo antes posible.
+        </p>
+
+        <button id="cerrarModalMensaje">
+            Aceptar
+        </button>
+
+    </div>
+
+</dialog>
+
+<?php endif; ?>
+
 </body>
 </html>

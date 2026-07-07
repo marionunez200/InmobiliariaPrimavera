@@ -6,6 +6,12 @@ if (!defined('BASE_URL')) {
 require_once ROOT_PATH . '/Config/database.php';
 $pdo = db();
 
+$categorias = $pdo->query("
+    SELECT id, nombre
+    FROM categorias_propiedad
+    ORDER BY nombre
+")->fetchAll(PDO::FETCH_ASSOC);
+
 function limpiarTexto(?string $texto): string
 {
     $texto = $texto ?? '';
@@ -40,13 +46,14 @@ function operacionTexto(?string $operacion): string
 
 $ciudad = $_GET['ciudad'] ?? '';
 $tipoOperacion = $_GET['tipo_operacion'] ?? '';
-$tipoPropiedad = $_GET['tipo_propiedad'] ?? '';
+$categoria = (int)($_GET['categoria'] ?? 0);
 $precioMin = $_GET['precio_min'] ?? '';
 $precioMax = $_GET['precio_max'] ?? '';
 
 $sql = "
     SELECT
         p.*,
+        c.nombre AS categoria_nombre,
         (
             SELECT ip.imagen_url
             FROM imagenes_propiedades ip
@@ -55,6 +62,8 @@ $sql = "
             LIMIT 1
         ) AS imagen_principal
     FROM propiedades p
+    INNER JOIN categorias_propiedad c
+        ON c.id = p.categoria_id
     WHERE p.estado_publicacion = 'activo'
 ";
 
@@ -70,9 +79,9 @@ if ($tipoOperacion !== '') {
     $params[] = $tipoOperacion;
 }
 
-if ($tipoPropiedad !== '') {
-    $sql .= " AND p.tipo_propiedad = ?";
-    $params[] = $tipoPropiedad;
+if ($categoria > 0) {
+    $sql .= " AND p.categoria_id = ?";
+    $params[] = $categoria;
 }
 
 if ($precioMin !== '' && is_numeric($precioMin)) {
@@ -98,6 +107,7 @@ $descripcion = "Encuentra casas, terrenos, departamentos y locales comerciales e
 $cssPaginas = [BASE_URL . 'CSS/catalogo.css', BASE_URL . 'CSS/burbuja.css'];
 
 require_once ROOT_PATH . 'Includes/header.php';
+
 ?>
 
 <main class="site-main">
@@ -121,15 +131,21 @@ require_once ROOT_PATH . 'Includes/header.php';
                     <option value="">Cualquiera</option>
                     <option value="venta" <?= selectedOption($tipoOperacion, 'venta') ?>>Venta</option>
                     <option value="renta" <?= selectedOption($tipoOperacion, 'renta') ?>>Renta</option>
+                    <option value="traspaso" <?= selectedOption($tipoOperacion, 'traspaso') ?>>Traspaso</option>
                 </select>
 
-                <label for="tipo_propiedad">Tipo de propiedad:</label>
-                <select id="tipo_propiedad" name="tipo_propiedad">
-                    <option value="">Cualquiera</option>
-                    <option value="casa" <?= selectedOption($tipoPropiedad, 'casa') ?>>Casa</option>
-                    <option value="departamento" <?= selectedOption($tipoPropiedad, 'departamento') ?>>Departamento</option>
-                    <option value="local_comercial" <?= selectedOption($tipoPropiedad, 'local_comercial') ?>>Local comercial</option>
-                    <option value="terreno" <?= selectedOption($tipoPropiedad, 'terreno') ?>>Terreno</option>
+                <label for="categoria">Categoría:</label>
+                <select id="categoria" name="categoria">
+                    <option value="0">Cualquiera</option>
+
+                    <?php foreach ($categorias as $cat): ?>
+                        <option
+                            value="<?= $cat['id'] ?>"
+                            <?= $categoria == $cat['id'] ? 'selected' : '' ?>
+                        >
+                            <?= e($cat['nombre']) ?>
+                        </option>
+                    <?php endforeach; ?>
                 </select>
 
             </div>
@@ -148,16 +164,16 @@ require_once ROOT_PATH . 'Includes/header.php';
                 </div>
 
                 <div>
-                    <input 
-                        type="range" 
-                        id="precio" 
-                        name="precio_rango" 
-                        min="0" 
-                        max="10000000" 
-                        step="100000" 
-                        value="<?= e($precioMax !== '' ? $precioMax : '5000000') ?>"
-                        aria-label="Rango de precios"
-                    >
+                    <div>
+                        <input
+                            type="range"
+                            id="precio"
+                            min="0"
+                            max="10000000"
+                            step="100000"
+                            value="<?= e($precioMax !== '' ? $precioMax : '5000000') ?>"
+                        >
+                    </div>
                 </div>
 
                 <div class="filtro-group floating-group">
@@ -170,10 +186,6 @@ require_once ROOT_PATH . 'Includes/header.php';
                     >
                     <label for="precio_max">Precio máximo:</label>
                 </div>
-
-                <button type="submit" id="aplicar_filtro" class="btn">
-                    Aplicar filtros
-                </button>
 
             </div>
 
@@ -292,64 +304,10 @@ require_once ROOT_PATH . 'Includes/header.php';
 <?php require_once ROOT_PATH . 'Includes/footer.php'; ?>
 
 <script>
-    const precioMin = document.getElementById('precioMin');
-    const precioMax = document.getElementById('precioMax');
-                
-    const precioMinTexto = document.getElementById('precioMinTexto');
-    const precioMaxTexto = document.getElementById('precioMaxTexto');
-                
-    const sliderTrack = document.querySelector('.slider-track');
-                
-    const diferenciaMinima = 50000;
-                
-    function formatearPrecio(valor) {
-        return new Intl.NumberFormat('es-MX', {
-            style: 'currency',
-            currency: 'MXN',
-            maximumFractionDigits: 0
-        }).format(valor);
-    }
-                
-    function actualizarSlider(evento = null) {
-        let min = parseInt(precioMin.value, 10);
-        let max = parseInt(precioMax.value, 10);
-                
-        if (max - min < diferenciaMinima) {
-            if (evento?.target === precioMin) {
-                precioMin.value = String(max - diferenciaMinima);
-                min = parseInt(precioMin.value, 10);
-            } else {
-                precioMax.value = String(min + diferenciaMinima);
-                max = parseInt(precioMax.value, 10);
-            }
-        }
-                
-        precioMinTexto.textContent = formatearPrecio(min);
-        precioMaxTexto.textContent = formatearPrecio(max);
-                
-        const minPorcentaje = (min / precioMin.max) * 100;
-        const maxPorcentaje = (max / precioMax.max) * 100;
-                
-        if (sliderTrack) {
-            sliderTrack.style.background = `
-                linear-gradient(
-                    to right,
-                    #ddd ${minPorcentaje}%,
-                    #0f5132 ${minPorcentaje}%,
-                    #0f5132 ${maxPorcentaje}%,
-                    #ddd ${maxPorcentaje}%
-                )
-            `;
-        }
-    }
-                
-    if (precioMin && precioMax) {
-        precioMin.addEventListener('input', (evento) => actualizarSlider(evento));
-        precioMax.addEventListener('input', (evento) => actualizarSlider(evento));
-    }
-                
-    actualizarSlider();
 
+    // ==========================
+    // MENÚ RESPONSIVO
+    // ==========================
     const menu = document.getElementById("navbar");
     const boton = document.getElementById("menu-toggle");
 
@@ -359,33 +317,93 @@ require_once ROOT_PATH . 'Includes/header.php';
         });
     }
 
+    // ==========================
+    // CHAT
+    // ==========================
     const chatCard = document.getElementById("chatCard");
     const abrirChat = document.getElementById("abrirChat");
-
-    // Se abre automáticamente después de 4 segundos
-    setTimeout(() => {
-        chatCard.classList.add("activo");
-    }, 4000);
-
-    // Abrir manualmente
-    abrirChat.addEventListener("click", () => {
-        chatCard.classList.toggle("activo");
-    });
-
-    // Cerrar
-    cerrarChat.addEventListener("click", () => {
-        chatCard.classList.remove("activo");
-    });
-
+    const cerrarChat = document.getElementById("cerrarChat");
     const mensajeBurbuja = document.querySelector(".mensaje-burbuja");
 
-    abrirChat.addEventListener("click", () => {
-        chatCard.classList.toggle("activo");
+    if (chatCard) {
+        setTimeout(() => {
+            chatCard.classList.add("activo");
+        }, 4000);
+    }
 
-        if(mensajeBurbuja){
-            mensajeBurbuja.style.display = "none";
-        }
-});
+    if (abrirChat) {
+        abrirChat.addEventListener("click", () => {
+
+            chatCard.classList.toggle("activo");
+
+            if (mensajeBurbuja) {
+                mensajeBurbuja.style.display = "none";
+            }
+
+        });
+    }
+
+    if (cerrarChat) {
+        cerrarChat.addEventListener("click", () => {
+            chatCard.classList.remove("activo");
+        });
+    }
+
+    // ==========================
+    // FILTROS
+    // ==========================
+    const formulario = document.querySelector(".filtro-form");
+    const catalogo = document.querySelector(".catalogo-grid");
+
+    const slider = document.getElementById("precio");
+    const precioMin = document.getElementById("precio_min");
+    const precioMax = document.getElementById("precio_max");
+
+    function cargarPropiedades() {
+
+        const datos = new FormData(formulario);
+
+        fetch("catalogo-filtrado.php?" + new URLSearchParams(datos))
+            .then(response => response.text())
+            .then(html => {
+                catalogo.innerHTML = html;
+            })
+            .catch(error => console.error(error));
+
+    }
+
+    // Selects
+    document.querySelectorAll(".filtro-form select").forEach(select => {
+        select.addEventListener("change", cargarPropiedades);
+    });
+
+    // Precio mínimo
+    if (precioMin) {
+        precioMin.addEventListener("input", cargarPropiedades);
+    }
+
+    // Slider
+    if (slider && precioMax) {
+
+        slider.addEventListener("input", () => {
+
+            precioMax.value = slider.value;
+            cargarPropiedades();
+
+        });
+
+    }
+
+    // Precio máximo
+    if (precioMax && slider) {
+
+        precioMax.addEventListener("input", () => {
+
+            slider.value = precioMax.value;
+            cargarPropiedades();
+
+        });
+
+    }
 
 </script>
-

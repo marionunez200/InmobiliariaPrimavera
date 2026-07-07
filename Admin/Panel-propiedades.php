@@ -89,6 +89,7 @@ $sql = "
     SELECT
         p.*,
         a.nombre AS agente_nombre,
+        c.nombre AS categoria_nombre,
         (
             SELECT ip.imagen_url
             FROM imagenes_propiedades ip
@@ -97,7 +98,10 @@ $sql = "
             LIMIT 1
         ) AS imagen_principal
     FROM propiedades p
-    LEFT JOIN agentes a ON p.agente_id = a.id
+    LEFT JOIN agentes a
+        ON p.agente_id = a.id
+    LEFT JOIN categorias_propiedad c
+        ON p.categoria_id = c.id
 ";
 
 $params = [];
@@ -106,11 +110,15 @@ if ($buscar !== '') {
 
     if (strtolower($buscar) === 'activo') {
 
-        $sql .= " WHERE p.estado_publicacion = 'activo'";
+        $sql .= "
+            WHERE p.estado_publicacion = 'activo'
+        ";
 
     } elseif (strtolower($buscar) === 'inactivo') {
 
-        $sql .= " WHERE p.estado_publicacion = 'inactivo'";
+        $sql .= "
+            WHERE p.estado_publicacion = 'inactivo'
+        ";
 
     } else {
 
@@ -119,13 +127,13 @@ if ($buscar !== '') {
                 p.titulo LIKE ?
                 OR p.direccion_completa LIKE ?
                 OR p.ciudad LIKE ?
-                OR p.tipo_propiedad LIKE ?
+                OR c.nombre LIKE ?
                 OR p.tipo_operacion LIKE ?
                 OR p.estado_publicacion LIKE ?
                 OR a.nombre LIKE ?
         ";
 
-        $like = '%' . $buscar . '%';
+        $like = "%{$buscar}%";
 
         $params = [
             $like,
@@ -182,6 +190,7 @@ if (!empty($idsPropiedades)) {
 $stmtUltimas = $pdo->query("
     SELECT
         p.*,
+        c.nombre AS categoria_nombre,
         (
             SELECT ip.imagen_url
             FROM imagenes_propiedades ip
@@ -189,12 +198,28 @@ $stmtUltimas = $pdo->query("
             ORDER BY ip.es_principal DESC, ip.orden ASC, ip.id ASC
             LIMIT 1
         ) AS imagen_principal
+
     FROM propiedades p
+
+    LEFT JOIN categorias_propiedad c
+    ON c.id = p.categoria_id
+
     ORDER BY p.creado_en DESC, p.id DESC
     LIMIT 4
 ");
 
 $ultimasPropiedades = $stmtUltimas->fetchAll();
+
+$stmtCategorias = $pdo->query("
+    SELECT
+        id,
+        nombre
+    FROM categorias_propiedad
+    WHERE activo = 1
+    ORDER BY nombre ASC
+");
+
+$categorias = $stmtCategorias->fetchAll();
 
 ?>
 
@@ -342,7 +367,7 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
                         'precio' => $propiedad['precio'],
                         'moneda' => $propiedad['moneda'],
                         'tipo_operacion' => $propiedad['tipo_operacion'],
-                        'tipo_propiedad' => $propiedad['tipo_propiedad'],
+                        'categoria_id' => $propiedad['categoria_id'],
                         'estado_publicacion' => $propiedad['estado_publicacion'],
                         'destacada' => $propiedad['destacada'],
                         'ciudad' => $propiedad['ciudad'],
@@ -372,7 +397,7 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
                     </span>
 
                     <span class="text_dentro">
-                        <?= e(tipoPanelTexto($propiedad['tipo_propiedad'])) ?>
+                        <?= e($propiedad['categoria_nombre'] ?? 'Sin categoría') ?>
                     </span>
 
                     <span class="text_dentro">
@@ -481,17 +506,34 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
                 <select name="tipo_operacion" required>
                     <option value="venta">Venta</option>
                     <option value="renta">Renta</option>
+                    <option value="traspaso">Traspaso</option>
                 </select>
             </label>
 
             <label>
                 Tipo de propiedad
-                <select name="tipo_propiedad" required>
-                    <option value="casa">Casa</option>
-                    <option value="terreno">Terreno</option>
-                    <option value="departamento">Departamento</option>
-                    <option value="local_comercial">Local comercial</option>
-                </select>
+                <div class="tipo-propiedad-box">
+                    <select name="categoria_id" required>
+
+                        <option value="">Selecciona una categoría</option>
+
+                        <?php foreach($categorias as $categoria): ?>
+
+                            <option value="<?= e((string)$categoria['id']) ?>">
+                                <?= e((string)$categoria['nombre']) ?>
+                            </option>
+
+                        <?php endforeach; ?>
+                    </select>
+
+                    <button
+                        type="button"
+                        class="btnNuevaCategoria">
+
+                        +
+
+                    </button>
+                </div>
             </label>
 
             <label>
@@ -502,11 +544,6 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
                     <option value="san_carlos">San Carlos</option>
                     <option value="guaymas">Guaymas</option>
                 </select>
-            </label>
-
-            <label>
-                Dirección completa
-                <input type="text" name="direccion_completa" placeholder="Calle, número, colonia" required>
             </label>
 
             <label>
@@ -576,9 +613,27 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
             </div>
 
             <label>
-                Google Maps URL
-                <input type="text" name="google_maps_url" placeholder="https://maps.google.com/...">
+                Dirección completa
+                <input
+                    type="text"
+                    name="direccion_completa"
+                    id="direccionAgregar"
+                    placeholder="Calle, número, colonia"
+                    required>
             </label>
+
+            <input
+                type="hidden"
+                name="google_maps_url"
+                id="googleMapsAgregar">
+
+            <div class="mapa-preview">
+                <iframe
+                    id="iframeAgregar"
+                    loading="lazy"
+                    allowfullscreen>
+                </iframe>
+            </div>
 
             <label class="checkbox-reemplazar">
                 <input type="checkbox" name="destacada" value="1">
@@ -645,17 +700,37 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
                 <select name="tipo_operacion" id="edit_tipo_operacion" required>
                     <option value="venta">Venta</option>
                     <option value="renta">Renta</option>
+                    <option value="traspaso">Traspaso</option>
                 </select>
             </label>
 
             <label>
                 Tipo de propiedad
-                <select name="tipo_propiedad" id="edit_tipo_propiedad" required>
-                    <option value="casa">Casa</option>
-                    <option value="terreno">Terreno</option>
-                    <option value="departamento">Departamento</option>
-                    <option value="local_comercial">Local comercial</option>
-                </select>
+
+                <div class="tipo-propiedad-box">
+
+                    <select name="categoria_id" id="edit_categoria_id" required>
+
+                        <option value="">Selecciona una categoría</option>
+
+                        <?php foreach ($categorias as $categoria): ?>
+
+                            <option value="<?= e($categoria['id']) ?>">
+                                <?= e($categoria['nombre']) ?>
+                            </option>
+
+                        <?php endforeach; ?>
+
+                    </select>
+
+                    <button
+                        type="button"
+                        id="btnNuevaCategoria">
+                        +
+                    </button>
+
+                </div>
+
             </label>
 
             <label>
@@ -666,11 +741,6 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
                     <option value="san_carlos">San Carlos</option>
                     <option value="guaymas">Guaymas</option>
                 </select>
-            </label>
-
-            <label>
-                Dirección completa
-                <input type="text" name="direccion_completa" id="edit_direccion_completa" required>
             </label>
 
             <label>
@@ -754,9 +824,26 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
             </label>
 
             <label>
-                Google Maps URL
-                <input type="text" name="google_maps_url" id="edit_google_maps_url">
+                Dirección completa
+                <input
+                    type="text"
+                    name="direccion_completa"
+                    id="edit_direccion_completa"
+                    required>
             </label>
+
+            <input
+                type="hidden"
+                name="google_maps_url"
+                id="edit_google_maps_url">
+
+            <div class="mapa-preview">
+                <iframe
+                    id="iframeEditar"
+                    loading="lazy"
+                    allowfullscreen>
+                </iframe>
+            </div>
 
             <label class="checkbox-reemplazar">
                 <input type="checkbox" name="destacada" id="edit_destacada" value="1">
@@ -781,6 +868,66 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
         </div>
 
     </form>
+</dialog>
+
+<!-- MODAL NUEVA CATEGORÍA -->
+<dialog class="modal modal-small" id="modalCategoria">
+
+    <form
+        class="modal-content"
+        action="guardar-categoria.php"
+        method="POST">
+
+        <div class="modal-header">
+            <h2>Nueva categoría</h2>
+
+            <button
+                type="button"
+                class="modal-close"
+                data-close-modal>
+                &times;
+            </button>
+        </div>
+
+        <div class="modal-body">
+
+            <label>
+
+                Nombre de la categoría
+
+                <input
+                    type="text"
+                    name="nombre"
+                    placeholder="Ej. Casa Campestre"
+                    required>
+
+            </label>
+
+        </div>
+
+        <div class="modal-actions">
+
+            <button
+                type="button"
+                class="btn-secondary"
+                data-close-modal>
+
+                Cancelar
+
+            </button>
+
+            <button
+                type="submit"
+                class="btn-primary">
+
+                Guardar
+
+            </button>
+
+        </div>
+
+    </form>
+
 </dialog>
 
 <!-- MODAL ELIMINAR PROPIEDAD -->
@@ -1070,10 +1217,10 @@ document.addEventListener('click', (event) => {
     }
 
     ponerValorSeguro('edit_id', propiedad.id);
+    ponerValorSeguro('edit_categoria_id', propiedad.categoria_id);
     ponerValorSeguro('edit_agente_id', propiedad.agente_id);
     ponerValorSeguro('edit_titulo', propiedad.titulo);
     ponerValorSeguro('edit_tipo_operacion', propiedad.tipo_operacion || 'venta');
-    ponerValorSeguro('edit_tipo_propiedad', propiedad.tipo_propiedad || 'casa');
     ponerValorSeguro('edit_ciudad', propiedad.ciudad || 'ciudad_obregon');
     ponerValorSeguro('edit_direccion_completa', propiedad.direccion_completa);
     ponerValorSeguro('edit_precio', propiedad.precio);
@@ -1090,6 +1237,14 @@ document.addEventListener('click', (event) => {
     ponerCheckSeguro('edit_destacada', propiedad.destacada);
 
     renderizarImagenesActuales(propiedad.imagenes ?? []);
+
+    ponerValorSeguro('edit_direccion_completa',propiedad.direccion_completa);
+
+    actualizarMapa(
+        direccionEditar,
+        googleEditar,
+        iframeEditar
+    );
 
     const previewEditar = document.getElementById('previewEditar');
     const inputImagenesEditar = document.getElementById('inputImagenesEditar');
@@ -1281,6 +1436,71 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
-</script>
+
+function actualizarMapa(inputDireccion, inputHidden, iframe){
+
+    const direccion = inputDireccion.value.trim();
+
+    if(direccion === ""){
+        iframe.removeAttribute("src");
+        inputHidden.value = "";
+        return;
+    }
+
+    const url = "https://www.google.com/maps?q=" +
+                encodeURIComponent(direccion) +
+                "&output=embed";
+
+    iframe.src = url;
+    inputHidden.value = url;
+}
+
+/* ================================
+   MAPA - AGREGAR PROPIEDAD
+================================ */
+
+const direccionAgregar = document.getElementById("direccionAgregar");
+const iframeAgregar = document.getElementById("iframeAgregar");
+const googleAgregar = document.getElementById("googleMapsAgregar");
+
+direccionAgregar.addEventListener("input", () => {
+
+    actualizarMapa(
+        direccionAgregar,
+        googleAgregar,
+        iframeAgregar
+    );
+
+});
+
+/* ================================
+   MAPA - EDITAR PROPIEDAD
+================================ */
+
+const direccionEditar = document.getElementById("edit_direccion_completa");
+const iframeEditar = document.getElementById("iframeEditar");
+const googleEditar = document.getElementById("edit_google_maps_url");
+
+direccionEditar.addEventListener("input", () => {
+
+    actualizarMapa(
+        direccionEditar,
+        googleEditar,
+        iframeEditar
+    );
+
+});
+
+const modalCategoria = document.getElementById("modalCategoria");
+
+document.querySelectorAll(".btnNuevaCategoria").forEach((boton)=>{
+
+    boton.addEventListener("click", ()=>{
+
+        modalCategoria.showModal();
+
+    });
+
+});</script>
 </body>
 </html>
