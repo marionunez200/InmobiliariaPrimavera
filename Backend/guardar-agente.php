@@ -51,7 +51,7 @@ function subirFotoAgente(?string $fotoActual = null): ?string
     $nombreNuevo = 'agente-' . uniqid() . '.' . $extension;
 
     $rutaServidor = $carpetaUploads . $nombreNuevo;
-    $rutaBaseDatos = BASE_URL . 'Uploads/agentes/' . $nombreNuevo;
+    $rutaBaseDatos = 'Uploads/agentes/' . $nombreNuevo;
 
     if (!move_uploaded_file($tmpName, $rutaServidor)) {
         throw new Exception('No se pudo guardar la foto en Uploads/agentes.');
