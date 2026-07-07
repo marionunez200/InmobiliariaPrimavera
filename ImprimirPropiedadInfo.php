@@ -14,17 +14,6 @@ function ciudadDetalleTexto(?string $ciudad): string
     };
 }
 
-function tipoDetalleTexto(?string $tipo): string
-{
-    return match ($tipo) {
-        'casa' => 'Casa',
-        'departamento' => 'Departamento',
-        'local_comercial' => 'Local comercial',
-        'terreno' => 'Terreno',
-        default => 'Propiedad'
-    };
-}
-
 function operacionDetalleTexto(?string $operacion): string
 {
     return match ($operacion) {
@@ -43,11 +32,14 @@ if (!$id || !is_numeric($id)) {
 $stmt = $pdo->prepare("
     SELECT
         p.*,
+        c.nombre AS categoria_nombre,
         a.nombre AS agente_nombre,
         a.telefono AS agente_telefono,
         a.email AS agente_email,
         a.foto_url AS agente_foto
     FROM propiedades p
+    LEFT JOIN categorias_propiedad c
+        ON p.categoria_id = c.id
     LEFT JOIN agentes a
         ON p.agente_id = a.id
     WHERE p.id = ?
@@ -69,10 +61,9 @@ $stmtImagenes = $pdo->prepare("
     FROM imagenes_propiedades
     WHERE propiedad_id = ?
     ORDER BY es_principal DESC,
-            orden ASC,
-            id ASC
+        orden ASC,
+        id ASC
 ");
-
 $stmtImagenes->execute([$id]);
 
 $imagenes = $stmtImagenes->fetchAll();
@@ -102,7 +93,7 @@ if($propiedad['tipo_operacion']=='renta'){
 
 $ciudadTexto = ciudadDetalleTexto($propiedad['ciudad']);
 
-$tipoTexto = tipoDetalleTexto($propiedad['tipo_propiedad']);
+$tipoTexto = $propiedad['categoria_nombre'] ?? 'Propiedad';
 
 $operacionTexto = operacionDetalleTexto($propiedad['tipo_operacion']);
 

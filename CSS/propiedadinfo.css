@@ -88,12 +88,12 @@
 
 /* Información de la propiedad */
 
-.propiedad{
+.propiedad {
     width: 80%;
     margin: 60px auto;
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start; 
     gap: 60px;
 }
 
@@ -412,13 +412,15 @@
 
     /* Información */
 
-    .propiedad{
-        width: 95%;
-        margin: 40px auto;
-        flex-direction: column;
-        gap: 40px;
-        align-items: stretch;
-    }
+    .propiedad {
+            width: 80%;
+            margin: 60px auto;
+            display: flex;
+            flex-direction: column; 
+            justify-content: flex-start;
+            align-items: center;
+            gap: 60px;
+        }
 
     .info_propiedad h1{
         font-size: 1.8rem;
