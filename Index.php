@@ -4,6 +4,26 @@ $descripcion = "Encuentra casas, terrenos, departamentos y locales comerciales e
 $cssPaginas = ["CSS/index.css"];
 
 require 'Includes/header.php';
+
+$conteos = [];
+
+require_once 'Config/database.php';
+$pdo = db();
+
+$stmt = $pdo->query("
+    SELECT
+        categoria_id,
+        tipo_operacion,
+        COUNT(*) AS total
+    FROM propiedades
+    WHERE estado_publicacion = 'activo'
+    GROUP BY categoria_id, tipo_operacion
+");
+
+while ($fila = $stmt->fetch(PDO::FETCH_ASSOC)) {
+    $conteos[$fila['tipo_operacion']][$fila['categoria_id']] = $fila['total'];
+}
+
 ?>
 
     <main class="main-content">
@@ -62,24 +82,33 @@ require 'Includes/header.php';
             </div>
 
             <div class="categories-grid">
-
-                <a href="catalogo.php" class="category-card card-casa movcard">
+                <a href="catalogo.php?tipo_operacion=venta&categoria=2"
+                class="category-card card-casa movcard">
                     <h3>Casas en venta</h3>
-                    <p>Disponibles: x</p>
+                    <p>
+                        Disponibles:
+                        <?= $conteos['venta'][2] ?? 0 ?>
+                    </p>
                 </a>
 
-                <a href="catalogo.php" class="category-card card-terreno movcard">
+                <a href="catalogo.php?tipo_operacion=venta&categoria=4"
+                class="category-card card-terreno movcard">
                     <h3>Terrenos en venta</h3>
-                    <p>Disponibles: x</p>
+                    <p>
+                        Disponibles:
+                        <?= $conteos['venta'][4] ?? 0 ?>
+                    </p>
                 </a>
 
-                <a href="catalogo.php" class="category-card card-renta movcard">
+                <a href="catalogo.php?tipo_operacion=renta"
+                class="category-card card-renta movcard">
                     <h3>Propiedades en renta</h3>
-                    <p>Disponibles: x</p>
+                    <p>
+                        Disponibles:
+                        <?= array_sum($conteos['renta'] ?? []) ?>
+                    </p>
                 </a>
-
             </div>
-
         </section>
 
         <!-- CIUDADES -->
@@ -205,4 +234,4 @@ require 'Includes/header.php';
 
     </main>
 
-<?php require 'includes/footer.php'; ?>
+<?php require 'Includes/footer.php'; ?>
