@@ -120,40 +120,40 @@ while ($fila = $stmt->fetch(PDO::FETCH_ASSOC)) {
         
             <div class="cities-carousel">
                 <div class="cities-track">
-                
-                    <a href="catalogo.php" class="city-card city-obregon">
+
+                    <a href="catalogo.php?ciudad=ciudad_obregon" class="city-card city-obregon">
                         <h3>Obregón</h3>
                     </a>
-                
-                    <a href="catalogo.php" class="city-card city-san-carlos">
+
+                    <a href="catalogo.php?ciudad=san_carlos" class="city-card city-san-carlos">
                         <h3>San Carlos</h3>
                     </a>
-                
-                    <a href="catalogo.php" class="city-card city-guaymas">
+
+                    <a href="catalogo.php?ciudad=guaymas" class="city-card city-guaymas">
                         <h3>Guaymas</h3>
                     </a>
-                
-                    <a href="catalogo.php" class="city-card city-navojoa">
+
+                    <a href="catalogo.php?ciudad=navojoa" class="city-card city-navojoa">
                         <h3>Navojoa</h3>
                     </a>
-                
+
                     <!-- Se repiten para que el carrusel sea infinito -->
-                    <a href="catalogo.php" class="city-card city-obregon">
+                    <a href="catalogo.php?ciudad=ciudad_obregon" class="city-card city-obregon">
                         <h3>Obregón</h3>
                     </a>
-                
-                    <a href="catalogo.php" class="city-card city-san-carlos">
+
+                    <a href="catalogo.php?ciudad=san_carlos" class="city-card city-san-carlos">
                         <h3>San Carlos</h3>
                     </a>
-                
-                    <a href="catalogo.php" class="city-card city-guaymas">
+
+                    <a href="catalogo.php?ciudad=guaymas" class="city-card city-guaymas">
                         <h3>Guaymas</h3>
                     </a>
-                
-                    <a href="catalogo.php" class="city-card city-navojoa">
+
+                    <a href="catalogo.php?ciudad=navojoa" class="city-card city-navojoa">
                         <h3>Navojoa</h3>
                     </a>
-                
+
                 </div>
             </div>
         </section>
