@@ -528,7 +528,7 @@ $categorias = $stmtCategorias->fetchAll();
 
                     <button
                         type="button"
-                        class="btnNuevaCategoria">
+                        class="btnNuevaCategoria plus">
 
                         +
 
@@ -725,7 +725,8 @@ $categorias = $stmtCategorias->fetchAll();
 
                     <button
                         type="button"
-                        id="btnNuevaCategoria">
+                        id="btnNuevaCategoria"
+                        class="plus">
                         +
                     </button>
 

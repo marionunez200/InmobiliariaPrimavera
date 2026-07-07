@@ -5,6 +5,25 @@ $titulo = "Primavera inmobiliaria | Casas y propiedades en venta y renta en Sono
 $descripcion = "Encuentra casas, terrenos, departamentos y locales comerciales en venta y renta en Sonora. Propiedades disponibles en Ciudad Obregón, San Carlos y Guaymas.";
 $cssPaginas = [BASE_URL . "CSS/index.css"];
 
+$conteos = [];
+
+require_once 'Config/database.php';
+$pdo = db();
+
+$stmt = $pdo->query("
+    SELECT
+        categoria_id,
+        tipo_operacion,
+        COUNT(*) AS total
+    FROM propiedades
+    WHERE estado_publicacion = 'activo'
+    GROUP BY categoria_id, tipo_operacion
+");
+
+while ($fila = $stmt->fetch(PDO::FETCH_ASSOC)) {
+    $conteos[$fila['tipo_operacion']][$fila['categoria_id']] = $fila['total'];
+}
+
 require_once ROOT_PATH . '/Includes/header.php';
 ?>
 
@@ -65,23 +84,30 @@ require_once ROOT_PATH . '/Includes/header.php';
 
             <div class="categories-grid">
 
-                <a href="<?= BASE_URL ?>Usuario/Catalogo.php" class="category-card card-casa movcard">
+                <a href="catalogo.php" class="category-card card-casa movcard">
                     <h3>Casas en venta</h3>
-                    <p>Disponibles: x</p>
+                    <p>
+                        Disponibles:
+                        <?= $conteos['venta'][2] ?? 0 ?>
+                    </p>
                 </a>
 
-                <a href="<?= BASE_URL ?>Usuario/Catalogo.php" class="category-card card-terreno movcard">
+                <a href="catalogo.php" class="category-card card-terreno movcard">
                     <h3>Terrenos en venta</h3>
-                    <p>Disponibles: x</p>
+                    <p>
+                        Disponibles:
+                        <?= $conteos['venta'][4] ?? 0 ?>
+                    </p>
                 </a>
 
-                <a href="<?= BASE_URL ?>Usuario/Catalogo.php" class="category-card card-renta movcard">
+                <a href="catalogo.php" class="category-card card-renta movcard">
                     <h3>Propiedades en renta</h3>
-                    <p>Disponibles: x</p>
+                    <p>
+                        Disponibles:
+                        <?= array_sum($conteos['renta'] ?? []) ?>
+                    </p>
                 </a>
-
             </div>
-
         </section>
 
         <!-- CIUDADES -->
@@ -94,39 +120,39 @@ require_once ROOT_PATH . '/Includes/header.php';
             <div class="cities-carousel">
                 <div class="cities-track">
                 
-                    <a href="<?= BASE_URL ?>Usuario/Catalogo.php" class="city-card city-obregon">
+                    <a href="catalogo.php" class="city-card city-obregon">
                         <h3>Obregón</h3>
                     </a>
                 
-                    <a href="<?= BASE_URL ?>Usuario/Catalogo.php" class="city-card city-san-carlos">
+                    <a href="catalogo.php" class="city-card city-san-carlos">
                         <h3>San Carlos</h3>
                     </a>
                 
-                    <a href="<?= BASE_URL ?>Usuario/Catalogo.php" class="city-card city-guaymas">
+                    <a href="catalogo.php" class="city-card city-guaymas">
                         <h3>Guaymas</h3>
                     </a>
                 
-                    <a href="<?= BASE_URL ?>Usuario/Catalogo.php" class="city-card city-navojoa">
+                    <a href="catalogo.php" class="city-card city-navojoa">
                         <h3>Navojoa</h3>
                     </a>
-                
+
                     <!-- Se repiten para que el carrusel sea infinito -->
-                    <a href="<?= BASE_URL ?>Usuario/Catalogo.php" class="city-card city-obregon">
+                    <a href="catalogo.php" class="city-card city-obregon">
                         <h3>Obregón</h3>
                     </a>
                 
-                    <a href="<?= BASE_URL ?>Usuario/Catalogo.php" class="city-card city-san-carlos">
+                    <a href="catalogo.php" class="city-card city-san-carlos">
                         <h3>San Carlos</h3>
                     </a>
                 
-                    <a href="<?= BASE_URL ?>Usuario/Catalogo.php" class="city-card city-guaymas">
+                    <a href="catalogo.php" class="city-card city-guaymas">
                         <h3>Guaymas</h3>
                     </a>
                 
-                    <a href="<?= BASE_URL ?>Usuario/Catalogo.php" class="city-card city-navojoa">
+                    <a href="catalogo.php" class="city-card city-navojoa">
                         <h3>Navojoa</h3>
                     </a>
-                
+
                 </div>
             </div>
         </section>
@@ -207,4 +233,4 @@ require_once ROOT_PATH . '/Includes/header.php';
 
     </main>
 
-<?php require_once ROOT_PATH . '/Includes/footer.php'; ?>
+<?php require 'includes/footer.php'; ?>

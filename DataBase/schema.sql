@@ -47,7 +47,7 @@ CREATE TABLE propiedades (
     precio DECIMAL(12,2) NOT NULL,
     moneda CHAR(3) DEFAULT 'MXN',
 
-    tipo_operacion ENUM('venta', 'renta') NOT NULL,
+    tipo_operacion ENUM('venta', 'renta', 'traspaso') NOT NULL,
 
     tipo_propiedad ENUM(
         'casa',

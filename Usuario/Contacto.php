@@ -15,8 +15,23 @@ require ROOT_PATH . 'Includes/header.php';
             <article class="art_info">
                 <h2>¿Dónde encontrarnos?</h2>
                 <p>Ejército nacional 1101 entre 5 de febrero y Jalisco. Fracc. Primavera</p>
-                <p><a href="tel:+526441234567" class="link-text">(644) 123 4567</a></p>
-                <p><a href="mailto:sucorreo@gmail.com" class="link-text">sucorreo@gmail.com</a></p>
+                <p class="social-link">
+                    <i class="fa-solid fa-phone col"></i>
+                    <a href="tel:+526441435244">(644) 143 5244</a>
+                </p>
+                <div class="social-list">
+                    <a
+                        href="https://wa.me/526441435244"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="social-link"
+                    >
+                        <span class="social-icon whatsapp">
+                            <i class="fa-brands fa-whatsapp"></i>
+                        </span>
+                        <span class="social-user">(644) 143 5244</span>
+                    </a>
+
             </article>
 
             <article class="art_horario">
