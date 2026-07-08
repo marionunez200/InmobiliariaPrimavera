@@ -540,6 +540,8 @@ $ultimosAgentes = $stmtUltimos->fetchAll();?>
     </dialog>
 <?php endif; ?>
 <script>
+const BASE_URL = '<?= BASE_URL ?>';
+
 const modalAgregar = document.getElementById('modalAgregar');
 const modalEditar = document.getElementById('modalEditar');
 const modalEliminar = document.getElementById('modalEliminar');
@@ -622,11 +624,13 @@ function renderizarFotoActualAgente(fotoUrl, nombreAgente) {
     const foto = fotoUrl || 'Imagenes/agente1.webp';
     const nombreArchivo = foto.split('/').pop();
 
+    const rutaCompleta = foto.startsWith('http') ? foto : `${BASE_URL}${foto}`;
+
     const card = document.createElement('div');
     card.className = 'archivo-preview archivo-existente';
 
     card.innerHTML = `
-        <img src="${foto}" alt="${nombreAgente || 'Agente'}">
+        <img src="${rutaCompleta}" alt="${nombreAgente || 'Agente'}">
 
         <div class="archivo-info">
             <span class="archivo-nombre" title="${nombreArchivo}">

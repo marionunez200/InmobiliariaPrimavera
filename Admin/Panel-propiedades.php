@@ -988,6 +988,8 @@ $categorias = $stmtCategorias->fetchAll();
 <?php endif; ?>
 
 <script>
+const BASE_URL = '<?= e(BASE_URL) ?>';
+
 const modalAgregar = document.getElementById('modalAgregar');
 const modalEditar = document.getElementById('modalEditar');
 const modalEliminar = document.getElementById('modalEliminar');
@@ -1095,7 +1097,7 @@ function renderizarImagenesActuales(imagenes) {
             : '<span class="archivo-principal oculto">Principal</span>';
 
         card.innerHTML = `
-            <img src="${imagen.url}" alt="${imagen.nombre}">
+            <img src="${BASE_URL}${imagen.url}" alt="${imagen.nombre}">
 
             <div class="archivo-info">
                 <span class="archivo-nombre" title="${imagen.nombre}">

@@ -61,7 +61,7 @@ try {
 
     }
 
-    header('Location: Panel-agente.php');
+    header('Location: ' . BASE_URL . 'Admin/Panel-agente.php');
     exit;
 
 } catch (Exception $e) {
