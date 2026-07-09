@@ -364,14 +364,6 @@ document.addEventListener('click', (event) => {
     cerrarModal(modal);
 });
 
-document.querySelectorAll('dialog').forEach((modal) => {
-    modal.addEventListener('click', (event) => {
-        if (event.target === modal) {
-            modal.close();
-        }
-    });
-});
-
 /* ================================
    FOTO ACTUAL DEL AGENTE
 ================================ */

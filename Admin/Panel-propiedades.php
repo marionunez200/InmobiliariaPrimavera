@@ -566,17 +566,17 @@ $categorias = $stmtCategorias->fetchAll();
 
             <label>
                 Recámaras
-                <input type="number" name="recamaras" value="0">
+                <input type="number" name="recamaras" value="0" min="0" step="1">
             </label>
 
             <label>
                 Baños
-                <input type="number" name="banos" value="0" step="0.5">
+                <input type="number" name="banos" value="0" min="0" step="1">
             </label>
 
             <label>
                 Estacionamientos
-                <input type="number" name="estacionamientos" value="0">
+                <input type="number" name="estacionamientos" value="0" min="0" step="1">
             </label>
 
             <label>
@@ -764,17 +764,17 @@ $categorias = $stmtCategorias->fetchAll();
 
             <label>
                 Recámaras
-                <input type="number" name="recamaras" id="edit_recamaras">
+                <input type="number" name="recamaras" id="edit_recamaras" min="0" step="1">
             </label>
 
             <label>
                 Baños
-                <input type="number" name="banos" id="edit_banos" step="0.5">
+                <input type="number" name="banos" id="edit_banos" min="0" step="1">
             </label>
 
             <label>
                 Estacionamientos
-                <input type="number" name="estacionamientos" id="edit_estacionamientos">
+                <input type="number" name="estacionamientos" id="edit_estacionamientos" min="0" step="1">
             </label>
 
             <label>
@@ -1050,14 +1050,6 @@ document.addEventListener('click', (event) => {
     const modal = closeButton.closest('dialog');
 
     cerrarModal(modal);
-});
-
-document.querySelectorAll('dialog').forEach((modal) => {
-    modal.addEventListener('click', (event) => {
-        if (event.target === modal) {
-            modal.close();
-        }
-    });
 });
 
 /* Imágenes actuales en editar */

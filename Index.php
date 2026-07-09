@@ -84,7 +84,7 @@ require_once ROOT_PATH . '/Includes/header.php';
 
             <div class="categories-grid">
 
-                <a href="<?= BASE_URL ?>Usuario/Catalogo.php" class="category-card card-casa movcard">
+                <a href="<?= BASE_URL ?>Usuario/Catalogo.php?tipo_operacion=venta&categoria=2" class="category-card card-casa movcard">
                     <h3>Casas en venta</h3>
                     <p>
                         Disponibles:
@@ -92,7 +92,7 @@ require_once ROOT_PATH . '/Includes/header.php';
                     </p>
                 </a>
 
-                <a href="<?= BASE_URL ?>Usuario/Catalogo.php" class="category-card card-terreno movcard">
+                <a href="<?= BASE_URL ?>Usuario/Catalogo.php?tipo_operacion=venta&categoria=4" class="category-card card-terreno movcard">
                     <h3>Terrenos en venta</h3>
                     <p>
                         Disponibles:
@@ -100,7 +100,7 @@ require_once ROOT_PATH . '/Includes/header.php';
                     </p>
                 </a>
 
-                <a href="<?= BASE_URL ?>Usuario/Catalogo.php" class="category-card card-renta movcard">
+                <a href="<?= BASE_URL ?>Usuario/Catalogo.php?tipo_operacion=renta" class="category-card card-renta movcard">
                     <h3>Propiedades en renta</h3>
                     <p>
                         Disponibles:
@@ -116,47 +116,46 @@ require_once ROOT_PATH . '/Includes/header.php';
                 <h2>Busca en tu ciudad</h2>
                 <p>Encuentra un hogar cerca de ti</p>
             </div>
-        
+
             <div class="cities-carousel">
                 <div class="cities-track">
-                
-                    <a href="<?= BASE_URL ?>Usuario/Catalogo.php" class="city-card city-obregon">
+
+                    <a href="<?= BASE_URL ?>Usuario/Catalogo.php?ciudad=ciudad_obregon" class="city-card city-obregon">
                         <h3>Obregón</h3>
                     </a>
-                
-                    <a href="<?= BASE_URL ?>Usuario/Catalogo.php" class="city-card city-san-carlos">
+
+                    <a href="<?= BASE_URL ?>Usuario/Catalogo.php?ciudad=san_carlos" class="city-card city-san-carlos">
                         <h3>San Carlos</h3>
                     </a>
-                
-                    <a href="<?= BASE_URL ?>Usuario/Catalogo.php" class="city-card city-guaymas">
+
+                    <a href="<?= BASE_URL ?>Usuario/Catalogo.php?ciudad=guaymas" class="city-card city-guaymas">
                         <h3>Guaymas</h3>
                     </a>
-                
-                    <a href="<?= BASE_URL ?>Usuario/Catalogo.php" class="city-card city-navojoa">
+
+                    <a href="<?= BASE_URL ?>Usuario/Catalogo.php?ciudad=navojoa" class="city-card city-navojoa">
                         <h3>Navojoa</h3>
                     </a>
 
                     <!-- Se repiten para que el carrusel sea infinito -->
-                    <a href="<?= BASE_URL ?>Usuario/Catalogo.php" class="city-card city-obregon">
+                    <a href="<?= BASE_URL ?>Usuario/Catalogo.php?ciudad=ciudad_obregon" class="city-card city-obregon">
                         <h3>Obregón</h3>
                     </a>
-                
-                    <a href="<?= BASE_URL ?>Usuario/Catalogo.php" class="city-card city-san-carlos">
+
+                    <a href="<?= BASE_URL ?>Usuario/Catalogo.php?ciudad=san_carlos" class="city-card city-san-carlos">
                         <h3>San Carlos</h3>
                     </a>
-                
-                    <a href="<?= BASE_URL ?>Usuario/Catalogo.php" class="city-card city-guaymas">
+
+                    <a href="<?= BASE_URL ?>Usuario/Catalogo.php?ciudad=guaymas" class="city-card city-guaymas">
                         <h3>Guaymas</h3>
                     </a>
-                
-                    <a href="<?= BASE_URL ?>Usuario/Catalogo.php" class="city-card city-navojoa">
+
+                    <a href="<?= BASE_URL ?>Usuario/Catalogo.php?ciudad=navojoa" class="city-card city-navojoa">
                         <h3>Navojoa</h3>
                     </a>
 
                 </div>
             </div>
         </section>
-
         <!-- QUIÉNES SOMOS -->
         <section class="about-section" aria-labelledby="about-title">
 

@@ -340,6 +340,10 @@ if (!in_array($estado_publicacion, ['activo', 'inactivo'], true)) {
     die('Estado de publicación inválido.');
 }
 
+$banos = max(0, (int)($_POST['banos'] ?? 0));
+$recamaras = max(0, (int)($_POST['recamaras'] ?? 0));
+$estacionamientos = max(0, (int)($_POST['estacionamientos'] ?? 0));
+
 $precio = (float)$precio;
 $banos = (float)$banos;
 

@@ -270,7 +270,7 @@ require_once ROOT_PATH . '/Includes/header.php';
                 </p>
 
                 <div class="asesor">
-                    <img src="<?= BASE_URL ?>Uploads/agentes/agente-6a3aea4d4bf61.webp" alt="Asesora">
+                    <img src="<?= BASE_URL ?>Uploads/agentes/agente-6a4caae0ba02f.webp" alt="Asesora">
 
                     <div>
                         <strong>María Fernanda</strong>
@@ -279,7 +279,7 @@ require_once ROOT_PATH . '/Includes/header.php';
                 </div>
 
                 <a
-                    href="https://wa.me/526441234567"
+                    href="https://wa.me/526441435244"
                     target="_blank"
                     class="btn-whatsapp"
                 >
@@ -294,7 +294,7 @@ require_once ROOT_PATH . '/Includes/header.php';
         </div>
 
         <button class="burbuja" id="abrirChat">
-            <img src="<?= BASE_URL ?>Uploads/agentes/agente-6a3aea4d4bf61.webp" alt="Asesora">
+            <img src="<?= BASE_URL ?>Uploads/agentes/agente-6a4caae0ba02f.webp" alt="Asesora">
         </button>
 
     </div>
