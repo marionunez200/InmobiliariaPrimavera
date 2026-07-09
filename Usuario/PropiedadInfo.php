@@ -93,85 +93,14 @@ $mapsDefault = 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d56631.1215
 $mapsUrl = !empty($propiedad['google_maps_url'])
     ? $propiedad['google_maps_url']
     : $mapsDefault;
+
+
+$titulo = e((string)$propiedad['titulo']);
+$descripcion = e((string)$propiedad['descripcion']);
+$cssPaginas = [BASE_URL . 'CSS/propiedadinfo.css'];
+
+require_once ROOT_PATH . 'Includes/header.php';
 ?>
-
-<!DOCTYPE html>
-<html lang="es-MX">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <link rel="stylesheet" href="<?= BASE_URL ?>CSS/Footer.css">
-    <link rel="stylesheet" href="<?= BASE_URL ?>CSS/header.css">
-
-    <title><?= e((string)$propiedad['titulo']) ?> | Primavera inmobiliaria</title>
-
-    <meta 
-        name="description" 
-        content="<?= e(substr((string)$propiedad['descripcion'], 0, 150)) ?>"
-    >
-
-    <meta name="robots" content="index, follow">
-    <meta name="theme-color" content="#ffffff">
-
-    <link rel="canonical" href="https://www.inmobiliariaprimavera.com/">
-    <link rel="icon" href="<?= BASE_URL ?>favicon.ico" type="image/x-icon">
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
-    <meta property="og:title" content="<?= e((string)$propiedad['titulo']) ?>">
-    <meta property="og:description" content="<?= e(substr((string)$propiedad['descripcion'], 0, 150)) ?>">
-    <meta property="og:image" content="<?= e((string)$imagenPrincipal) ?>">
-    <meta property="og:url" content="https://www.inmobiliariaprimavera.com/">
-    <meta property="og:type" content="website">
-    <meta property="og:locale" content="es_MX">
-
-    <link rel="stylesheet" href="<?= BASE_URL ?>CSS/propiedadinfo.css">
-</head>
-
-<body>
-
-<header class="site-header">
-    <nav class="navbar">
-
-        <div class="navbar-left">
-
-            <a href="<?= BASE_URL ?>index.php">Inicio</a>
-
-            <div>
-                <a href="<?= BASE_URL ?>Usuario/Catalogo.php?tipo_operacion=venta">Venta</a>
-
-                <ul class="submenu">
-                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo.php?tipo_operacion=venta&categoria=1">Casas en venta</a></li>
-                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo.php?tipo_operacion=venta&categoria=2">Departamentos en venta</a></li>
-                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo.php?tipo_operacion=venta&categoria=4">Locales comerciales en venta</a></li>
-                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo.php?tipo_operacion=venta&categoria=3">Terrenos en venta</a></li>
-                </ul>
-            </div>
-
-            <div>
-                <a href="<?= BASE_URL ?>Usuario/Catalogo.php?tipo_operacion=renta">Renta</a>
-
-                <ul class="submenu">
-                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo.php?tipo_operacion=renta&categoria=1">Casas en renta</a></li>
-                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo.php?tipo_operacion=renta&categoria=2">Departamentos en renta</a></li>
-                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo.php?tipo_operacion=renta&categoria=4">Locales comerciales en renta</a></li>
-                </ul>
-            </div>
-
-        </div>
-
-        <a href="<?= BASE_URL ?>index.php" class="navbar-logo">
-            <img class="logo" src="<?= BASE_URL ?>Imagenes/Logosolo.png" alt="Logo">
-        </a>
-
-        <div class="navbar-right">
-            <a href="<?= BASE_URL ?>Usuario/Contacto.php">Contacto</a>
-        </div>
-
-    </nav>
-</header>
-
 <main>
 
     <!-- Imágenes de la propiedad -->
@@ -181,7 +110,7 @@ $mapsUrl = !empty($propiedad['google_maps_url'])
             <img 
                 class="imagen_principal" 
                 id="imagenPrincipal"
-                src="<?= e((string)$imagenPrincipal) ?>" 
+                src="<?= BASE_URL ?><?= e((string)$imagenPrincipal) ?>" 
                 alt="<?= e((string)$propiedad['titulo']) ?>"
             >
         </figure>
@@ -195,7 +124,7 @@ $mapsUrl = !empty($propiedad['google_maps_url'])
             <div class="miniaturas" id="miniaturas">
                 <?php foreach ($imagenes as $imagen): ?>
                     <img 
-                        src="<?= e((string)$imagen['imagen_url']) ?>" 
+                        src="<?= BASE_URL ?><?= e((string)$imagen['imagen_url']) ?>"
                         alt="<?= e((string)($imagen['texto_alternativo'] ?: $propiedad['titulo'])) ?>"
                         onclick="cambiarImagen(this.src)"
                     >
@@ -301,7 +230,7 @@ $mapsUrl = !empty($propiedad['google_maps_url'])
         <aside class="info_agente">
 
             <img 
-                src="<?= e((string)$fotoAgente) ?>" 
+                src="<?= BASE_URL ?><?= e((string)$fotoAgente) ?>"
                 alt="<?= e((string)($propiedad['agente_nombre'] ?: 'Agente inmobiliario')) ?>"
             >
 
@@ -392,7 +321,7 @@ $mapsUrl = !empty($propiedad['google_maps_url'])
         <h1>Encuentra la propiedad</h1>
 
         <iframe 
-            src="<?= e((string)$mapsUrl) ?>" 
+            src="<?= e((string)$mapsUrl) ?>"
             width="945" 
             height="370" 
             style="border:0;" 
@@ -403,92 +332,7 @@ $mapsUrl = !empty($propiedad['google_maps_url'])
     </section>
 
 </main>
-
-<footer class="site-footer">
-
-    <div class="footer-container">
-
-        <div class="footer-logo">
-            <a href="<?= BASE_URL ?>index.php" aria-label="Ir al inicio">
-                <img src="<?= BASE_URL ?>Imagenes/Logosolo.png" alt="Logo de Primavera inmobiliaria">
-            </a>
-        </div>
-
-        <nav class="footer-info" aria-label="Enlaces de información">
-            <h2 class="footer-title">Información</h2>
-
-            <ul class="footer-links">
-                <li><a href="<?= BASE_URL ?>Usuario/Politicas-privacidad.php" class="footer-link">Aviso de privacidad</a></li>
-                <li><a href="<?= BASE_URL ?>Usuario/Terminos-condiciones.php" class="footer-link">Términos y condiciones</a></li>
-                <li><a href="<?= BASE_URL ?>Usuario/Catalogo.php" class="footer-link">Todas las propiedades</a></li>
-                <li><a href="<?= BASE_URL ?>Usuario/Contacto.php" class="footer-link">Contacto</a></li>
-            </ul>
-        </nav>
-
-        <address class="footer-contacto">
-            <h2 class="footer-title">Contacto</h2>
-
-            <p class="footer-text">
-                Ejército Nacional 1101 entre 5 de Febrero y Jalisco. Fracc. Primavera
-            </p>
-
-            <p class="footer-text">
-                <a class="footer-text" href="tel:+526441435244">(644) 143 5244</a>
-            </p>
-
-            <p class="footer-text">
-                <a class="footer-text" href="mailto:sucorreo@gmail.com">sucorreo@gmail.com</a>
-            </p>
-        </address>
-
-        <div class="footer-redes">
-            <h2 class="footer-title">Redes sociales</h2>
-        
-            <div class="social-list">
-
-                <a 
-                    href="https://www.facebook.com/share/14eyn1t5H3f/?mibextid=wwXIfr" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    aria-label="Facebook de Primavera inmobiliaria"
-                    class="social-link"
-                >
-                    <span class="social-icon facebook">
-                        <i class="fa-brands fa-facebook-f"></i>
-                    </span>
-
-                    <span class="social-user">Primavera Inmobiliaria</span>
-                </a>
-            
-                <a 
-                    href="https://www.instagram.com/primavera.inmobiliariasc?igsh=dGZoajhrYjJpYXR6" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    aria-label="Instagram de Primavera inmobiliaria"
-                    class="social-link"
-                >
-                    <span class="social-icon instagram">
-                        <i class="fa-brands fa-instagram"></i>
-                    </span>
-
-                    <span class="social-user">@primavera.inmobiliariasc</span>
-                </a>
-
-            </div>
-        </div>
-
-    </div>
-
-    <div class="footer-bottom">
-        <p>&copy; 2027 Primavera inmobiliaria. Todos los derechos reservados.</p>
-
-        <p>
-            Desarrollado por 
-            <a href="<?= BASE_URL ?>contacto-desarrolladores.php">ULSA North West</a>
-        </p>
-    </div>
-
-</footer>
+<?php require_once ROOT_PATH . 'Includes/footer.php'; ?>
 
 <script>
 function cambiarImagen(src) {
@@ -581,5 +425,3 @@ document.addEventListener("DOMContentLoaded", () => {
 
 <?php endif; ?>
 
-</body>
-</html>

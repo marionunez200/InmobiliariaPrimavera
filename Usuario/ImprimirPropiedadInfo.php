@@ -185,7 +185,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
 
     class="imagen_principal"
 
-    src="<?= e($imagenPrincipal) ?>"
+    src="<?= BASE_URL ?><?= e($imagenPrincipal) ?>"
 
     alt="<?= e($propiedad['titulo']) ?>">
 
@@ -197,7 +197,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
 
     <img
 
-    src="<?= e($imagen['imagen_url']) ?>"
+    src="<?= BASE_URL ?><?= e($imagen['imagen_url']) ?>"
 
     alt="<?= e($imagen['texto_alternativo']) ?>">
 
@@ -353,7 +353,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
 
     <img
 
-        src="<?= e($fotoAgente) ?>"
+        src="<?= BASE_URL ?><?= e($fotoAgente) ?>"
 
         alt="<?= e($propiedad['agente_nombre']) ?>">
 
