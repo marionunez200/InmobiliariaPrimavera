@@ -82,7 +82,7 @@ $cssPaginas = $cssPaginas ?? [];
             </div>
         </div>
         
-        <a href="<?= BASE_URL ?>index.php" class="navbar-logo">
+        <a href="<?= BASE_URL ?>index.php" class="navbar-logo desktop">
             <img class="logo" src="<?= BASE_URL ?>Imagenes/Logosolo.png" alt="Logo de Primavera inmobiliaria">
         </a>
         
@@ -91,3 +91,6 @@ $cssPaginas = $cssPaginas ?? [];
         </div>
     </nav>
 </header>
+<script src="<?= BASE_URL ?>JS/header.js"></script>
+</body>
+</html>
