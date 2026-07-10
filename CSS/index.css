@@ -798,11 +798,31 @@ body {
     .section1-heading {
         max-width: 100%;
         padding: 1rem;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        text-align: center;
     }
 
-    .section1-heading h2,
+    .section1-heading h2 {
+        width: 100%;
+        text-align: center;
+    }
+
     .line {
         width: 70%;
+        margin: 1rem auto;
+    }
+
+    .section1-heading p {
+        max-width: 500px;
+        text-align: center;
+    }
+
+    .view-all-button {
+        align-self: center;
     }
 
     .categories-grid {
@@ -819,6 +839,14 @@ body {
     }
 
     .about-content {
+        max-width: 100%;
+    }
+
+    .about-image {
+        justify-content: center;
+    }
+
+    .about-img {
         max-width: 100%;
     }
 
@@ -856,7 +884,7 @@ body {
     }
 
     .view-all-button {
-        align-self: flex-start;
+        align-self: center;
     }
 
     .category-card {
