@@ -211,15 +211,13 @@ $stmtUltimas = $pdo->query("
 $ultimasPropiedades = $stmtUltimas->fetchAll();
 
 $stmtCategorias = $pdo->query("
-    SELECT
-        id,
-        nombre
+    SELECT *
     FROM categorias_propiedad
     WHERE activo = 1
     ORDER BY nombre ASC
 ");
 
-$categorias = $stmtCategorias->fetchAll();
+$categorias = $stmtCategorias->fetchAll(PDO::FETCH_ASSOC);
 
 ?>
 
@@ -529,9 +527,13 @@ $categorias = $stmtCategorias->fetchAll();
                     <button
                         type="button"
                         class="btnNuevaCategoria plus">
-
                         +
+                    </button>
 
+                    <button
+                        type="button"
+                        class="btnAdministrarCategorias minus">
+                        <i class="fa-solid fa-trash"></i>
                     </button>
                 </div>
             </label>
@@ -714,20 +716,23 @@ $categorias = $stmtCategorias->fetchAll();
                         <option value="">Selecciona una categoría</option>
 
                         <?php foreach ($categorias as $categoria): ?>
-
                             <option value="<?= e($categoria['id']) ?>">
                                 <?= e($categoria['nombre']) ?>
                             </option>
-
                         <?php endforeach; ?>
 
                     </select>
 
                     <button
                         type="button"
-                        id="btnNuevaCategoria"
-                        class="plus">
+                        class="btnNuevaCategoria plus">
                         +
+                    </button>
+
+                    <button
+                        type="button"
+                        class="btnAdministrarCategorias minus">
+                        <i class="fa-solid fa-trash"></i>
                     </button>
 
                 </div>
@@ -874,11 +879,9 @@ $categorias = $stmtCategorias->fetchAll();
 <!-- MODAL NUEVA CATEGORÍA -->
 <dialog class="modal modal-small" id="modalCategoria">
 
-    <form
-        class="modal-content"
-        action="guardar-categoria.php"
-        method="POST">
-
+<form class="modal-content"
+    action="<?= BASE_URL ?>Backend/guardar-categoria.php"
+    method="POST">
         <div class="modal-header">
             <h2>Nueva categoría</h2>
 
@@ -931,6 +934,64 @@ $categorias = $stmtCategorias->fetchAll();
 
 </dialog>
 
+    <!-- MODAL ELIMINAR CATEGORIA -->
+<dialog class="modal" id="modalCategorias">
+
+    <div class="modal-header">
+        <h2>Administrar categorias</h2>
+
+        <button type="button" class="modal-close" data-close-modal>
+            &times;
+        </button>
+    </div>
+
+    <div class="categorias-admin-list">
+
+    <?php foreach ($categorias as $categoria): ?>
+
+        <div class="categoria-item">
+
+            <div class="categoria-info">
+                <span class="categoria-nombre">
+                    <?= e($categoria['nombre']) ?>
+                </span>
+
+                <?php if ($categoria['protegida']): ?>
+                    <span class="categoria-badge protegida">
+                        Protegida
+                    </span>
+                <?php endif; ?>
+            </div>
+
+            <?php if (!$categoria['protegida']): ?>
+
+                <form
+                    action="<?= BASE_URL ?>Backend/eliminar-categoria.php"
+                    method="POST">
+
+                    <input
+                        type="hidden"
+                        name="id"
+                        value="<?= $categoria['id'] ?>">
+
+                    <button
+                        type="button"
+                        class="btn-danger btn-eliminar-categoria"
+                        data-id="<?= $categoria['id'] ?>">
+                        Eliminar
+                    </button>
+
+                </form>
+
+            <?php endif; ?>
+
+        </div>
+
+    <?php endforeach; ?>
+
+</div>
+</dialog>
+    
 <!-- MODAL ELIMINAR PROPIEDAD -->
 <dialog class="modal modal-small" id="modalEliminar">
     <form class="modal-content" action="<?= BASE_URL ?>Backend/eliminar-propiedad.php" method="POST">
@@ -959,6 +1020,57 @@ $categorias = $stmtCategorias->fetchAll();
             </button>
 
             <button type="submit" class="btn-danger">
+                Sí, eliminar
+            </button>
+        </div>
+
+    </form>
+</dialog>
+
+<!-- MODAL CONFIRMAR ELIMINAR CATEGORIA -->
+<dialog class="modal modal-small" id="modalEliminarCategoria">
+    <form
+        class="modal-content"
+        action="<?= BASE_URL ?>Backend/eliminar-categoria.php"
+        method="POST">
+
+        <input
+            type="hidden"
+            name="id"
+            id="delete_categoria_id">
+
+        <div class="modal-header">
+            <h2>Eliminar categoría</h2>
+
+            <button
+                type="button"
+                class="modal-close"
+                data-close-modal>
+                &times;
+            </button>
+        </div>
+
+        <div class="modal-body">
+            <p>
+                ¿Seguro que quieres eliminar esta categoría?
+            </p>
+
+            <p class="warning">
+                Esta acción no se podrá deshacer.
+            </p>
+        </div>
+
+        <div class="modal-actions">
+            <button
+                type="button"
+                class="btn-secondary"
+                data-close-modal>
+                Cancelar
+            </button>
+
+            <button
+                type="submit"
+                class="btn-danger">
                 Sí, eliminar
             </button>
         </div>
@@ -1050,6 +1162,31 @@ document.addEventListener('click', (event) => {
     const modal = closeButton.closest('dialog');
 
     cerrarModal(modal);
+});
+
+/* Borrar categoría */
+const modalCategorias = document.getElementById("modalCategorias");
+
+document.querySelectorAll(".btnAdministrarCategorias").forEach(btn => {
+    btn.addEventListener("click", () => {
+        modalCategorias.showModal();
+    });
+});
+
+/* Confirmar eliminar categoría */
+const modalEliminarCategoria = document.getElementById("modalEliminarCategoria");
+const deleteCategoriaId = document.getElementById("delete_categoria_id");
+
+document.querySelectorAll(".btn-eliminar-categoria").forEach(btn => {
+
+    btn.addEventListener("click", () => {
+
+        deleteCategoriaId.value = btn.dataset.id;
+
+        modalEliminarCategoria.showModal();
+
+    });
+
 });
 
 /* Imágenes actuales en editar */
@@ -1496,6 +1633,7 @@ document.querySelectorAll(".btnNuevaCategoria").forEach((boton)=>{
 
     });
 
-});</script>
+});
+</script>
 </body>
 </html>

@@ -11,7 +11,7 @@ $pdo = db();
 $nombre = trim($_POST['nombre'] ?? '');
 
 if ($nombre == '') {
-    header("Location: Panel-propiedades.php");
+    header("Location: " . BASE_URL . "Admin/Panel-propiedades.php");
     exit;
 }
 
@@ -31,7 +31,7 @@ if ($stmt->fetch()) {
         'mensaje' => 'Ya existe una categoría con ese nombre.'
     ];
 
-    header("Location: Panel-propiedades.php");
+    header("Location: " . BASE_URL . "Admin/Panel-propiedades.php");
     exit;
 }
 
@@ -49,5 +49,5 @@ $_SESSION['modal_exito'] = [
     'mensaje' => 'La categoría fue creada correctamente.'
 ];
 
-header("Location: Panel-propiedades.php");
+header("Location: " . BASE_URL . "Admin/Panel-propiedades.php");
 exit;
