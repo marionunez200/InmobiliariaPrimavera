@@ -113,6 +113,11 @@ require_once ROOT_PATH . '/Includes/header.php';
 <main class="site-main">
 
     <section class="filtro">
+        
+        <h2 class="titulo-filtros">
+            Filtros
+        </h2>
+
         <form class="filtro-form" action="<?= BASE_URL ?>Usuario/Catalogo.php" method="GET" aria-label="Formulario de filtrado de propiedades">
 
             <div class="filtro-group-top">
