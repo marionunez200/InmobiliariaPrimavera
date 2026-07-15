@@ -121,13 +121,13 @@ function guardarImagenesPropiedad(PDO $pdo, int $propiedad_id, string $titulo, b
             throw new Exception('Solo se permiten imágenes JPG, JPEG, PNG o WEBP.');
         }
 
-        $nombreNuevo = 'propiedad-' . $propiedad_id . '-' . uniqid() . '.' . $extension;
+        $nombreNuevo = 'propiedad-' . $propiedad_id . '-' . uniqid() . '.webp';
 
         $rutaDestinoServidor = $carpetaUploads . $nombreNuevo;
         $rutaParaBaseDatos = 'Uploads/propiedades/' . $nombreNuevo;
 
-        if (!move_uploaded_file($tmpName, $rutaDestinoServidor)) {
-            throw new Exception('No se pudo guardar la imagen en la carpeta Uploads.');
+        if (!convertirAWebp($tmpName, $rutaDestinoServidor, $extension)) {
+            throw new Exception('No se pudo convertir la imagen a WEBP.');
         }
 
         $esPrincipal = $hayPrincipal ? 0 : 1;
@@ -457,6 +457,42 @@ try {
             $propiedad_id,
             $_POST['eliminar_imagenes']
         );
+    }
+
+    function convertirAWebp(string $origen, string $destino, string $extension): bool
+    {
+        switch ($extension) {
+
+            case 'jpg':
+            case 'jpeg':
+                $imagen = imagecreatefromjpeg($origen);
+                break;
+
+            case 'png':
+                $imagen = imagecreatefrompng($origen);
+
+                imagepalettetotruecolor($imagen);
+                imagealphablending($imagen, true);
+                imagesavealpha($imagen, true);
+
+                break;
+
+            case 'webp':
+                return move_uploaded_file($origen, $destino);
+
+            default:
+                return false;
+        }
+
+        if (!$imagen) {
+            return false;
+        }
+
+        imagewebp($imagen, $destino, 85);
+
+        imagedestroy($imagen);
+
+        return true;
     }
 
     guardarImagenesPropiedad(

@@ -11,6 +11,36 @@ $pdo = db();
 
 $pdo = db();
 
+function convertirAWebp(string $origen, string $destino, string $extension): bool
+{
+    switch (strtolower($extension)) {
+        case 'jpg':
+        case 'jpeg':
+            $imagen = imagecreatefromjpeg($origen);
+            break;
+
+        case 'png':
+            $imagen = imagecreatefrompng($origen);
+
+            imagepalettetotruecolor($imagen);
+            imagealphablending($imagen, true);
+            imagesavealpha($imagen, true);
+            break;
+
+        case 'webp':
+            return move_uploaded_file($origen, $destino);
+
+        default:
+            return false;
+    }
+
+    $resultado = imagewebp($imagen, $destino, 85);
+
+    imagedestroy($imagen);
+
+    return $resultado;
+}
+
 function subirFotoAgente(?string $fotoActual = null): ?string
 {
     if (
@@ -48,13 +78,13 @@ function subirFotoAgente(?string $fotoActual = null): ?string
         mkdir($carpetaUploads, 0777, true);
     }
 
-    $nombreNuevo = 'agente-' . uniqid() . '.' . $extension;
+    $nombreNuevo = 'agente-' . uniqid() . '.webp';
 
     $rutaServidor = $carpetaUploads . $nombreNuevo;
     $rutaBaseDatos = 'Uploads/agentes/' . $nombreNuevo;
 
-    if (!move_uploaded_file($tmpName, $rutaServidor)) {
-        throw new Exception('No se pudo guardar la foto en Uploads/agentes.');
+    if (!convertirAWebp($tmpName, $rutaServidor, $extension)) {
+        throw new Exception('No se pudo convertir la imagen a WebP.');
     }
 
     if (
