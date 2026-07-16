@@ -469,7 +469,7 @@ $categorias = $stmtCategorias->fetchAll(PDO::FETCH_ASSOC);
 
 <!-- MODAL AGREGAR PROPIEDAD -->
 <dialog class="modal" id="modalAgregar">
-    <form class="modal-content" action="<?= BASE_URL ?>Backend/guardar-propiedad.php" method="POST" enctype="multipart/form-data">
+    <form class="modal-content" action="<?= BASE_URL ?>Backend/Propiedades/agregar-propiedad.php" method="POST" enctype="multipart/form-data">
 
         <div class="modal-header">
             <h2>Agregar propiedad</h2>
@@ -664,7 +664,7 @@ $categorias = $stmtCategorias->fetchAll(PDO::FETCH_ASSOC);
 
 <!-- MODAL EDITAR PROPIEDAD -->
 <dialog class="modal" id="modalEditar">
-    <form class="modal-content" action="<?= BASE_URL ?>Backend/guardar-propiedad.php" method="POST" enctype="multipart/form-data">
+    <form class="modal-content" action="<?= BASE_URL ?>Backend/Propiedades/editar-propiedad.php" method="POST" enctype="multipart/form-data">
 
         <input type="hidden" name="id" id="edit_id">
         <input type="hidden" name="imagen_principal_id" id="imagen_principal_id">
@@ -994,7 +994,7 @@ $categorias = $stmtCategorias->fetchAll(PDO::FETCH_ASSOC);
     
 <!-- MODAL ELIMINAR PROPIEDAD -->
 <dialog class="modal modal-small" id="modalEliminar">
-    <form class="modal-content" action="<?= BASE_URL ?>Backend/eliminar-propiedad.php" method="POST">
+    <form class="modal-content" action="<?= BASE_URL ?>Backend/Propiedades/eliminar-propiedad.php" method="POST">
 
         <input type="hidden" name="id" id="delete_id">
 

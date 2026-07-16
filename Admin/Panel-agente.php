@@ -305,7 +305,7 @@ $ultimosAgentes = $stmtUltimos->fetchAll();?>
 
 <!-- MODAL AGREGAR AGENTE -->
 <dialog class="modal" id="modalAgregar">
-    <form class="modal-content" action="<?= BASE_URL ?>Backend/guardar-agente.php" method="POST" enctype="multipart/form-data">
+    <form class="modal-content" action="<?= BASE_URL ?>Backend/Agente/agregar-agente.php" method="POST" enctype="multipart/form-data">
         <div class="modal-header">
             <h2>Agregar agente</h2>
 
@@ -391,7 +391,7 @@ $ultimosAgentes = $stmtUltimos->fetchAll();?>
 
 <!-- MODAL EDITAR AGENTE -->
 <dialog class="modal" id="modalEditar">
-    <form class="modal-content" action="<?= BASE_URL ?>Backend/guardar-agente.php" method="POST" enctype="multipart/form-data">
+    <form class="modal-content" action="<?= BASE_URL ?>Backend/Agente/editar-agente.php" method="POST" enctype="multipart/form-data">
         <input type="hidden" name="id" id="edit_id">
 
         <div class="modal-header">
@@ -488,7 +488,7 @@ $ultimosAgentes = $stmtUltimos->fetchAll();?>
 
 <!-- MODAL ELIMINAR AGENTE -->
 <dialog class="modal modal-small" id="modalEliminar">
-    <form class="modal-content" action="<?= BASE_URL ?>Backend/eliminar-agente.php" method="POST">
+    <form class="modal-content" action="<?= BASE_URL ?>Backend/Agente/eliminar-agente.php" method="POST">
 
         <input type="hidden" name="id" id="delete_id">
 

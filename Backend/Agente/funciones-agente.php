@@ -1,15 +1,6 @@
+
 <?php
 require_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
-
-require_once ROOT_PATH . '/Config/database.php';
-
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
-$pdo = db();
-
-$pdo = db();
 
 function convertirAWebp(string $origen, string $destino, string $extension): bool
 {
@@ -101,89 +92,16 @@ function subirFotoAgente(?string $fotoActual = null): ?string
     return $rutaBaseDatos;
 }
 
-$id = trim($_POST['id'] ?? '');
-$esEdicion = $id !== '';
+function obtenerFotoActual(PDO $pdo, int $id): ?string
+{
+    $stmt = $pdo->prepare("
+        SELECT foto_url
+        FROM agentes
+        WHERE id = ?
+        LIMIT 1
+    ");
 
-$nombre = trim($_POST['nombre'] ?? '');
-$telefono = trim($_POST['telefono'] ?? '');
-$email = trim($_POST['email'] ?? '');
-$activo = isset($_POST['activo']) ? (int)$_POST['activo'] : 1;
+    $stmt->execute([$id]);
 
-if ($nombre === '') {
-    die('El nombre del agente es obligatorio.');
-}
-
-try {
-    if ($id !== '') {
-        $stmtActual = $pdo->prepare("
-            SELECT foto_url
-            FROM agentes
-            WHERE id = ?
-            LIMIT 1
-        ");
-
-        $stmtActual->execute([$id]);
-        $agenteActual = $stmtActual->fetch();
-
-        $fotoActual = $agenteActual['foto_url'] ?? null;
-
-        $nuevaFoto = subirFotoAgente($fotoActual);
-
-        $fotoFinal = $nuevaFoto ?: $fotoActual;
-
-        $stmt = $pdo->prepare("
-            UPDATE agentes SET
-                nombre = ?,
-                telefono = ?,
-                email = ?,
-                foto_url = ?,
-                activo = ?
-            WHERE id = ?
-        ");
-
-        $stmt->execute([
-            $nombre,
-            $telefono,
-            $email,
-            $fotoFinal,
-            $activo,
-            $id
-        ]);
-
-    } else {
-        $nuevaFoto = subirFotoAgente(null);
-
-        $fotoFinal = $nuevaFoto ?: 'Imagenes/agente1.webp';
-
-        $stmt = $pdo->prepare("
-            INSERT INTO agentes (
-                nombre,
-                telefono,
-                email,
-                foto_url,
-                activo
-            ) VALUES (?, ?, ?, ?, ?)
-        ");
-
-        $stmt->execute([
-            $nombre,
-            $telefono,
-            $email,
-            $fotoFinal,
-            $activo
-        ]);
-    }
-
-    $_SESSION['modal_exito'] = [
-        'titulo' => $esEdicion ? 'Cambios guardados' : 'Agente agregado',
-        'mensaje' => $esEdicion
-            ? 'La información del agente se actualizó correctamente.'
-            : 'El agente se agregó correctamente al panel.'
-    ];
-    
-    header('Location: ' . BASE_URL . 'Admin/Panel-agente.php');
-    exit;
-
-} catch (Exception $e) {
-    die('Error al guardar agente: ' . $e->getMessage());
+    return $stmt->fetchColumn() ?: null;
 }
