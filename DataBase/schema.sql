@@ -1,152 +1,177 @@
-CREATE DATABASE inmobiliaria_db
-CHARACTER SET utf8mb4
-COLLATE utf8mb4_unicode_ci;
+-- MySQL dump 10.13  Distrib 8.0.46, for Win64 (x86_64)
+--
+-- Host: 127.0.0.1    Database: inmobiliaria_db
+-- ------------------------------------------------------
+-- Server version	9.7.1
 
-USE inmobiliaria_db;
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!50503 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+SET @MYSQLDUMP_TEMP_LOG_BIN = @@SESSION.SQL_LOG_BIN;
+SET @@SESSION.SQL_LOG_BIN= 0;
 
-CREATE TABLE usuarios_admin (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+--
+-- GTID state at the beginning of the backup 
+--
 
-    nombre VARCHAR(100) NOT NULL,
-    email VARCHAR(150) NOT NULL UNIQUE,
-    password_hash VARCHAR(255) NOT NULL,
+SET @@GLOBAL.GTID_PURGED=/*!80000 '+'*/ '0f341035-6eb4-11f1-af9d-028855667746:1-170,
+3099865d-6da0-11f1-aed4-00e04cb20f2c:1-177';
 
-    rol ENUM('admin', 'editor') DEFAULT 'admin',
-    activo TINYINT DEFAULT 1,
+--
+-- Table structure for table `agentes`
+--
 
-    creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    actualizado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-) ENGINE=InnoDB;
+DROP TABLE IF EXISTS `agentes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `agentes` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `telefono` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `email` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `foto_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `activo` tinyint DEFAULT '1',
+  `creado_en` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `actualizado_en` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Table structure for table `categorias_propiedad`
+--
 
-CREATE TABLE agentes (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+DROP TABLE IF EXISTS `categorias_propiedad`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `categorias_propiedad` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `activo` tinyint(1) DEFAULT '1',
+  `protegida` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `nombre` (`nombre`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
-    nombre VARCHAR(100) NOT NULL,
-    telefono VARCHAR(30),
-    email VARCHAR(150),
-    foto_url VARCHAR(255),
+--
+-- Table structure for table `imagenes_propiedades`
+--
 
-    activo TINYINT DEFAULT 1,
+DROP TABLE IF EXISTS `imagenes_propiedades`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `imagenes_propiedades` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `propiedad_id` int NOT NULL,
+  `imagen_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `texto_alternativo` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `es_principal` tinyint DEFAULT '0',
+  `orden` int DEFAULT '0',
+  `creado_en` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_imagenes_propiedad` (`propiedad_id`),
+  CONSTRAINT `fk_imagenes_propiedades` FOREIGN KEY (`propiedad_id`) REFERENCES `propiedades` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
-    creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    actualizado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-) ENGINE=InnoDB;
+--
+-- Table structure for table `mensajes_contacto`
+--
 
+DROP TABLE IF EXISTS `mensajes_contacto`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `mensajes_contacto` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `propiedad_id` int DEFAULT NULL,
+  `nombre` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `telefono` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `email` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mensaje` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `estado_mensaje` enum('nuevo','leido','contactado','cerrado') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'nuevo',
+  `creado_en` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `completado_en` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_mensajes_propiedad` (`propiedad_id`),
+  CONSTRAINT `fk_mensajes_propiedades` FOREIGN KEY (`propiedad_id`) REFERENCES `propiedades` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
-CREATE TABLE propiedades (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+--
+-- Table structure for table `propiedades`
+--
 
-    agente_id INT NOT NULL,
+DROP TABLE IF EXISTS `propiedades`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `propiedades` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `agente_id` int NOT NULL,
+  `titulo` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `slug` varchar(180) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `descripcion` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `precio` decimal(12,2) NOT NULL,
+  `moneda` char(3) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'MXN',
+  `tipo_operacion` enum('venta','renta','traspaso') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `estado_publicacion` enum('activo','inactivo') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'activo',
+  `destacada` tinyint DEFAULT '0',
+  `ciudad` enum('navojoa','san_carlos','ciudad_obregon','guaymas') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `direccion_completa` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `google_maps_url` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `recamaras` tinyint unsigned DEFAULT '0',
+  `banos` decimal(3,1) DEFAULT '0.0',
+  `estacionamientos` tinyint unsigned DEFAULT '0',
+  `terreno_m2` decimal(10,2) DEFAULT NULL,
+  `construccion_m2` decimal(10,2) DEFAULT NULL,
+  `creado_en` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `actualizado_en` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `categoria_id` int NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `slug` (`slug`),
+  KEY `idx_propiedades_agente` (`agente_id`),
+  KEY `idx_propiedades_filtros` (`estado_publicacion`,`ciudad`,`tipo_operacion`,`precio`),
+  KEY `idx_propiedades_destacadas` (`destacada`),
+  CONSTRAINT `fk_propiedades_agentes` FOREIGN KEY (`agente_id`) REFERENCES `agentes` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
-    titulo VARCHAR(150) NOT NULL,
-    slug VARCHAR(180) UNIQUE,
+--
+-- Table structure for table `usuarios_admin`
+--
 
-    descripcion TEXT,
+DROP TABLE IF EXISTS `usuarios_admin`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `usuarios_admin` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `password_hash` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `rol` enum('admin','editor') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'admin',
+  `activo` tinyint DEFAULT '1',
+  `creado_en` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `actualizado_en` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `email` (`email`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+SET @@SESSION.SQL_LOG_BIN = @MYSQLDUMP_TEMP_LOG_BIN;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
-    precio DECIMAL(12,2) NOT NULL,
-    moneda CHAR(3) DEFAULT 'MXN',
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
-    tipo_operacion ENUM('venta', 'renta', 'traspaso') NOT NULL,
-
-    tipo_propiedad ENUM(
-        'casa',
-        'departamento',
-        'local_comercial',
-        'terreno'
-    ) NOT NULL,
-
-    estado_publicacion ENUM('activo', 'inactivo') DEFAULT 'activo',
-
-    destacada TINYINT DEFAULT 0,
-
-    ciudad ENUM(
-        'navojoa',
-        'san_carlos',
-        'ciudad_obregon',
-        'guaymas'
-    ) NOT NULL,
-
-    direccion_completa VARCHAR(255) NOT NULL,
-    google_maps_url VARCHAR(500),
-
-    recamaras TINYINT UNSIGNED DEFAULT 0,
-    banos DECIMAL(3,1) DEFAULT 0,
-    estacionamientos TINYINT UNSIGNED DEFAULT 0,
-
-    terreno_m2 DECIMAL(10,2),
-    construccion_m2 DECIMAL(10,2),
-
-    creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    actualizado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-
-    CONSTRAINT fk_propiedades_agentes
-        FOREIGN KEY (agente_id)
-        REFERENCES agentes(id)
-        ON UPDATE CASCADE
-        ON DELETE RESTRICT
-) ENGINE=InnoDB;
-
-
-CREATE TABLE imagenes_propiedades (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-
-    propiedad_id INT NOT NULL,
-
-    imagen_url VARCHAR(255) NOT NULL,
-    texto_alternativo VARCHAR(150),
-    es_principal TINYINT DEFAULT 0,
-    orden INT DEFAULT 0,
-
-    creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT fk_imagenes_propiedades
-        FOREIGN KEY (propiedad_id)
-        REFERENCES propiedades(id)
-        ON UPDATE CASCADE
-        ON DELETE CASCADE
-) ENGINE=InnoDB;
-
-
-CREATE TABLE mensajes_contacto (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-
-    propiedad_id INT NULL,
-
-    nombre VARCHAR(100) NOT NULL,
-    telefono VARCHAR(30),
-    email VARCHAR(150),
-    mensaje TEXT NOT NULL,
-
-    estado_mensaje ENUM('nuevo', 'leido', 'contactado', 'cerrado') DEFAULT 'nuevo',
-
-    creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    completado_en DATETIME NULL,
-
-    CONSTRAINT fk_mensajes_propiedades
-        FOREIGN KEY (propiedad_id)
-        REFERENCES propiedades(id)
-        ON UPDATE CASCADE
-        ON DELETE SET NULL
-) ENGINE=InnoDB;
-
-CREATE INDEX idx_propiedades_agente
-ON propiedades(agente_id);
-
-CREATE INDEX idx_propiedades_filtros
-ON propiedades(
-    estado_publicacion,
-    ciudad,
-    tipo_operacion,
-    tipo_propiedad,
-    precio
-);
-
-CREATE INDEX idx_propiedades_destacadas
-ON propiedades(destacada);
-
-CREATE INDEX idx_imagenes_propiedad
-ON imagenes_propiedades(propiedad_id);
-
-CREATE INDEX idx_mensajes_propiedad
-ON mensajes_contacto(propiedad_id);
+-- Dump completed on 2026-07-18 17:42:52
