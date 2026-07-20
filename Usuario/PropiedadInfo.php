@@ -203,7 +203,7 @@ require_once ROOT_PATH . 'Includes/header.php';
 
                     <li>
                         <i class="fa-solid fa-toilet"></i>
-                        <p><?= e((string)$propiedad['banos']) ?> baños</p>
+                        <p><?= (int)$propiedad['banos'] ?> baños</p>
                     </li>
 
                     <li>

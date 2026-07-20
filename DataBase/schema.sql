@@ -71,7 +71,7 @@ CREATE TABLE propiedades (
     google_maps_url VARCHAR(500),
 
     recamaras TINYINT UNSIGNED DEFAULT 0,
-    banos DECIMAL(3,1) DEFAULT 0,
+    banos INT DEFAULT 0,
     estacionamientos TINYINT UNSIGNED DEFAULT 0,
 
     terreno_m2 DECIMAL(10,2),
