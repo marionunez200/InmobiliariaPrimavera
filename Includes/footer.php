@@ -26,7 +26,11 @@ if (!defined('BASE_URL')) {
 
             <address class="footer-contacto">
                 <h2 class="footer-title">Contacto</h2>
-                <p class="footer-text">Ejército Nacional 1101 entre 5 de Febrero y Jalisco. Fracc. Primavera</p>
+                <a class="decoration" href="https://maps.app.goo.gl/5eBm6munAbHJV8wH7" target="_blank" rel="noopener noreferrer">
+                    <p class="footer-text">
+                        Ejército Nacional 1101 entre 5 de Febrero y Jalisco. Fracc. Primavera
+                    </p>
+                </a>
                 <p class="footer-text">
                     <i class="fa-solid fa-phone"></i>
                     <a class="footer-text" href="tel:+526441435244">(644) 143 5244</a>
