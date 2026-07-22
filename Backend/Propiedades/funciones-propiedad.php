@@ -109,6 +109,28 @@ function guardarImagenesPropiedad(PDO $pdo, int $propiedad_id, string $titulo, b
             throw new Exception('Una imagen supera los 5 MB.');
         }
 
+        if (!is_uploaded_file($tmpName)) {
+            throw new Exception('Archivo inválido.');
+        }
+
+        $finfo = new finfo(FILEINFO_MIME_TYPE);
+        $mime = $finfo->file($tmpName);
+        
+        $mimesPermitidos = [
+            'image/jpeg',
+            'image/png',
+            'image/webp'
+        ];
+
+        if (!in_array($mime, $mimesPermitidos, true)) {
+            throw new Exception('El archivo seleccionado no es una imagen válida.');
+        }
+
+        /* Validar que GD pueda leer la imagen */
+        if (getimagesize($tmpName) === false) {
+            throw new Exception('La imagen está dañada o es inválida.');
+        }
+
         $extension = strtolower(pathinfo($nombreOriginal, PATHINFO_EXTENSION));
 
         if (!in_array($extension, $extensionesPermitidas, true)) {

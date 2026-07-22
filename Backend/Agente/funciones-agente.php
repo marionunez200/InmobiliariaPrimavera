@@ -27,8 +27,6 @@ function convertirAWebp(string $origen, string $destino, string $extension): boo
 
     $resultado = imagewebp($imagen, $destino, 85);
 
-    imagedestroy($imagen);
-
     return $resultado;
 }
 
@@ -53,6 +51,27 @@ function subirFotoAgente(?string $fotoActual = null): ?string
 
     if ($size > $maxSize) {
         throw new Exception('La imagen no debe pesar más de 5 MB.');
+    }
+
+    if (!is_uploaded_file($tmpName)) {
+        throw new Exception('Archivo inválido.');
+    }
+
+    $finfo = new finfo(FILEINFO_MIME_TYPE);
+    $mime = $finfo->file($tmpName);
+
+    $mimesPermitidos = [
+        'image/jpeg',
+        'image/png',
+        'image/webp'
+    ];
+
+    if (!in_array($mime, $mimesPermitidos, true)) {
+        throw new Exception('El archivo seleccionado no es una imagen válida.');
+    }
+
+    if (getimagesize($tmpName) === false) {
+        throw new Exception('La imagen está dañada o es inválida.');
     }
 
     $extension = strtolower(pathinfo($nombreOriginal, PATHINFO_EXTENSION));
