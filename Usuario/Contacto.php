@@ -56,7 +56,7 @@ require ROOT_PATH . 'Includes/header.php';
         <!-- Mapa -->
         <section class="ubicacion card-mapa">
             <h2>Ubicacion</h2>
-        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d6878.142646234171!2d-109.93446448399092!3d27.453948993461836!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x86c81700666afb4b%3A0xea1613f33bff575a!2sPrimavera%20Inmobiliaria!5e1!3m2!1ses-419!2s!4v1784760246049!5m2!1ses-419!2s" width="615" height="575" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3540.455434763745!2d-109.9341586884015!3d27.455077236473013!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x86c81700666afb4b%3A0xea1613f33bff575a!2sPrimavera%20Inmobiliaria!5e0!3m2!1ses!2smx!4v1784762687206!5m2!1ses!2smx" width="615" height="575" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
     </main>
 
 <?php require ROOT_PATH . 'Includes/footer.php'; ?>
