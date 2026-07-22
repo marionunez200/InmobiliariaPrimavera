@@ -287,6 +287,7 @@ require_once ROOT_PATH . '/Includes/header.php';
                     href="https://wa.me/526441435244"
                     target="_blank"
                     class="btn-whatsapp"
+                    rel="noopener noreferrer"
                 >
                     <i class="fa-brands fa-whatsapp"></i>
                     Enviar mensaje

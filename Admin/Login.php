@@ -11,39 +11,79 @@ $pdo = db();
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
     $usuarioLogin = trim($_POST['usuario'] ?? '');
-    $password = trim($_POST['password'] ?? '');
+    $password = $_POST['password'] ?? '';
 
     if ($usuarioLogin === '' || $password === '') {
+
         $error = 'Completa todos los campos.';
+
     } else {
+
+        /*
+        Buscamos solamente el usuario.
+        La contraseña NO se compara en SQL.
+        */
+
         $stmt = $pdo->prepare("
-            SELECT id, nombre, email, rol, activo
+            SELECT 
+                id,
+                nombre,
+                email,
+                rol,
+                activo,
+                password_hash
             FROM usuarios_admin
-            WHERE (email = ? OR nombre = ?)
-            AND password_hash = ?
-            AND activo = 1
+            WHERE email = ?
+            OR nombre = ?
             LIMIT 1
         ");
 
         $stmt->execute([
             $usuarioLogin,
-            $usuarioLogin,
-            $password
+            $usuarioLogin
         ]);
 
-        $usuario = $stmt->fetch();
+        $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($usuario) {
+
+        /*
+        Verificamos la contraseña usando password_verify()
+        */
+
+        if (
+            $usuario &&
+            $usuario['activo'] == 1 &&
+            password_verify($password, $usuario['password_hash'])
+        ) {
+
+
+            /*
+            Regeneramos la sesión para evitar
+            ataques de fijación de sesión
+            */
+
+            session_regenerate_id(true);
+
+
             $_SESSION['admin_id'] = $usuario['id'];
             $_SESSION['admin_nombre'] = $usuario['nombre'];
             $_SESSION['admin_email'] = $usuario['email'];
             $_SESSION['admin_rol'] = $usuario['rol'];
 
-            header('Location: ' . BASE_URL . 'Admin/Panel-propiedades.php');
+
+            header(
+                'Location: ' . BASE_URL . 'Admin/Panel-propiedades.php'
+            );
+
             exit;
+
+
         } else {
+
             $error = 'Usuario, correo o contraseña incorrectos.';
+
         }
     }
 }
