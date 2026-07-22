@@ -7,14 +7,11 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-$pdo = db();
-
-if (!function_exists('e')) {
-    function e(string $value): string
-    {
-        return htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
-    }
+if (!isset($_SESSION['admin_id'])) {
+    header("Location: Login.php");
+    exit;
 }
+$pdo = db();
 
 /* ================================
     MODAL DE ÉXITO

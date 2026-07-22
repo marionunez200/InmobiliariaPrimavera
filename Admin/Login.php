@@ -11,19 +11,29 @@ $pdo = db();
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
     $usuarioLogin = trim($_POST['usuario'] ?? '');
-    $password = trim($_POST['password'] ?? '');
+    $password = $_POST['password'] ?? '';
 
     if ($usuarioLogin === '' || $password === '') {
+
         $error = 'Completa todos los campos.';
+
     } else {
+
+        /*
+        Buscamos solamente el usuario.
+        La contraseña NO se compara en SQL.
+        */
+
         $stmt = $pdo->prepare("
-            SELECT id,
-                    nombre,
-                    email,
-                    rol,
-                    activo,
-                    password_hash
+            SELECT
+                id,
+                nombre,
+                email,
+                rol,
+                activo,
+                password_hash
             FROM usuarios_admin
             WHERE (email = ? OR nombre = ?)
             AND activo = 1
@@ -37,7 +47,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($usuario && password_verify($password, $usuario['password_hash'])) {
+        /*
+        Verificamos la contraseña usando password_verify()
+        */
+
+        if (
+            $usuario &&
+            password_verify($password, $usuario['password_hash'])
+        ) {
+
+            /*
+            Regeneramos la sesión para evitar
+            ataques de fijación de sesión
+            */
+
+            session_regenerate_id(true);
 
             $_SESSION['admin_id'] = $usuario['id'];
             $_SESSION['admin_nombre'] = $usuario['nombre'];

@@ -5,7 +5,10 @@ require_once ROOT_PATH . '/Config/database.php';
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-
+if (!isset($_SESSION['admin_id'])) {
+    header("Location: Login.php");
+    exit;
+}
 $pdo = db();
 
 $modalExitoTitulo = '';
