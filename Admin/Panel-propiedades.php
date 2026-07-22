@@ -547,7 +547,7 @@ $categorias = $stmtCategorias->fetchAll(PDO::FETCH_ASSOC);
 
             <label>
                 Precio
-                <input type="number" name="precio" placeholder="2500000" step="0.01" required>
+                <input type="number" name="precio" placeholder="2500000" min="0" step="1" required>
             </label>
 
             <label>
@@ -580,12 +580,12 @@ $categorias = $stmtCategorias->fetchAll(PDO::FETCH_ASSOC);
 
             <label>
                 Terreno m²
-                <input type="number" name="terreno_m2" step="0.01">
+                <input type="number" name="terreno_m2" step="1">
             </label>
 
             <label>
                 Construcción m²
-                <input type="number" name="construccion_m2" step="0.01">
+                <input type="number" name="construccion_m2" min="0" step="1">
             </label>
 
             <div>
@@ -748,7 +748,7 @@ $categorias = $stmtCategorias->fetchAll(PDO::FETCH_ASSOC);
 
             <label>
                 Precio
-                <input type="number" name="precio" id="edit_precio" step="0.01" required>
+                <input type="number" name="precio" id="edit_precio" min="0" step="1" required>
             </label>
 
             <label>
@@ -781,12 +781,12 @@ $categorias = $stmtCategorias->fetchAll(PDO::FETCH_ASSOC);
 
             <label>
                 Terreno m²
-                <input type="number" name="terreno_m2" id="edit_terreno_m2" step="0.01">
+                <input type="number" name="terreno_m2" id="edit_terreno_m2" min="0" step="1">
             </label>
 
             <label>
                 Construcción m²
-                <input type="number" name="construccion_m2" id="edit_construccion_m2" step="0.01">
+                <input type="number" name="construccion_m2" id="edit_construccion_m2" min="0" step="1">
             </label>
 
             <div class="imagenes-actuales-box">

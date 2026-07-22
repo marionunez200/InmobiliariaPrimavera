@@ -196,10 +196,9 @@ $mensajes = $stmt->fetchAll();
                             </span>
 
                             <!-- Estado -->
-                            <span class="text_dentro estado <?= strtolower(e($mensaje['estado_mensaje'])) ?>">
-                                <?= ucfirst(e($mensaje['estado_mensaje'])) ?>
+                            <span>
+                                <?php var_dump($mensaje['estado_mensaje']); ?>
                             </span>
-
                             <!-- Fecha -->
                             <span class="text_dentro">
                                 <?= date('d/m/Y', strtotime($mensaje['creado_en'])) ?>
@@ -219,18 +218,25 @@ $mensajes = $stmt->fetchAll();
                                     Ver
                                 </button>
 
-                                <?php if($mensaje['estado_mensaje'] != 'cerrado'): ?>
+                                <?php if (strtolower(trim($mensaje['estado_mensaje'])) == 'cerrado'): ?>
 
-                                    <form action="<?= BASE_URL ?>Backend/marcar-hecho.php" method="POST" class="form-hecho">
-                                        <input
-                                            type="hidden"
-                                            name="id"
-                                            value="<?= e($mensaje['id']) ?>">
+                                    <form action="<?= BASE_URL ?>Backend/eliminar-mensaje.php" method="POST">
+                                        <input type="hidden" name="id" value="<?= e($mensaje['id']) ?>">
 
                                         <button
                                             type="button"
-                                            class="hecho"
-                                            data-confirmar-hecho>
+                                            class="eliminar"
+                                            data-confirmar-eliminar>
+                                            Eliminar
+                                        </button>
+                                    </form>
+
+                                <?php else: ?>
+
+                                    <form action="<?= BASE_URL ?>Backend/marcar-hecho.php" method="POST" class="form-hecho">
+                                        <input type="hidden" name="id" value="<?= e($mensaje['id']) ?>">
+
+                                        <button type="button" class="hecho" data-confirmar-hecho>
                                             Hecho
                                         </button>
                                     </form>
@@ -321,6 +327,36 @@ $mensajes = $stmt->fetchAll();
 
         </dialog>
 
+        <dialog id="modalConfirmarEliminar" class="modal-confirmar">
+
+        <div class="modal-confirmar-content">
+
+            <div class="modal-confirmar-icono">
+                <i class="fa-solid fa-trash"></i>
+            </div>
+
+            <h2>Eliminar mensaje</h2>
+
+            <p>
+                ¿Estás seguro de que deseas eliminar este mensaje?<br>
+                Esta acción no se puede deshacer.
+            </p>
+
+            <div class="modal-confirmar-botones">
+
+                <button type="button" class="cancelar" id="cancelarEliminar">
+                    Cancelar
+                </button>
+
+                <button type="button" class="eliminar" id="confirmarEliminar">
+                    Eliminar
+                </button>
+
+            </div>
+
+        </div>
+
+    </dialog>
 <script>
 
 const modalMensaje = document.getElementById("modalMensaje");
@@ -566,6 +602,39 @@ document.getElementById("confirmarHecho").addEventListener("click", () => {
 
     if(formularioHecho){
         formularioHecho.submit();
+    }
+
+});
+
+const modalEliminar = document.getElementById("modalConfirmarEliminar");
+const btnCancelarEliminar = document.getElementById("cancelarEliminar");
+const btnConfirmarEliminar = document.getElementById("confirmarEliminar");
+
+let formularioEliminar = null;
+
+document.querySelectorAll("[data-confirmar-eliminar]").forEach(boton => {
+
+    boton.addEventListener("click", () => {
+
+        formularioEliminar = boton.closest("form");
+
+        modalEliminar.showModal();
+
+    });
+
+});
+
+btnCancelarEliminar.addEventListener("click", () => {
+
+    formularioEliminar = null;
+    modalEliminar.close();
+
+});
+
+btnConfirmarEliminar.addEventListener("click", () => {
+
+    if(formularioEliminar){
+        formularioEliminar.submit();
     }
 
 });

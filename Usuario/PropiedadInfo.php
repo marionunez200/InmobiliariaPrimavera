@@ -116,25 +116,25 @@ require_once ROOT_PATH . 'Includes/header.php';
         </figure>
 
         <div class="contenedor_miniaturas">
-
             <button class="boton boton_izquierda" type="button" id="btnMiniaturasIzquierda">
                 &#10094;
             </button>
-            
+
             <div class="miniaturas" id="miniaturas">
-                <?php foreach ($imagenes as $imagen): ?>
-                    <img 
-                        src="<?= BASE_URL ?><?= e((string)$imagen['imagen_url']) ?>"
-                        alt="<?= e((string)($imagen['texto_alternativo'] ?: $propiedad['titulo'])) ?>"
-                        onclick="cambiarImagen(this.src)"
-                    >
-                <?php endforeach; ?>
+                <div class="miniaturas-contenedor">
+                    <?php foreach ($imagenes as $imagen): ?>
+                        <img
+                            src="<?= BASE_URL ?><?= e((string)$imagen['imagen_url']) ?>"
+                            alt="<?= e((string)($imagen['texto_alternativo'] ?: $propiedad['titulo'])) ?>"
+                            onclick="cambiarImagen(this.src)"
+                        >
+                    <?php endforeach; ?>
+                </div>
             </div>
 
             <button class="boton boton_derecha" type="button" id="btnMiniaturasDerecha">
                 &#10095;
             </button>
-
         </div>
 
     </section>
@@ -203,7 +203,7 @@ require_once ROOT_PATH . 'Includes/header.php';
 
                     <li>
                         <i class="fa-solid fa-toilet"></i>
-                        <p><?= e((string)$propiedad['banos']) ?> baños</p>
+                        <p><?= (int)$propiedad['banos'] ?> baños</p>
                     </li>
 
                     <li>

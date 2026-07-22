@@ -1521,3 +1521,114 @@ MODAL DE ÉXITO
     background:#15803d;
     transform:scale(1.05);
 }
+
+.modal-confirmar{
+    border:none;
+    border-radius:28px;
+    padding:0;
+    background:transparent;
+}
+
+.modal-confirmar::backdrop{
+    background:rgba(0,0,0,.55);
+    backdrop-filter:blur(4px);
+}
+
+.modal-confirmar-content{
+
+    width:400px;
+    max-width:90vw;
+
+    background:#fff5e0;
+    border-radius:28px;
+
+    padding:35px;
+    text-align:center;
+
+    font-family:'Montserrat',sans-serif;
+
+}
+
+.modal-confirmar-icono{
+
+    width:80px;
+    height:80px;
+
+    margin:auto auto 20px;
+
+    border-radius:50%;
+
+    background:#122548;
+    color:#fff5e0;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    font-size:34px;
+
+}
+
+.modal-confirmar-content h2{
+
+    margin:0 0 15px;
+    color:#122548;
+
+}
+
+.modal-confirmar-content p{
+
+    margin-bottom:30px;
+    line-height:1.6;
+
+}
+
+.modal-confirmar-botones{
+
+    display:flex;
+    justify-content:center;
+    gap:15px;
+
+}
+
+.modal-confirmar-botones button{
+
+    border:none;
+    border-radius:30px;
+
+    padding:12px 28px;
+
+    cursor:pointer;
+
+    font-family:'Montserrat',sans-serif;
+    transition:.25s;
+
+}
+
+.cancelar{
+
+    background:#122548;
+    color:#fff5e0;
+
+}
+
+.cancelar:hover{
+
+    transform: translateY(-2px);
+    background: #0c1a33;
+
+}
+
+.eliminar{
+
+    background:#c62828;
+    color:white;
+
+}
+
+.eliminar:hover{
+
+    transform: translateY(-2px);
+    background:#b71c1c;
+
+}

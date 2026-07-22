@@ -39,15 +39,15 @@ require ROOT_PATH . 'Includes/header.php';
                 <ul>
                     <li>
                         <p><strong>Lunes - Viernes</strong></p>
-                        <p>9:00 AM - 6:00 PM</p>
+                        <p>10:00 AM - 9:00 PM</p>
                     </li>
                     <li>
                         <p><strong>Sábado</strong></p>
-                        <p>9:00 AM - 3:00 PM</p>
+                        <p>10:00 AM - 6:00 PM</p>
                     </li>
                     <li>
                         <p><strong>Domingo</strong></p>
-                        <p>9:00 AM - 1:00 PM</p>
+                        <p>10:00 AM - 6:00 PM</p>
                     </li>
                 </ul>
             </article>

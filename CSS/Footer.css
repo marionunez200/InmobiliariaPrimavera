@@ -41,6 +41,7 @@ body {
 .footer-redes {
     flex: 1 1 200px;
     max-width: 260px;
+    text-decoration: none;
 }
 
 .footer-logo img {
@@ -94,6 +95,12 @@ address.footer-contacto {
     font-size: 1.125rem;
     font-family: 'Montserrat', sans-serif;
     margin: 0.5rem 0;
+    text-decoration: none;
+}
+
+.decoration{
+    text-decoration: none;
+    color: inherit;
 }
 
 /* Redes sociales */

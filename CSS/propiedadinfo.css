@@ -30,18 +30,27 @@
 
 .miniaturas{
     width: 100%;
-    display: flex;
-    gap: 10px;
-
     overflow-x: auto;
     overflow-y: hidden;
 
+    display: flex;
+    justify-content: center;
+
     scroll-behavior: smooth;
     scrollbar-width: none;
+
+    padding: 0 15px;
+    box-sizing: border-box;
 }
 
 .miniaturas::-webkit-scrollbar{
     display: none;
+}
+
+.miniaturas-contenedor{
+    display: flex;
+    gap: 10px;
+    width: max-content;
 }
 
 .miniaturas img{
@@ -79,11 +88,11 @@
 }
 
 .boton_izquierda{
-    left: 0;
+    left: -30px;
 }
 
 .boton_derecha{
-    right: 0;
+    right: -30px;
 }
 
 /* Información de la propiedad */
@@ -496,4 +505,3 @@
     }
 
 }
-
