@@ -262,7 +262,54 @@ body{
     display:none;
 
 }
+.paginacion {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 14px;
+    margin: 50px 0;
+    font-family: 'Montserrat', sans-serif;
+}
 
+.paginacion .paginacion-numero {
+    width: 45px;
+    height: 45px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    text-decoration: none;
+    background: #fff5e0;
+    color: #122548;
+    font-weight: 700;
+    transition: all 0.3s ease;
+}
+
+.paginacion .paginacion-numero:hover,
+.paginacion .paginacion-numero.activo {
+    background: #122548;
+    color: #fff5e0;
+}
+
+.paginacion .paginacion-btn {
+    text-decoration: none;
+    color: #122548;
+    font-weight: 700;
+    font-size: 1rem;
+    padding: 0 8px;
+    background: transparent;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.paginacion a.paginacion-btn:hover {
+    color: #3b82f6;
+}
+
+.paginacion .paginacion-btn.deshabilitado {
+    color: #999999;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
 /* Responsive - Teléfono */
 
 @media (max-width: 768px){

@@ -6,11 +6,29 @@ if (!defined('BASE_URL')) {
 require_once ROOT_PATH . '/Config/database.php';
 $pdo = db();
 
+$porPagina = 12;
+
+$pagina = isset($_GET['pagina'])
+    ? max(1, (int)$_GET['pagina'])
+    : 1;
+
+$offset = ($pagina - 1) * $porPagina;
+
 $categorias = $pdo->query("
     SELECT id, nombre
     FROM categorias_propiedad
     ORDER BY nombre
 ")->fetchAll(PDO::FETCH_ASSOC);
+
+$sqlCount = "
+    SELECT COUNT(*)
+    FROM propiedades p
+    INNER JOIN categorias_propiedad c
+        ON c.id = p.categoria_id
+    WHERE p.estado_publicacion = 'activo'
+";
+
+$paramsCount = [];
 
 function limpiarTexto(?string $texto): string
 {
@@ -70,31 +88,42 @@ $sql = "
 $params = [];
 
 if ($ciudad !== '') {
-    $sql .= " AND p.ciudad = ?";
-    $params[] = $ciudad;
+    $sqlCount .= " AND p.ciudad = ?";
+    $paramsCount[] = $ciudad;
 }
 
 if ($tipoOperacion !== '') {
-    $sql .= " AND p.tipo_operacion = ?";
-    $params[] = $tipoOperacion;
+    $sqlCount .= " AND p.tipo_operacion = ?";
+    $paramsCount[] = $tipoOperacion;
 }
 
 if ($categoria > 0) {
-    $sql .= " AND p.categoria_id = ?";
-    $params[] = $categoria;
+    $sqlCount .= " AND p.categoria_id = ?";
+    $paramsCount[] = $categoria;
 }
 
 if ($precioMin !== '' && is_numeric($precioMin)) {
-    $sql .= " AND p.precio >= ?";
-    $params[] = $precioMin;
+    $sqlCount .= " AND p.precio >= ?";
+    $paramsCount[] = $precioMin;
 }
 
 if ($precioMax !== '' && is_numeric($precioMax)) {
-    $sql .= " AND p.precio <= ?";
-    $params[] = $precioMax;
+    $sqlCount .= " AND p.precio <= ?";
+    $paramsCount[] = $precioMax;
 }
 
-$sql .= " ORDER BY p.destacada DESC, p.creado_en DESC";
+$sql .= "
+    ORDER BY p.destacada DESC, p.creado_en DESC
+    LIMIT $porPagina
+    OFFSET $offset
+";
+
+$stmtCount = $pdo->prepare($sqlCount);
+$stmtCount->execute($paramsCount);
+
+$totalPropiedades = $stmtCount->fetchColumn();
+
+$totalPaginas = ceil($totalPropiedades / $porPagina);
 
 $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
@@ -256,6 +285,73 @@ require_once ROOT_PATH . '/Includes/header.php';
             <?php endforeach; ?>
             
         </div>
+
+        <?php if ($totalPaginas > 1): ?>
+
+            <nav class="paginacion" aria-label="Navegación de páginas">
+
+                <?php if ($pagina > 1): ?>
+                    <?php 
+                        $queryPrev = $_GET;
+                        $queryPrev['pagina'] = $pagina - 1;
+                    ?>
+                    <a href="?<?= http_build_query($queryPrev) ?>" class="paginacion-btn">
+                        &larr; Anterior
+                    </a>
+                <?php else: ?>
+                    <span class="paginacion-btn deshabilitado">&larr; Anterior</span>
+                <?php endif; ?>
+
+                <?php
+                    $rango = 1;
+                    $inicio = max(1, $pagina - $rango);
+                    $fin = min($totalPaginas, $pagina + $rango);
+                ?>
+
+                <?php if ($inicio > 1): ?>
+                    <?php $q = $_GET; $q['pagina'] = 1; ?>
+                    <a href="?<?= http_build_query($q) ?>" class="paginacion-numero">1</a>
+                    <?php if ($inicio > 2): ?>
+                        <span style="color:#122548; font-weight:bold;">...</span>
+                    <?php endif; ?>
+                <?php endif; ?>
+
+                <?php for ($i = $inicio; $i <= $fin; $i++): ?>
+                    <?php
+                        $query = $_GET;
+                        $query['pagina'] = $i;
+                    ?>
+                    <a
+                        href="?<?= http_build_query($query) ?>"
+                        class="paginacion-numero <?= $i == $pagina ? 'activo' : '' ?>">
+                        <?= $i ?>
+                    </a>
+                <?php endfor; ?>
+
+                <?php if ($fin < $totalPaginas): ?>
+                    <?php if ($fin < $totalPaginas - 1): ?>
+                        <span style="color:#122548; font-weight:bold;">...</span>
+                    <?php endif; ?>
+                    <?php $q = $_GET; $q['pagina'] = $totalPaginas; ?>
+                    <a href="?<?= http_build_query($q) ?>" class="paginacion-numero"><?= $totalPaginas ?></a>
+                <?php endif; ?>
+
+                <?php if ($pagina < $totalPaginas): ?>
+                    <?php 
+                        $queryNext = $_GET;
+                        $queryNext['pagina'] = $pagina + 1;
+                    ?>
+                    <a href="?<?= http_build_query($queryNext) ?>" class="paginacion-btn">
+                        Siguiente &rarr;
+                    </a>
+                <?php else: ?>
+                    <span class="paginacion-btn deshabilitado">Siguiente &rarr;</span>
+                <?php endif; ?>
+
+            </nav>
+
+        <?php endif; ?>
+
     </section>
 
     <div class="chat-widget" id="chatWidget">
