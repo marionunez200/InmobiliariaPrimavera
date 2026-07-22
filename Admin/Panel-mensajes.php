@@ -194,7 +194,7 @@ $mensajes = $stmt->fetchAll();
 
                             <!-- Estado -->
                             <span>
-                                <?php var_dump($mensaje['estado_mensaje']); ?>
+                                <?= e($mensaje['estado_mensaje']) ?>
                             </span>
                             <!-- Fecha -->
                             <span class="text_dentro">
