@@ -18,23 +18,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = 'Completa todos los campos.';
     } else {
         $stmt = $pdo->prepare("
-            SELECT id, nombre, email, rol, activo
+            SELECT id,
+                    nombre,
+                    email,
+                    rol,
+                    activo,
+                    password_hash
             FROM usuarios_admin
             WHERE (email = ? OR nombre = ?)
-            AND password_hash = ?
             AND activo = 1
             LIMIT 1
         ");
 
         $stmt->execute([
             $usuarioLogin,
-            $usuarioLogin,
-            $password
+            $usuarioLogin
         ]);
 
-        $usuario = $stmt->fetch();
+        $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($usuario) {
+        if ($usuario && password_verify($password, $usuario['password_hash'])) {
+
             $_SESSION['admin_id'] = $usuario['id'];
             $_SESSION['admin_nombre'] = $usuario['nombre'];
             $_SESSION['admin_email'] = $usuario['email'];
@@ -42,8 +46,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             header('Location: ' . BASE_URL . 'Admin/Panel-propiedades.php');
             exit;
+
         } else {
+
             $error = 'Usuario, correo o contraseña incorrectos.';
+
         }
     }
 }
@@ -130,6 +137,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 </form>
             </div>
+
+            <p class="olvide-password">
+                <a href="<?= BASE_URL ?>Admin/Olvide-password.php">
+                    ¿Olvidaste tu contraseña?
+                </a>
+            </p>
 
         </section>
     </main>
