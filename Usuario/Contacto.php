@@ -56,7 +56,7 @@ require ROOT_PATH . 'Includes/header.php';
         <!-- Mapa -->
         <section class="ubicacion card-mapa">
             <h2>Ubicacion</h2>
-        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d7080.911508897659!2d-109.92697067063644!3d27.455067279184366!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x86c8163e0b97c5e3%3A0xcb761a2bd8b3205f!2sC.%20Ej%C3%A9rcito%20Nacional%201101%2C%2085000%20Cdad.%20Obreg%C3%B3n%2C%20Son.!5e0!3m2!1ses!2smx!4v1782251447719!5m2!1ses!2smx" width="615" height="575" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>        </section>
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d6878.142646234171!2d-109.93446448399092!3d27.453948993461836!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x86c81700666afb4b%3A0xea1613f33bff575a!2sPrimavera%20Inmobiliaria!5e1!3m2!1ses-419!2s!4v1784760246049!5m2!1ses-419!2s" width="615" height="575" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
     </main>
 
 <?php require ROOT_PATH . 'Includes/footer.php'; ?>
