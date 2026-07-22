@@ -94,31 +94,82 @@ body{
     color: #17305e;
 }
 
-/* Sección de precios */
-
-#precio {
+/* Contenedor del doble slider */
+.slider-container {
+    position: relative;
     width: 250px;
-    appearance: none;
-    background: transparent;
-    cursor: pointer;
+    height: 40px;
 }
 
-#precio::-webkit-slider-runnable-track {
+/* Línea fija del slider */
+.slider-container::before {
+    content: "";
+    position: absolute;
+    width: 100%;
     height: 8px;
+    top: 16px;
     background: #d9d9d9;
     border-radius: 10px;
 }
 
-#precio::-webkit-slider-thumb {
+/* Inputs de rango */
+.range-slider {
+    position: absolute;
+    width: 100%;
+    height: 8px;
+    top: 16px;
+    background: none;
+    pointer-events: none;
     appearance: none;
-    width: 20px;
-    height: 20px;
-    margin-top: -6px;
-    background: #122548;
-    border: 2px solid #fff5e0;
-    border-radius: 50%;
+    -webkit-appearance: none;
+    margin: 0;
 }
 
+/* Barra del navegador Chrome */
+.range-slider::-webkit-slider-runnable-track {
+    height: 8px;
+    background: transparent;
+}
+
+/* Botones circulares */
+.range-slider::-webkit-slider-thumb {
+    appearance: none;
+    -webkit-appearance: none;
+
+    width: 20px;
+    height: 20px;
+
+    margin-top: -6px;
+
+    background: #122548;
+    border: 2px solid #fff5e0;
+
+    border-radius: 50%;
+
+    cursor: pointer;
+    pointer-events: auto;
+
+    transition: transform .1s ease;
+}
+
+.range-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.1);
+}
+
+
+/* Firefox */
+.range-slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+
+    background: #122548;
+    border: 2px solid #fff5e0;
+
+    border-radius: 50%;
+
+    cursor: pointer;
+    pointer-events: auto;
+}
 #aplicar_filtro {
     width: 180px;
     margin: 20px auto;

@@ -91,7 +91,6 @@ function subirFotoAgente(?string $fotoActual = null): ?string
 
     return $rutaBaseDatos;
 }
-
 function obtenerFotoActual(PDO $pdo, int $id): ?string
 {
     $stmt = $pdo->prepare("

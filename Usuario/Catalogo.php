@@ -170,14 +170,10 @@ require_once ROOT_PATH . '/Includes/header.php';
 
                 <div>
                     <div>
-                        <input
-                            type="range"
-                            id="precio"
-                            min="0"
-                            max="10000000"
-                            step="100000"
-                            value="<?= e($precioMax !== '' ? $precioMax : '5000000') ?>"
-                        >
+                        <div class="slider-container">
+                            <input class="range-slider" type="range" class="range-slider" id="min-range" min="0" max="10000000" value="0" step="100">
+                            <input class="range-slider" type="range" class="range-slider" id="max-range" min="0" max="10000000" value="10000000" step="100">
+                        </div>
                     </div>
                 </div>
 
@@ -361,10 +357,12 @@ require_once ROOT_PATH . '/Includes/header.php';
     const formulario = document.querySelector(".filtro-form");
     const catalogo = document.querySelector(".catalogo-grid");
 
-    const slider = document.getElementById("precio");
+    
     const precioMin = document.getElementById("precio_min");
     const precioMax = document.getElementById("precio_max");
-
+    const minRange = document.getElementById("min-range");
+    const maxRange = document.getElementById("max-range");
+    
     function cargarPropiedades() {
 
         const datos = new FormData(formulario);
@@ -382,34 +380,57 @@ require_once ROOT_PATH . '/Includes/header.php';
     document.querySelectorAll(".filtro-form select").forEach(select => {
         select.addEventListener("change", cargarPropiedades);
     });
+    if (minRange && precioMin) {
 
-    // Precio mínimo
-    if (precioMin) {
-        precioMin.addEventListener("input", cargarPropiedades);
-    }
+        minRange.addEventListener("input", () => {
 
-    // Slider
-    if (slider && precioMax) {
+            precioMin.value = minRange.value;
 
-        slider.addEventListener("input", () => {
-
-            precioMax.value = slider.value;
             cargarPropiedades();
 
         });
 
     }
 
-    // Precio máximo
-    if (precioMax && slider) {
+
+    // Slider precio máximo
+    if (maxRange && precioMax) {
+
+        maxRange.addEventListener("input", () => {
+
+            precioMax.value = maxRange.value;
+
+            cargarPropiedades();
+
+        });
+
+    }
+
+
+    // Input precio mínimo
+    if (precioMin && minRange) {
+
+        precioMin.addEventListener("input", () => {
+
+            minRange.value = precioMin.value;
+
+            cargarPropiedades();
+
+        });
+
+    }
+
+
+    // Input precio máximo
+    if (precioMax && maxRange) {
 
         precioMax.addEventListener("input", () => {
 
-            slider.value = precioMax.value;
+            maxRange.value = precioMax.value;
+
             cargarPropiedades();
 
         });
 
     }
-
 </script>

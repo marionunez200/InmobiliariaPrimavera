@@ -63,9 +63,9 @@ $stmtImagenes = $pdo->prepare("
     SELECT
         imagen_url,
         texto_alternativo
-    FROM imagenes_propiedades
-    WHERE propiedad_id = ?
-    ORDER BY es_principal DESC,
+        FROM imagenes_propiedades
+        WHERE propiedad_id = ?
+        ORDER BY es_principal DESC,
         orden ASC,
         id ASC
 ");
