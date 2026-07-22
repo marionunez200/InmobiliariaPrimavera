@@ -109,9 +109,13 @@ $mensajes = $stmt->fetchAll();
             <a href="<?= BASE_URL ?>Admin/Panel-mensajes.php">Mensajes</a>
         </nav>
     
-        <button class="cerrar-sesion" type="button" onclick="location.href='login.php'">
+        <button
+            class="cerrar-sesion"
+            type="button"
+            onclick="location.href='<?= BASE_URL ?>Backend/cerrar-sesion.php'">
             Cerrar sesión
         </button>
+
     </aside>
 
     <main class="admin-main">

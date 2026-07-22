@@ -152,7 +152,10 @@ $ultimosAgentes = $stmtUltimos->fetchAll();?>
             <a href="<?= BASE_URL ?>Admin/Panel-mensajes.php">Mensajes</a>
         </nav>
     
-        <button class="cerrar-sesion" type="button" onclick="location.href='<?= BASE_URL ?>Admin/Login.php'">
+        <button
+            class="cerrar-sesion"
+            type="button"
+            onclick="location.href='<?= BASE_URL ?>Backend/cerrar-sesion.php'">
             Cerrar sesión
         </button>
     </aside>
