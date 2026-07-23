@@ -8,7 +8,7 @@ if (session_status() === PHP_SESSION_NONE) {
 // Verificar sesión
 
 if (!isset($_SESSION['admin_id'])) {
-    header("Location: " . BASE_URL . "Admin/Login.php");
+    header("Location: " . BASE_URL . "Login.php");
     exit;
 }
 

@@ -207,7 +207,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <?php endif; ?>
 
                 <form
-                    action="<?= BASE_URL ?>Admin/Login.php"
+                    action="<?= BASE_URL ?>Login.php"
                     method="POST"
                     class="login-form"
                     autocomplete="off"

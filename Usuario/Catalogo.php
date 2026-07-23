@@ -311,7 +311,7 @@ require_once ROOT_PATH . '/Includes/header.php';
                         </p>
 
                         <div class="info_card">
-                            <p>Baños: <?= (int)$propiedad['banos'] ?>
+                            <p>Baños: <?= e((string)$propiedad['banos']) ?></p>
                             <p>Recámaras: <?= e((string)$propiedad['recamaras']) ?></p>
                         </div>
 

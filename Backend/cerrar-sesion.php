@@ -33,5 +33,5 @@ if (ini_get("session.use_cookies")) {
 session_destroy();
 
 /* Regresar al login */
-header('Location: ' . BASE_URL . 'Admin/Login.php');
+header('Location: ' . BASE_URL . 'Login.php');
 exit;
