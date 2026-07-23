@@ -2,14 +2,8 @@
 require_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
 
 require_once ROOT_PATH . '/Config/database.php';
+require_once ROOT_PATH . '/Admin/auth.php';
 
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-if (!isset($_SESSION['admin_id'])) {
-    header("Location: Login.php");
-    exit;
-}
 $pdo = db();
 
 $pdo->exec("
@@ -225,6 +219,11 @@ $mensajes = $stmt->fetchAll();
                                 <?php if (strtolower(trim($mensaje['estado_mensaje'])) == 'cerrado'): ?>
 
                                     <form action="<?= BASE_URL ?>Backend/eliminar-mensaje.php" method="POST">
+                                        <input 
+                                            type="hidden"
+                                            name="csrf_token"
+                                            value="<?= $_SESSION['csrf_token'] ?>"
+                                        >
                                         <input type="hidden" name="id" value="<?= e($mensaje['id']) ?>">
 
                                         <button
@@ -238,6 +237,11 @@ $mensajes = $stmt->fetchAll();
                                 <?php else: ?>
 
                                     <form action="<?= BASE_URL ?>Backend/marcar-hecho.php" method="POST" class="form-hecho">
+                                        <input 
+                                            type="hidden"
+                                            name="csrf_token"
+                                            value="<?= $_SESSION['csrf_token'] ?>"
+                                        >
                                         <input type="hidden" name="id" value="<?= e($mensaje['id']) ?>">
 
                                         <button type="button" class="hecho" data-confirmar-hecho>

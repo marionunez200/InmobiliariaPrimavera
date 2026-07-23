@@ -1,14 +1,8 @@
 <?php
 require_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
 require_once ROOT_PATH . '/Config/database.php';
+require_once ROOT_PATH . '/Admin/auth.php';
 
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-if (!isset($_SESSION['admin_id'])) {
-    header("Location: Login.php");
-    exit;
-}
 $pdo = db();
 
 $modalExitoTitulo = '';
@@ -187,6 +181,7 @@ $ultimosAgentes = $stmtUltimos->fetchAll();?>
                 <h2>Agentes inmobiliarios</h2>
 
                 <form method="GET" action="<?= BASE_URL ?>Admin/Panel-agente.php" class="busqueda">
+                    
                     <input 
                         type="search" 
                         name="buscar"
@@ -312,6 +307,11 @@ $ultimosAgentes = $stmtUltimos->fetchAll();?>
 <!-- MODAL AGREGAR AGENTE -->
 <dialog class="modal" id="modalAgregar">
     <form class="modal-content" action="<?= BASE_URL ?>Backend/Agente/agregar-agente.php" method="POST" enctype="multipart/form-data">
+            <input 
+            type="hidden"
+            name="csrf_token"
+            value="<?= $_SESSION['csrf_token'] ?>"
+        >
         <div class="modal-header">
             <h2>Agregar agente</h2>
 
@@ -398,6 +398,11 @@ $ultimosAgentes = $stmtUltimos->fetchAll();?>
 <!-- MODAL EDITAR AGENTE -->
 <dialog class="modal" id="modalEditar">
     <form class="modal-content" action="<?= BASE_URL ?>Backend/Agente/editar-agente.php" method="POST" enctype="multipart/form-data">
+        <input 
+            type="hidden"
+            name="csrf_token"
+            value="<?= $_SESSION['csrf_token'] ?>"
+        >
         <input type="hidden" name="id" id="edit_id">
 
         <div class="modal-header">
@@ -497,6 +502,11 @@ $ultimosAgentes = $stmtUltimos->fetchAll();?>
     <form class="modal-content" action="<?= BASE_URL ?>Backend/Agente/eliminar-agente.php" method="POST">
 
         <input type="hidden" name="id" id="delete_id">
+        
+        <input type="hidden" 
+        name="csrf_token" 
+        value="<?= $_SESSION['csrf_token'] ?>"
+        >
 
         <div class="modal-header">
             <h2>Eliminar agente</h2>

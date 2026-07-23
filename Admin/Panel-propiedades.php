@@ -2,15 +2,7 @@
 require_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
 
 require_once ROOT_PATH . '/Config/database.php';
-
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
-if (!isset($_SESSION['admin_id'])) {
-    header("Location: Login.php");
-    exit;
-}
+require_once ROOT_PATH . '/Admin/auth.php';
 $pdo = db();
 
 /* ================================
@@ -318,6 +310,7 @@ $categorias = $stmtCategorias->fetchAll(PDO::FETCH_ASSOC);
                 <h2>Propiedades</h2>
 
                 <form method="GET" action="<?= BASE_URL ?>Admin/Panel-propiedades.php" class="busqueda">
+
                     <input 
                         type="search" 
                         name="buscar"
@@ -471,7 +464,11 @@ $categorias = $stmtCategorias->fetchAll(PDO::FETCH_ASSOC);
 <!-- MODAL AGREGAR PROPIEDAD -->
 <dialog class="modal" id="modalAgregar">
     <form class="modal-content" action="<?= BASE_URL ?>Backend/Propiedades/agregar-propiedad.php" method="POST" enctype="multipart/form-data">
-
+        <input 
+            type="hidden"
+            name="csrf_token"
+            value="<?= $_SESSION['csrf_token'] ?>"
+        >
         <div class="modal-header">
             <h2>Agregar propiedad</h2>
 
@@ -666,7 +663,11 @@ $categorias = $stmtCategorias->fetchAll(PDO::FETCH_ASSOC);
 <!-- MODAL EDITAR PROPIEDAD -->
 <dialog class="modal" id="modalEditar">
     <form class="modal-content" action="<?= BASE_URL ?>Backend/Propiedades/editar-propiedad.php" method="POST" enctype="multipart/form-data">
-
+        <input 
+            type="hidden"
+            name="csrf_token"
+            value="<?= $_SESSION['csrf_token'] ?>"
+        >
         <input type="hidden" name="id" id="edit_id">
         <input type="hidden" name="imagen_principal_id" id="imagen_principal_id">
 
@@ -883,6 +884,11 @@ $categorias = $stmtCategorias->fetchAll(PDO::FETCH_ASSOC);
 <form class="modal-content"
     action="<?= BASE_URL ?>Backend/guardar-categoria.php"
     method="POST">
+        <input 
+            type="hidden"
+            name="csrf_token"
+            value="<?= $_SESSION['csrf_token'] ?>"
+        >
         <div class="modal-header">
             <h2>Nueva categoría</h2>
 
@@ -966,9 +972,15 @@ $categorias = $stmtCategorias->fetchAll(PDO::FETCH_ASSOC);
 
             <?php if (!$categoria['protegida']): ?>
 
-                <form
+                <form       
                     action="<?= BASE_URL ?>Backend/eliminar-categoria.php"
                     method="POST">
+
+                    <input 
+                        type="hidden"
+                        name="csrf_token"
+                        value="<?= $_SESSION['csrf_token'] ?>"
+                    >
 
                     <input
                         type="hidden"
@@ -996,7 +1008,11 @@ $categorias = $stmtCategorias->fetchAll(PDO::FETCH_ASSOC);
 <!-- MODAL ELIMINAR PROPIEDAD -->
 <dialog class="modal modal-small" id="modalEliminar">
     <form class="modal-content" action="<?= BASE_URL ?>Backend/Propiedades/eliminar-propiedad.php" method="POST">
-
+        <input 
+            type="hidden"
+            name="csrf_token"
+            value="<?= $_SESSION['csrf_token'] ?>"
+        >
         <input type="hidden" name="id" id="delete_id">
 
         <div class="modal-header">
@@ -1036,6 +1052,11 @@ $categorias = $stmtCategorias->fetchAll(PDO::FETCH_ASSOC);
         method="POST">
 
         <input
+            type="hidden"
+            name="csrf_token"
+            value="<?= $_SESSION['csrf_token'] ?>"
+        >
+
             type="hidden"
             name="id"
             id="delete_categoria_id">
