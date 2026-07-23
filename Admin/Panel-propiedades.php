@@ -267,12 +267,19 @@ $categorias = $stmtCategorias->fetchAll(PDO::FETCH_ASSOC);
             <a href="<?= BASE_URL ?>Admin/Panel-mensajes.php">Mensajes</a>
         </nav>
     
-        <button
-            class="cerrar-sesion"
-            type="button"
-            onclick="location.href='<?= BASE_URL ?>Backend/cerrar-sesion.php'">
-            Cerrar sesión
-        </button>
+        <form class="cerrar-sesion" action="<?= BASE_URL ?>Backend/cerrar-sesion.php" method="POST">
+            <input
+                type="hidden"
+                name="csrf_token"
+                value="<?= $_SESSION['csrf_token'] ?>"
+            >
+
+            <button
+                class="cerrar-sesion"
+                type="submit">
+                Cerrar sesión
+            </button>
+        </form>
         
     </aside>
 

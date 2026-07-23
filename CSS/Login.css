@@ -230,3 +230,9 @@
 .olvide-password a:hover{
     text-decoration:underline;
 }
+
+.captcha {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+}

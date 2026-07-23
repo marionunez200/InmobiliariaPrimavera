@@ -7,4 +7,10 @@ define('BASE_URL', '/');
 // 2. RUTA PARA EL SERVIDOR (Para PHP: require, require_once, include)
 // __DIR__ detecta automáticamente que estás en 'C:\xampp\htdocs'
 define('ROOT_PATH', __DIR__ . '/');
+
+//3. DEFINICION PARA EL CAPTCHA EN LOGIN
+define('RECAPTCHA_SITE_KEY', '6LcH-mEtAAAAAIwieCsJGtoStuorVUYCXaxH7SBr');
+define('RECAPTCHA_SECRET_KEY', '6LcH-mEtAAAAAAaDYmcLM-65l6nQhnK6Sh_BWuXu');
+
 ?>
+
