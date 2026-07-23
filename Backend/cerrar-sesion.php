@@ -2,6 +2,9 @@
 <?php
 
 require_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
+require_once ROOT_PATH . '/Admin/auth.php';
+validar_csrf();
+
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
