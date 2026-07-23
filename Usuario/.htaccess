@@ -2,4 +2,11 @@ RewriteEngine On
 
 RewriteBase /Usuario/
 
+# URLs de propiedades con slug
 RewriteRule ^propiedades/([a-zA-Z0-9-]+)/?$ PropiedadInfo.php?slug=$1 [L,QSA]
+
+
+# Ocultar extensión .php
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}.php -f
+RewriteRule ^(.+)$ $1.php [L,QSA]

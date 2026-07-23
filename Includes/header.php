@@ -59,42 +59,42 @@ $cssPaginas = $cssPaginas ?? [];
             <a href="<?= BASE_URL ?>index">Inicio</a>
             
             <div>
-                <a href="<?= BASE_URL ?>Usuario/Catalogo.php?tipo_operacion=venta">Venta</a>
+                <a href="<?= BASE_URL ?>Usuario/Catalogo?tipo_operacion=venta">Venta</a>
                 <ul class="submenu">
-                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo.php?tipo_operacion=venta&categoria=2">Casas en venta</a></li>
-                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo.php?tipo_operacion=venta&categoria=3">Departamentos en venta</a></li>
-                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo.php?tipo_operacion=venta&categoria=4">Locales comerciales en venta</a></li>
-                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo.php?tipo_operacion=venta&categoria=5">Terrenos en venta</a></li>
+                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo?tipo_operacion=venta&categoria=2">Casas en venta</a></li>
+                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo?tipo_operacion=venta&categoria=3">Departamentos en venta</a></li>
+                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo?tipo_operacion=venta&categoria=4">Locales comerciales en venta</a></li>
+                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo?tipo_operacion=venta&categoria=5">Terrenos en venta</a></li>
                 </ul>
             </div>
 
             <div>
-                <a href="<?= BASE_URL ?>Usuario/Catalogo.php?tipo_operacion=renta">Renta</a>
+                <a href="<?= BASE_URL ?>Usuario/Catalogo?tipo_operacion=renta">Renta</a>
                 <ul class="submenu">
-                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo.php?tipo_operacion=renta&categoria=1">Casas en renta</a></li>
-                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo.php?tipo_operacion=renta&categoria=2">Departamentos en renta</a></li>
-                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo.php?tipo_operacion=renta&categoria=4">Locales comerciales en renta</a></li>
-                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo.php?tipo_operacion=renta&categoria=5">Terrenos en renta</a></li>
+                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo?tipo_operacion=renta&categoria=1">Casas en renta</a></li>
+                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo?tipo_operacion=renta&categoria=2">Departamentos en renta</a></li>
+                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo?tipo_operacion=renta&categoria=4">Locales comerciales en renta</a></li>
+                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo?tipo_operacion=renta&categoria=5">Terrenos en renta</a></li>
                 </ul>
             </div>
             
 
             <div>
-                <a href="<?= BASE_URL ?>Usuario/Catalogo.php?tipo_operacion=traspaso">Traspaso</a>
+                <a href="<?= BASE_URL ?>Usuario/Catalogo?tipo_operacion=traspaso">Traspaso</a>
                 <ul class="submenu">
-                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo.php?tipo_operacion=traspaso&categoria=2">Casas en traspaso</a></li>
-                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo.php?tipo_operacion=traspaso&categoria=3">Departamentos en traspaso</a></li>
-                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo.php?tipo_operacion=traspaso&categoria=4">Locales comerciales en traspaso</a></li>
+                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo?tipo_operacion=traspaso&categoria=2">Casas en traspaso</a></li>
+                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo?tipo_operacion=traspaso&categoria=3">Departamentos en traspaso</a></li>
+                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo?tipo_operacion=traspaso&categoria=4">Locales comerciales en traspaso</a></li>
                 </ul>
             </div>
         </div>
         
-        <a href="<?= BASE_URL ?>index.php" class="navbar-logo desktop">
+        <a href="<?= BASE_URL ?>index" class="navbar-logo desktop">
             <img class="logo" src="<?= BASE_URL ?>Imagenes/Logosolo.png" alt="Logo de Primavera inmobiliaria">
         </a>
         
         <div class="navbar-right">
-            <a href="<?= BASE_URL ?>Usuario/Contacto.php">Contacto</a>
+            <a href="<?= BASE_URL ?>Usuario/Contacto">Contacto</a>
         </div>
     </nav>
 </header>
