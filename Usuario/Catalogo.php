@@ -494,7 +494,7 @@ require_once ROOT_PATH . '/Includes/header.php';
     // FILTROS
     // ==========================
     const formulario = document.querySelector(".filtro-form");
-    const catalogo = document.querySelector(".catalogo-grid");
+    const catalogo = document.querySelector(".catalogo");
 
     
     const precioMin = document.getElementById("precio_min");
@@ -502,9 +502,27 @@ require_once ROOT_PATH . '/Includes/header.php';
     const minRange = document.getElementById("min-range");
     const maxRange = document.getElementById("max-range");
     
+    
     function cargarPropiedades() {
 
         const datos = new FormData(formulario);
+
+        // Actualizar la URL
+        const nuevaURL = new URL(window.location);
+
+        nuevaURL.searchParams.set("pagina", "1");
+
+        for (const [clave, valor] of datos.entries()) {
+
+            if (valor !== "") {
+                nuevaURL.searchParams.set(clave, valor);
+            } else {
+                nuevaURL.searchParams.delete(clave);
+            }
+
+        }
+
+        history.replaceState({}, "", nuevaURL);
 
         fetch("<?= BASE_URL ?>Usuario/catalogo-filtrado.php?" + new URLSearchParams(datos))
             .then(response => response.text())
@@ -512,7 +530,6 @@ require_once ROOT_PATH . '/Includes/header.php';
                 catalogo.innerHTML = html;
             })
             .catch(error => console.error(error));
-
     }
 
     // Selects
