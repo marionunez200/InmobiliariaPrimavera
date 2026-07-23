@@ -21,13 +21,20 @@ $cssPaginas = $cssPaginas ?? [];
     <link rel="icon" href="<?= BASE_URL ?>favicon.ico">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="<?= BASE_URL ?>CSS/header.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>CSS/header.css?v=<?= filemtime(ROOT_PATH . 'CSS/header.css') ?>">
     
-    <?php foreach ($cssPaginas as $css): ?>
-        <link rel="stylesheet" href="<?= htmlspecialchars($css) ?>">
-    <?php endforeach; ?>
+    <?php foreach ($cssPaginas as $css):
+
+            $rutaRelativa = str_replace(BASE_URL, '', $css);
+            $rutaFisica = ROOT_PATH . str_replace('/', DIRECTORY_SEPARATOR, $rutaRelativa);
+
+        ?>
+            <link
+                rel="stylesheet"
+                href="<?= htmlspecialchars($css) ?>?v=<?= file_exists($rutaFisica) ? filemtime($rutaFisica) : time() ?>">
+        <?php endforeach; ?>
     
-    <link rel="stylesheet" href="<?= BASE_URL ?>CSS/Footer.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>CSS/Footer.css?v=<?= filemtime(ROOT_PATH . 'CSS/Footer.css') ?>">
 
     <meta property="og:title" content="<?= htmlspecialchars($titulo) ?>">
     <meta property="og:description" content="<?= htmlspecialchars($descripcion) ?>">

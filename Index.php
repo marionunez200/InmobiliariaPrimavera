@@ -5,10 +5,12 @@ $titulo = "Primavera inmobiliaria | Casas y propiedades en venta y renta en Sono
 $descripcion = "Encuentra casas, terrenos, departamentos y locales comerciales en venta y renta en Sonora. Propiedades disponibles en Ciudad Obregón, San Carlos y Guaymas.";
 $cssPaginas = [BASE_URL . "CSS/index.css"];
 
-$conteos = [];
-
 require_once 'Config/database.php';
 $pdo = db();
+
+$conteos = [];
+
+$conteosPorCategoria = [];
 
 $stmt = $pdo->query("
     SELECT
@@ -21,7 +23,21 @@ $stmt = $pdo->query("
 ");
 
 while ($fila = $stmt->fetch(PDO::FETCH_ASSOC)) {
-    $conteos[$fila['tipo_operacion']][$fila['categoria_id']] = $fila['total'];
+    $conteos[$fila['tipo_operacion']][$fila['categoria_id']] = (int)$fila['total'];
+}
+
+// 2. Obtener conteos totales por categoría (Casas, Terrenos, Locales, etc.)
+$stmtCat = $pdo->query("
+    SELECT
+        categoria_id,
+        COUNT(*) AS total
+    FROM propiedades
+    WHERE estado_publicacion = 'activo'
+    GROUP BY categoria_id
+");
+
+while ($fila = $stmtCat->fetch(PDO::FETCH_ASSOC)) {
+    $conteosPorCategoria[$fila['categoria_id']] = (int)$fila['total'];
 }
 
 require_once ROOT_PATH . '/Includes/header.php';
@@ -83,28 +99,30 @@ require_once ROOT_PATH . '/Includes/header.php';
             </div>
 
             <div class="categories-grid">
-
-                <a href="<?= BASE_URL ?>Usuario/Catalogo.php?tipo_operacion=venta&categoria=2" class="category-card card-casa movcard">
-                    <h3>Casas en venta</h3>
+                <!-- 1. CASAS HABITACIONAL -->
+                <a href="<?= BASE_URL ?>Usuario/Catalogo.php?categoria=2" class="category-card card-casa movcard">
+                    <h3>Casas Habitacional</h3>
                     <p>
                         Disponibles:
-                        <?= $conteos['venta'][2] ?? 0 ?>
+                        <?= $conteosPorCategoria[2] ?? 0 ?>
                     </p>
                 </a>
 
-                <a href="<?= BASE_URL ?>Usuario/Catalogo.php?tipo_operacion=venta&categoria=4" class="category-card card-terreno movcard">
-                    <h3>Terrenos en venta</h3>
+                <!-- 2. TERRENOS DISPONIBLES -->
+                <a href="<?= BASE_URL ?>Usuario/Catalogo.php?categoria=4" class="category-card card-terreno movcard">
+                    <h3>Terrenos Disponibles</h3>
                     <p>
                         Disponibles:
-                        <?= $conteos['venta'][4] ?? 0 ?>
+                        <?= $conteosPorCategoria[4] ?? 0 ?>
                     </p>
                 </a>
 
-                <a href="<?= BASE_URL ?>Usuario/Catalogo.php?tipo_operacion=renta" class="category-card card-renta movcard">
-                    <h3>Propiedades en renta</h3>
+                <!-- 3. LOCAL COMERCIAL -->
+                <a href="<?= BASE_URL ?>Usuario/Catalogo.php?categoria=5" class="category-card card-renta movcard">
+                    <h3>Local Comercial</h3>
                     <p>
                         Disponibles:
-                        <?= array_sum($conteos['renta'] ?? []) ?>
+                        <?= $conteosPorCategoria[5] ?? 0 ?>
                     </p>
                 </a>
             </div>

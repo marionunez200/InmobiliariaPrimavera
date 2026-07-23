@@ -396,49 +396,48 @@ require_once ROOT_PATH . '/Includes/header.php';
         <?php endif; ?>
 
     </section>
+        
+        <div class="chat-widget">
+            <!-- Tarjeta desplegable (Modal de WhatsApp) -->
+            <div class="chat-card" id="chatCard">
+                <div class="chat-texto">
+                    <h3>¿No encontraste lo que buscabas?</h3>
 
-    <div class="chat-widget" id="chatWidget">
+                    <p>
+                        Contáctame y con gusto te ayudaré a encontrar
+                        la propiedad ideal para ti.
+                    </p>
 
-        <div class="chat-card" id="chatCard">
+                    <div class="asesor">
+                        <img src="<?= BASE_URL ?>Uploads/agentes/agente-6a4caae0ba02f.webp" alt="Asesora">
 
-            <div class="chat-texto">
-                <h3>¿No encontraste lo que buscabas?</h3>
-
-                <p>
-                    Contáctame y con gusto te ayudaré a encontrar
-                    la propiedad ideal para ti.
-                </p>
-
-                <div class="asesor">
-                    <img src="<?= BASE_URL ?>Uploads/agentes/agente-6a4caae0ba02f.webp" alt="Asesora">
-
-                    <div>
-                        <strong>María Fernanda</strong>
-                        <span>Asesora inmobiliaria</span>
+                        <div>
+                            <strong>María Fernanda</strong>
+                            <span>Asesora inmobiliaria</span>
+                        </div>
                     </div>
-                </div>
 
-                <a
-                    href="https://wa.me/526441435244"
-                    target="_blank"
-                    class="btn-whatsapp"
-                    rel="noopener noreferrer"
-                >
-                    <i class="fa-brands fa-whatsapp"></i>
-                    Enviar mensaje
-                </a>
+                    <a
+                        href="https://wa.me/526441435244"
+                        target="_blank"
+                        class="btn-whatsapp"
+                        rel="noopener noreferrer"
+                    >
+                        <i class="fa-brands fa-whatsapp"></i>
+                        Enviar mensaje
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Contenedor alineado: Mensaje a la izquierda, foto a la derecha -->
+            <div class="chat-burbuja-container">
+                <button class="burbuja" id="abrirChat">
+                    <img src="<?= BASE_URL ?>Uploads/agentes/agente-6a4caae0ba02f.webp" alt="Asesora">
+                </button>
+                
+                <div class="mensaje-burbuja">👋 Estoy aquí para ayudarte</div>
             </div>
         </div>
-        
-        <div class="mensaje-burbuja hover">
-            👋 Estoy aquí para ayudarte
-        </div>
-
-        <button class="burbuja" id="abrirChat">
-            <img src="<?= BASE_URL ?>Uploads/agentes/agente-6a4caae0ba02f.webp" alt="Asesora">
-        </button>
-
-    </div>
 
 </main>
 
@@ -589,4 +588,20 @@ require_once ROOT_PATH . '/Includes/header.php';
         });
 
     }
+
+        // Esperar a que cargue el DOM
+    document.addEventListener('DOMContentLoaded', function() {
+        const cerrarBtn = document.getElementById('cerrarChat');
+        const chatCard = document.getElementById('chatCard');
+        // const abrirBtn = document.getElementById('abrirChat'); // Si lo necesitas
+
+        // Función para cerrar la tarjeta
+        cerrarBtn.addEventListener('click', function() {
+            // Opción 1: Ocultar con display
+            chatCard.style.display = 'none';
+
+            // Opción 2: Si usas clases CSS para animar (ej: .active { display: block })
+            // chatCard.classList.remove('active');
+        });
+    });
 </script>
