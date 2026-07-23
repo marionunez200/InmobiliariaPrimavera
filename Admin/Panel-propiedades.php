@@ -573,17 +573,17 @@ $categorias = $stmtCategorias->fetchAll(PDO::FETCH_ASSOC);
 
             <label>
                 Recámaras
-                <input type="number" name="recamaras" value="0" min="0" step="1">
+                <input type="number" name="recamaras" min="0" step="1">
             </label>
 
             <label>
                 Baños
-                <input type="number" name="banos" value="0" min="0" step="1">
+                <input type="number" name="banos" min="0" step="1">
             </label>
 
             <label>
                 Estacionamientos
-                <input type="number" name="estacionamientos" value="0" min="0" step="1">
+                <input type="number" name="estacionamientos" min="0" step="1">
             </label>
 
             <label>
