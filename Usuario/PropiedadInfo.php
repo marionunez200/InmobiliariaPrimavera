@@ -31,9 +31,9 @@ function operacionDetalleTexto(?string $operacion): string
     };
 }
 
-$id = $_GET['id'] ?? null;
+$slug = $_GET['slug'] ?? null;
 
-if (!$id || !is_numeric($id)) {
+if (!$slug) {
     die('Propiedad no encontrada.');
 }
 
@@ -50,11 +50,11 @@ $stmt = $pdo->prepare("
         ON c.id = p.categoria_id
     LEFT JOIN agentes a
         ON p.agente_id = a.id
-    WHERE p.id = ?
+    WHERE p.slug = ?
     LIMIT 1
 ");
 
-$stmt->execute([$id]);
+$stmt->execute([$slug]);
 $propiedad = $stmt->fetch();
 
 if (!$propiedad) {
@@ -68,7 +68,7 @@ $stmtImagenes = $pdo->prepare("
     ORDER BY es_principal DESC, orden ASC, id ASC
 ");
 
-$stmtImagenes->execute([$id]);
+$stmtImagenes->execute([$propiedad['id']]);
 $imagenes = $stmtImagenes->fetchAll();
 
 if (empty($imagenes)) {
@@ -317,8 +317,7 @@ require_once ROOT_PATH . '/Includes/header.php';
     <button
         class="imprimir"
         type="button"
-        onclick="window.open('ImprimirPropiedadInfo.php?id=<?= $id ?>&moneda=<?= e($monedaMostrar) ?>', '_blank')">
-        <i class="fa-solid fa-print"></i>
+            onclick="window.open('ImprimirPropiedadInfo.php?id=<?= $propiedad['id'] ?>&moneda=<?= e($monedaMostrar) ?>', '_blank')"        <i class="fa-solid fa-print"></i>
         Imprimir ficha
     </button>
 

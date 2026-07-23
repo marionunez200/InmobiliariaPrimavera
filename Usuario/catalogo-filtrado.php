@@ -130,6 +130,7 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 
 $propiedades = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 ?>
 
 <div class="catalogo-grid">
@@ -192,7 +193,7 @@ if ($propiedad['tipo_operacion'] === 'renta') {
 
         <a
             class="propiedad_detalles"
-            href="<?= BASE_URL ?>Usuario/PropiedadInfo.php?id=<?= (int)$propiedad['id'] ?>&moneda=<?= e($monedaMostrar) ?>"
+            href="<?= BASE_URL ?>Usuario/propiedades/<?= e($propiedad['slug']) ?>?moneda=<?= e($monedaMostrar) ?>"
         >
             Ver detalles
         </a>

@@ -46,7 +46,7 @@ $cssPaginas = $cssPaginas ?? [];
 <body>
 
 <header class="site-header">
-    <a href="<?= BASE_URL ?>index.php" class="navbar-logo movil">
+    <a href="<?= BASE_URL ?>index" class="navbar-logo movil">
         <img class="logo" src="<?= BASE_URL ?>Imagenes/Logosolo.png" alt="Logo de Primavera inmobiliaria">
     </a>
     
@@ -56,7 +56,7 @@ $cssPaginas = $cssPaginas ?? [];
 
     <nav class="navbar">
         <div class="navbar-left">
-            <a href="<?= BASE_URL ?>index.php">Inicio</a>
+            <a href="<?= BASE_URL ?>index">Inicio</a>
             
             <div>
                 <a href="<?= BASE_URL ?>Usuario/Catalogo.php?tipo_operacion=venta">Venta</a>
