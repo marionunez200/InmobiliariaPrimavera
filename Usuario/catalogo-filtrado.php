@@ -4,6 +4,8 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
 
 require_once ROOT_PATH . '/Config/database.php';
 
+require_once ROOT_PATH . '/Backend/cambio-moneda.php';
+
 $pdo = db();
 
 function ciudadTexto(?string $ciudad): string
@@ -38,6 +40,11 @@ $tipoOperacion = $_GET['tipo_operacion'] ?? '';
 $categoria = (int)($_GET['categoria'] ?? 0);
 $precioMin = $_GET['precio_min'] ?? '';
 $precioMax = $_GET['precio_max'] ?? '';
+$monedaMostrar = strtoupper($_GET['moneda'] ?? 'MXN');
+
+if (!in_array($monedaMostrar, ['MXN', 'USD'], true)) {
+    $monedaMostrar = 'MXN';
+}
 
 if ($precioMax === '' && isset($_GET['precio_rango'])) {
     $precioMax = $_GET['precio_rango'];
@@ -77,6 +84,26 @@ if ($categoria > 0) {
     $params[] = $categoria;
 }
 
+if ($monedaMostrar === 'USD') {
+
+    if ($precioMin !== '' && is_numeric($precioMin)) {
+        $precioMin = MonedaService::convertir(
+            (float)$precioMin,
+            'USD',
+            'MXN'
+        );
+    }
+
+    if ($precioMax !== '' && is_numeric($precioMax)) {
+        $precioMax = MonedaService::convertir(
+            (float)$precioMax,
+            'USD',
+            'MXN'
+        );
+    }
+
+}
+
 if ($precioMin !== '' && is_numeric($precioMin)) {
     $sql .= " AND p.precio >= ?";
     $params[] = $precioMin;
@@ -110,10 +137,19 @@ if ($imagen === '') {
 
 $titulo = limpiarTexto($propiedad['titulo']);
 
-$precio = '$' . number_format((float)$propiedad['precio'], 0) . ' ' . $propiedad['moneda'];
+$precioConvertido = MonedaService::convertir(
+    (float)$propiedad['precio'],
+    $propiedad['moneda'],
+    $monedaMostrar
+);
+
+$precio = MonedaService::formato(
+    $precioConvertido,
+    $monedaMostrar
+);
 
 if ($propiedad['tipo_operacion'] === 'renta') {
-    $precio .= '/mes';
+    $precio .= ' /mes';
 }
 
 ?>
@@ -139,7 +175,7 @@ if ($propiedad['tipo_operacion'] === 'renta') {
 
         <a
             class="propiedad_detalles"
-            href="<?= BASE_URL ?>Usuario/PropiedadInfo.php?id=<?= e($propiedad['id']) ?>"
+            href="<?= BASE_URL ?>Usuario/PropiedadInfo.php?id=<?= e($propiedad['id']) ?>&moneda=<?= e($monedaMostrar) ?>"
         >
             Ver detalles
         </a>

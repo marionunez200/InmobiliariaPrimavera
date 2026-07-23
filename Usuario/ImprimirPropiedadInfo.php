@@ -7,6 +7,8 @@ require_once ROOT_PATH . '/Config/database.php';
 
 $pdo = db();
 
+$monedaMostrar = strtoupper($_GET['moneda'] ?? 'MXN');
+
 function ciudadDetalleTexto(?string $ciudad): string
 {
     return match ($ciudad) {

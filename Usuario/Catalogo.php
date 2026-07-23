@@ -6,6 +6,14 @@ if (!defined('BASE_URL')) {
 require_once ROOT_PATH . '/Config/database.php';
 $pdo = db();
 
+require_once ROOT_PATH . '/Backend/cambio-moneda.php';
+
+$monedaMostrar = strtoupper($_GET['moneda'] ?? 'MXN');
+
+if (!in_array($monedaMostrar, ['MXN', 'USD'], true)) {
+    $monedaMostrar = 'MXN';
+}
+
 $porPagina = 12;
 
 $pagina = isset($_GET['pagina'])
@@ -89,27 +97,37 @@ $params = [];
 
 if ($ciudad !== '') {
     $sqlCount .= " AND p.ciudad = ?";
+    $sql      .= " AND p.ciudad = ?";
     $paramsCount[] = $ciudad;
+    $params[]      = $ciudad;
 }
 
 if ($tipoOperacion !== '') {
     $sqlCount .= " AND p.tipo_operacion = ?";
+    $sql      .= " AND p.tipo_operacion = ?";
     $paramsCount[] = $tipoOperacion;
+    $params[]      = $tipoOperacion;
 }
 
 if ($categoria > 0) {
     $sqlCount .= " AND p.categoria_id = ?";
+    $sql      .= " AND p.categoria_id = ?";
     $paramsCount[] = $categoria;
+    $params[]      = $categoria;
 }
 
 if ($precioMin !== '' && is_numeric($precioMin)) {
     $sqlCount .= " AND p.precio >= ?";
+    $sql      .= " AND p.precio >= ?";
     $paramsCount[] = $precioMin;
+    $params[]      = $precioMin;
 }
 
 if ($precioMax !== '' && is_numeric($precioMax)) {
     $sqlCount .= " AND p.precio <= ?";
+    $sql      .= " AND p.precio <= ?";
     $paramsCount[] = $precioMax;
+    $params[]      = $precioMax;
 }
 
 $sql .= "
@@ -182,6 +200,22 @@ require_once ROOT_PATH . '/Includes/header.php';
                     <?php endforeach; ?>
                 </select>
 
+                <label for="moneda">Moneda</label>
+
+                <select name="moneda" id="moneda">
+
+                    <option value="MXN"
+                        <?= selectedOption($monedaMostrar, 'MXN') ?>>
+                        Pesos mexicanos
+                    </option>
+
+                    <option value="USD"
+                        <?= selectedOption($monedaMostrar, 'USD') ?>>
+                        Dólares estadounidenses
+                    </option>
+
+                </select>
+
             </div>
 
             <div class="filtro-group-bottom">
@@ -232,56 +266,65 @@ require_once ROOT_PATH . '/Includes/header.php';
             <?php foreach ($propiedades as $propiedad): ?>
                 <?php
                     $imagen = limpiarTexto($propiedad['imagen_principal'] ?? '');
-            
+
                     if ($imagen === '') {
                         $imagen = 'Imagenes/casa1.jpg';
                     }
-            
-                    $titulo = limpiarTexto($propiedad['titulo']);
+
+                    // Usamos $tituloPropiedad para evitar sobrescribir $titulo de la página
+                    $tituloPropiedad = limpiarTexto($propiedad['titulo']);
                     $ciudadLegible = ciudadTexto($propiedad['ciudad']);
                     $operacionLegible = operacionTexto($propiedad['tipo_operacion']);
-            
-                    $precio = '$' . number_format((float)$propiedad['precio'], 0) . ' ' . $propiedad['moneda'];
-            
+
+                    $precioConvertido = MonedaService::convertir(
+                        (float)$propiedad['precio'],
+                        $propiedad['moneda'],
+                        $monedaMostrar
+                    );
+
+                    $precio = MonedaService::formato(
+                        $precioConvertido,
+                        $monedaMostrar
+                    );
+
                     if ($propiedad['tipo_operacion'] === 'renta') {
                         $precio .= '/mes';
                     }
                 ?>
 
                 <article class="propiedad-card">
-            
+
                     <img 
                         class="propiedad-img" 
                         src="<?= BASE_URL ?><?= e($imagen) ?>"
-                        alt="<?= e($titulo) ?>"
+                        alt="<?= e($tituloPropiedad) ?>"
                     >
-            
+
                     <div class="propiedad-info">
-            
+
                         <h2>
-                            <?= e($titulo) ?>
+                            <?= e($tituloPropiedad) ?>
                         </h2>
-            
+
                         <p class="precio-mxn">
                             <?= e($precio) ?>
                         </p>
-            
+
                         <div class="info_card">
                             <p>Baños: <?= e((string)$propiedad['banos']) ?></p>
                             <p>Recámaras: <?= e((string)$propiedad['recamaras']) ?></p>
                         </div>
-            
-                        <a 
-                            class="propiedad_detalles" 
-                            href="<?= BASE_URL ?>Usuario/PropiedadInfo.php?id=<?= e((string)$propiedad['id']) ?>"
+
+                        <a
+                            class="propiedad_detalles"
+                            href="<?= BASE_URL ?>Usuario/PropiedadInfo.php?id=<?= (int)$propiedad['id'] ?>&moneda=<?= e($monedaMostrar) ?>"
                         >
                             Ver detalles
                         </a>
-            
                     </div>
-            
+
                 </article>
-            
+
             <?php endforeach; ?>
             
         </div>

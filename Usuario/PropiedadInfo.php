@@ -1,9 +1,15 @@
 <?php
 require_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
-
 require_once ROOT_PATH . '/Config/database.php';
+require_once ROOT_PATH . '/Backend/cambio-moneda.php';
 
 $pdo = db();
+
+$monedaMostrar = strtoupper($_GET['moneda'] ?? 'MXN');
+
+if (!in_array($monedaMostrar, ['MXN', 'USD'], true)) {
+    $monedaMostrar = 'MXN';
+}
 
 function ciudadDetalleTexto(?string $ciudad): string
 {
@@ -74,10 +80,19 @@ if (empty($imagenes)) {
 
 $imagenPrincipal = $imagenes[0]['imagen_url'] ?? 'Imagenes/casa2.jpg';
 
-$precioTexto = '$' . number_format((float)$propiedad['precio'], 2) . ' ' . $propiedad['moneda'];
+$precioConvertido = MonedaService::convertir(
+    (float)$propiedad['precio'],
+    $propiedad['moneda'],
+    $monedaMostrar
+);
+
+$precio = MonedaService::formato(
+    $precioConvertido,
+    $monedaMostrar
+);
 
 if ($propiedad['tipo_operacion'] === 'renta') {
-    $precioTexto .= '/mes';
+    $precio .= ' /mes';
 }
 
 $telefonoLimpio = preg_replace('/\D+/', '', (string)($propiedad['agente_telefono'] ?? ''));
@@ -94,18 +109,15 @@ $mapsUrl = !empty($propiedad['google_maps_url'])
     ? $propiedad['google_maps_url']
     : $mapsDefault;
 
-
 $titulo = e((string)$propiedad['titulo']);
 $descripcion = e((string)$propiedad['descripcion']);
 $cssPaginas = [BASE_URL . 'CSS/propiedadinfo.css'];
 
-require_once ROOT_PATH . 'Includes/header.php';
+require_once ROOT_PATH . '/Includes/header.php';
 ?>
+
 <main>
-
-    <!-- Imágenes de la propiedad -->
     <section class="propiedad_imagenes">
-
         <figure>
             <img 
                 class="imagen_principal" 
@@ -136,14 +148,11 @@ require_once ROOT_PATH . 'Includes/header.php';
                 &#10095;
             </button>
         </div>
-
     </section>
 
     <!-- Información de la propiedad -->
     <section class="propiedad">
-
         <article class="info_propiedad">
-
             <h1>
                 <?= e($tipoTexto) ?> en <?= e($operacionTexto) ?> - <?= e($ciudadTexto) ?>
             </h1>
@@ -155,13 +164,13 @@ require_once ROOT_PATH . 'Includes/header.php';
                 </p>
 
                 <p class="precio">
-                    <strong><?= e($precioTexto) ?></strong>
+                    <?= e($precio) ?>
                 </p>
+
             </div>
 
             <!-- Características -->
             <div class="caracteristicas">
-
                 <ul>
                     <li>
                         <i class="fa-solid fa-house"></i>
@@ -214,7 +223,6 @@ require_once ROOT_PATH . 'Includes/header.php';
                         </p>
                     </li>
                 </ul>
-
             </div>
 
             <?php if (!empty($propiedad['descripcion'])): ?>
@@ -223,12 +231,10 @@ require_once ROOT_PATH . 'Includes/header.php';
                     <p><?= nl2br(e((string)$propiedad['descripcion'])) ?></p>
                 </div>
             <?php endif; ?>
-
         </article>
 
         <!-- Info agente -->
         <aside class="info_agente">
-
             <img 
                 src="<?= BASE_URL ?><?= e((string)$fotoAgente) ?>"
                 alt="<?= e((string)($propiedad['agente_nombre'] ?: 'Agente inmobiliario')) ?>"
@@ -306,13 +312,12 @@ require_once ROOT_PATH . 'Includes/header.php';
                 </button>
             </form>
         </aside>
-
     </section>
 
     <button
         class="imprimir"
         type="button"
-        onclick="window.open('ImprimirPropiedadInfo.php?id=<?= $id ?>', '_blank')">
+        onclick="window.open('ImprimirPropiedadInfo.php?id=<?= $id ?>&moneda=<?= e($monedaMostrar) ?>', '_blank')">
         <i class="fa-solid fa-print"></i>
         Imprimir ficha
     </button>
@@ -331,13 +336,31 @@ require_once ROOT_PATH . 'Includes/header.php';
         </iframe>
     </section>
 
+    <?php if (isset($_GET['mensaje']) && $_GET['mensaje'] == 1): ?>
+        <dialog id="modalMensajeEnviado" class="modal-exito">
+            <div class="modal-exito-content">
+                <div class="modal-exito-icon">
+                    <i class="fa-solid fa-circle-check"></i>
+                </div>
+                <h2>¡Mensaje enviado!</h2>
+                <p>
+                    Gracias por contactarnos.<br>
+                    Un asesor de Inmobiliaria Primavera se comunicará contigo lo antes posible.
+                </p>
+                <button id="cerrarModalMensaje">
+                    Aceptar
+                </button>
+            </div>
+        </dialog>
+    <?php endif; ?>
+
 </main>
-<?php require_once ROOT_PATH . 'Includes/footer.php'; ?>
+
+<?php require_once ROOT_PATH . '/Includes/footer.php'; ?>
 
 <script>
 function cambiarImagen(src) {
     const imagenPrincipal = document.getElementById('imagenPrincipal');
-
     if (imagenPrincipal) {
         imagenPrincipal.src = src;
     }
@@ -347,81 +370,47 @@ const miniaturas = document.getElementById('miniaturas');
 const btnIzquierda = document.getElementById('btnMiniaturasIzquierda');
 const btnDerecha = document.getElementById('btnMiniaturasDerecha');
 
-btnIzquierda.addEventListener('click', () => {
-    miniaturas.scrollBy({
-        left: -500,
-        behavior: 'smooth'
+if (btnIzquierda && miniaturas) {
+    btnIzquierda.addEventListener('click', () => {
+        miniaturas.scrollBy({
+            left: -500,
+            behavior: 'smooth'
+        });
     });
-});
+}
 
-btnDerecha.addEventListener('click', () => {
-    miniaturas.scrollBy({
-        left: 500,
-        behavior: 'smooth'
+if (btnDerecha && miniaturas) {
+    btnDerecha.addEventListener('click', () => {
+        miniaturas.scrollBy({
+            left: 500,
+            behavior: 'smooth'
+        });
     });
-});
+}
 
 document.addEventListener("DOMContentLoaded", () => {
-
     const modal = document.getElementById("modalMensajeEnviado");
-
     if (!modal) return;
 
     modal.showModal();
 
-    document
-        .getElementById("cerrarModalMensaje")
-        .addEventListener("click", () => {
-
+    const cerrarBtn = document.getElementById("cerrarModalMensaje");
+    if (cerrarBtn) {
+        cerrarBtn.addEventListener("click", () => {
             modal.close();
-
             const url = new URL(window.location);
             url.searchParams.delete("mensaje");
             window.history.replaceState({}, "", url);
-
         });
+    }
 
     modal.addEventListener("click", (e) => {
-
         if (e.target === modal) {
-
             modal.close();
-
             const url = new URL(window.location);
             url.searchParams.delete("mensaje");
             window.history.replaceState({}, "", url);
-
         }
-
     });
-
 });
 </script>
-
-<?php if (isset($_GET['mensaje']) && $_GET['mensaje'] == 1): ?>
-
-<dialog id="modalMensajeEnviado" class="modal-exito">
-
-    <div class="modal-exito-content">
-
-        <div class="modal-exito-icon">
-            <i class="fa-solid fa-circle-check"></i>
-        </div>
-
-        <h2>¡Mensaje enviado!</h2>
-
-        <p>
-            Gracias por contactarnos.<br>
-            Un asesor de Inmobiliaria Primavera se comunicará contigo lo antes posible.
-        </p>
-
-        <button id="cerrarModalMensaje">
-            Aceptar
-        </button>
-
-    </div>
-
-</dialog>
-
-<?php endif; ?>
-

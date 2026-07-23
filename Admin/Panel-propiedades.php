@@ -584,7 +584,7 @@ $categorias = $stmtCategorias->fetchAll(PDO::FETCH_ASSOC);
 
             <label>
                 Terreno m²
-                <input type="number" name="terreno_m2" step="1">
+                <input type="number" name="terreno_m2" min="0" step="1">
             </label>
 
             <label>
