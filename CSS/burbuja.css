@@ -185,3 +185,95 @@
         transform:translateY(-4px);
     }
 }
+
+/* ===========================
+   Responsive
+=========================== */
+@media (max-width: 768px){
+
+    .chat-widget{
+        right:15px;
+        bottom:15px;
+    }
+
+    .chat-card{
+        width:calc(100vw - 30px);
+        max-width:340px;
+
+        right:0;
+        bottom:95px;
+
+        padding:20px;
+    }
+
+    .chat-texto h3{
+        font-size:1.1rem;
+    }
+
+    .chat-texto p{
+        font-size:.95rem;
+    }
+
+    .asesor{
+        gap:12px;
+        margin:18px 0;
+    }
+
+    .asesor img{
+        width:70px;
+        height:70px;
+    }
+
+    .asesor strong{
+        font-size:.95rem;
+    }
+
+    .asesor span{
+        font-size:.8rem;
+    }
+
+    .btn-whatsapp{
+        padding:12px;
+        font-size:.95rem;
+    }
+
+    .burbuja{
+        width:70px;
+        height:70px;
+    }
+
+    .mensaje-burbuja{
+        font-size:.8rem;
+        padding:8px 14px;
+    }
+}
+
+@media (max-width:480px){
+
+    .chat-card{
+        width:280px;
+        right:0;
+        bottom:85px;
+
+        padding:16px;
+        border-radius:18px;
+    }
+
+    .asesor img{
+        width:55px;
+        height:55px;
+    }
+
+    .chat-texto h3{
+        font-size:.95rem;
+    }
+
+    .chat-texto p{
+        font-size:.85rem;
+    }
+
+    .btn-whatsapp{
+        padding:10px;
+        font-size:.85rem;
+    }
+}
