@@ -327,7 +327,7 @@ body{
 
     .titulo-filtros{
         width:100%;
-        max-width:420px;
+        max-width:360px;
 
         margin:0 auto 20px;
 
@@ -347,7 +347,7 @@ body{
 
     .filtro-group-top{
         width:100%;
-        max-width:470px;
+        max-width:400px;
 
         display:flex;
         flex-direction:column;
