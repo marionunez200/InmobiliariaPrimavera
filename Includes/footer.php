@@ -8,7 +8,7 @@ if (!defined('BASE_URL')) {
         <div class="footer-container">
 
             <div class="footer-logo">
-                <a href="<?= BASE_URL ?>index.php" aria-label="Ir al inicio">
+                <a href="<?= BASE_URL ?>index" aria-label="Ir al inicio">
                     <img src="<?= BASE_URL ?>Imagenes/Logosolo.png" alt="Logo de Primavera inmobiliaria">
                 </a>
             </div>
@@ -17,10 +17,10 @@ if (!defined('BASE_URL')) {
                 <h2 class="footer-title">Información</h2>
 
                 <ul class="footer-links">
-                    <li><a href="<?= BASE_URL ?>Usuario/Politicas-privacidad.php" class="footer-link">Aviso de privacidad</a></li>
-                    <li><a href="<?= BASE_URL ?>Usuario/Terminos-condiciones.php" class="footer-link">Términos y condiciones</a></li>
-                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo.php" class="footer-link">Todas las propiedades</a></li>
-                    <li><a href="<?= BASE_URL ?>Usuario/Contacto.php" class="footer-link">Contacto</a></li>
+                    <li><a href="<?= BASE_URL ?>Usuario/Politicas-privacidad" class="footer-link">Aviso de privacidad</a></li>
+                    <li><a href="<?= BASE_URL ?>Usuario/Terminos-condiciones" class="footer-link">Términos y condiciones</a></li>
+                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo" class="footer-link">Todas las propiedades</a></li>
+                    <li><a href="<?= BASE_URL ?>Usuario/Contacto" class="footer-link">Contacto</a></li>
                 </ul>
             </nav>
 
