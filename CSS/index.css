@@ -63,7 +63,7 @@ body {
     background-image: linear-gradient(
         rgba(0, 0, 0, 0.48),
         rgba(0, 0, 0, 0.48)
-    ), url("../Imagenes/casa1.jpg");
+    ), url("../Imagenes/casa1.webp");
 
     background-size: cover;
     background-position: center;

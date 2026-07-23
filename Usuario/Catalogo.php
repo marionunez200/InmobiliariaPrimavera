@@ -317,7 +317,7 @@ require_once ROOT_PATH . '/Includes/header.php';
 
                         <a
                             class="propiedad_detalles"
-                            href="<?= BASE_URL ?>Usuario/PropiedadInfo.php?id=<?= (int)$propiedad['id'] ?>&moneda=<?= e($monedaMostrar) ?>"
+                            href="<?= BASE_URL ?>Usuario/propiedades/<?= e($propiedad['slug'] ?? '') ?>?moneda=<?= e($monedaMostrar) ?>"
                         >
                             Ver detalles
                         </a>
