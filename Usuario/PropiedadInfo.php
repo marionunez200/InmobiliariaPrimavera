@@ -310,6 +310,12 @@ require_once ROOT_PATH . '/Includes/header.php';
                 <button type="submit">
                     Enviar mensaje
                 </button>
+
+                <input
+                    type="hidden"
+                    name="slug"
+                    value="<?= e($propiedad['slug']) ?>"
+                >
             </form>
         </aside>
     </section>
@@ -317,7 +323,7 @@ require_once ROOT_PATH . '/Includes/header.php';
     <button
         class="imprimir"
         type="button"
-            onclick="window.open('ImprimirPropiedadInfo.php?id=<?= $propiedad['id'] ?>&moneda=<?= e($monedaMostrar) ?>', '_blank')"        <i class="fa-solid fa-print"></i>
+            onclick="window.open('<?= BASE_URL ?>Usuario/ImprimirPropiedadInfo.php?id=<?= $propiedad['id'] ?>&moneda=<?= urlencode($monedaMostrar) ?>', '_blank')"        <i class="fa-solid fa-print"></i>
         Imprimir ficha
     </button>
 

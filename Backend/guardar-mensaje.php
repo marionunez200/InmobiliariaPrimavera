@@ -16,6 +16,7 @@ $nombre = trim($_POST['nombre']);
 $telefono = trim($_POST['telefono']);
 $email = trim($_POST['email']);
 $mensaje = trim($_POST['mensaje']);
+$slug = $_POST['slug'] ?? '';
 
 if (
     $nombre === '' ||
@@ -55,5 +56,4 @@ $stmt->execute([
     ':mensaje' => $mensaje
 ]);
 
-header("Location: " . BASE_URL . "Usuario/PropiedadInfo.php?id=" . $propiedad_id . "&mensaje=1");
-exit;
+header("Location: " . BASE_URL . "Usuario/PropiedadInfo.php?slug=" . urlencode($slug) . "&mensaje=1"); exit;
