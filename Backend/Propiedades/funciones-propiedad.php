@@ -169,17 +169,29 @@ function guardarImagenesPropiedad(PDO $pdo, int $propiedad_id, string $titulo, b
             ) VALUES (?, ?, ?, ?, ?)
         ");
 
-        $stmtImg->execute([
-            $propiedad_id,
-            $rutaParaBaseDatos,
-            $titulo,
-            $esPrincipal,
-            $orden
-        ]);
-
-        $hayPrincipal = true;
-    }
-}
+        try {
+        
+            $stmtImg->execute([
+                $propiedad_id,
+                $rutaParaBaseDatos,
+                $titulo,
+                $esPrincipal,
+                $orden
+            ]);
+        
+        } catch (Exception $e) {
+        
+            // Si falla MySQL, borrar archivo creado
+            if (is_file($rutaDestinoServidor)) {
+                unlink($rutaDestinoServidor);
+            }
+        
+            throw $e;
+        }
+        
+                $hayPrincipal = true;
+            }
+        }
 
 function eliminarImagenesSeleccionadas(PDO $pdo, int $propiedad_id, array $idsImagenes): void
 {
@@ -207,8 +219,8 @@ function eliminarImagenesSeleccionadas(PDO $pdo, int $propiedad_id, array $idsIm
         $ruta = (string)$imagen['imagen_url'];
 
         if (str_starts_with($ruta, 'Uploads/propiedades/')) {
-            $rutaServidor = __DIR__ . '/' . $ruta;
-
+            $rutaServidor = ROOT_PATH . '/' . $ruta;
+            
             if (is_file($rutaServidor)) {
                 unlink($rutaServidor);
             }

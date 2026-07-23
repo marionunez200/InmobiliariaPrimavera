@@ -24,12 +24,20 @@ if ($nombre === '') {
 }
 
 try {
+
     if ($id !== '') {
+
+        $pdo->beginTransaction();
+
+
         $fotoActual = obtenerFotoActual($pdo, (int)$id);
+
 
         $nuevaFoto = subirFotoAgente($fotoActual);
 
+
         $fotoFinal = $nuevaFoto ?: $fotoActual;
+
 
         $stmt = $pdo->prepare("
             UPDATE agentes SET
@@ -41,6 +49,7 @@ try {
             WHERE id = ?
         ");
 
+
         $stmt->execute([
             $nombre,
             $telefono,
@@ -50,18 +59,30 @@ try {
             $id
         ]);
 
+
+        $pdo->commit();
+
     }
 
+
     $_SESSION['modal_exito'] = [
-        'titulo' => $esEdicion ? 'Cambios guardados' : 'Agente agregado',
-        'mensaje' => $esEdicion
-            ? 'La información del agente se actualizó correctamente.'
-            : 'El agente se agregó correctamente al panel.'
+        'titulo' => 'Cambios guardados',
+        'mensaje' => 'La información del agente se actualizó correctamente.'
     ];
-    
+
+
     header('Location: ' . BASE_URL . 'Admin/Panel-agente.php');
     exit;
 
+
 } catch (Exception $e) {
+
+
+    if ($pdo->inTransaction()) {
+        $pdo->rollBack();
+    }
+
+
     die('Error al guardar agente: ' . $e->getMessage());
+
 }
