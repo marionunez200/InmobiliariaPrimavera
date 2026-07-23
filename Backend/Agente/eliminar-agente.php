@@ -1,7 +1,9 @@
 <?php
+
 require_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
 require_once ROOT_PATH . '/Config/database.php';
 require_once ROOT_PATH . '/Admin/auth.php';
+
 validar_csrf();
 
 if (session_status() === PHP_SESSION_NONE) {
@@ -18,7 +20,7 @@ if ($id <= 0) {
 
 try {
 
-    // Verificar cuántas propiedades tiene asignadas
+    // Revisar propiedades asignadas
     $stmt = $pdo->prepare("
         SELECT COUNT(*)
         FROM propiedades
@@ -29,9 +31,10 @@ try {
 
     $totalPropiedades = (int)$stmt->fetchColumn();
 
+
     if ($totalPropiedades > 0) {
 
-        // Tiene propiedades: solo desactivar
+        // Si tiene propiedades solo se desactiva
         $stmt = $pdo->prepare("
             UPDATE agentes
             SET activo = 0
@@ -40,14 +43,40 @@ try {
 
         $stmt->execute([$id]);
 
+
         $_SESSION['modal_exito'] = [
             'titulo' => 'Agente desactivado',
             'mensaje' => 'El agente tiene propiedades asignadas, por lo que fue desactivado.'
         ];
 
+
     } else {
 
-        // No tiene propiedades: eliminar
+
+        // Obtener foto antes de eliminar
+        $stmtFoto = $pdo->prepare("
+            SELECT foto_url
+            FROM agentes
+            WHERE id = ?
+        ");
+
+        $stmtFoto->execute([$id]);
+
+        $foto = $stmtFoto->fetchColumn();
+
+
+        // Eliminar foto física
+        if ($foto && str_starts_with($foto, 'Uploads/agentes/')) {
+
+            $rutaFoto = ROOT_PATH . '/' . $foto;
+
+            if (is_file($rutaFoto)) {
+                unlink($rutaFoto);
+            }
+        }
+
+
+        // Eliminar registro
         $stmt = $pdo->prepare("
             DELETE FROM agentes
             WHERE id = ?
@@ -55,16 +84,21 @@ try {
 
         $stmt->execute([$id]);
 
+
         $_SESSION['modal_exito'] = [
             'titulo' => 'Agente eliminado',
-            'mensaje' => 'El agente fue eliminado correctamente.'
+            'mensaje' => 'El agente y su fotografía fueron eliminados correctamente.'
         ];
 
     }
 
+
     header('Location: ' . BASE_URL . 'Admin/Panel-agente.php');
     exit;
 
+
 } catch (Exception $e) {
-    die('Error: ' . $e->getMessage());
+
+    die('Error al eliminar agente: ' . $e->getMessage());
+
 }

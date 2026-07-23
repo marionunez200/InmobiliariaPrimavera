@@ -6,11 +6,15 @@ validar_csrf();
 
 function convertirAWebp(string $origen, string $destino, string $extension): bool
 {
+    $imagen = null;
+
     switch (strtolower($extension)) {
+
         case 'jpg':
         case 'jpeg':
             $imagen = imagecreatefromjpeg($origen);
             break;
+
 
         case 'png':
             $imagen = imagecreatefrompng($origen);
@@ -18,16 +22,34 @@ function convertirAWebp(string $origen, string $destino, string $extension): boo
             imagepalettetotruecolor($imagen);
             imagealphablending($imagen, true);
             imagesavealpha($imagen, true);
+
             break;
 
+
         case 'webp':
-            return move_uploaded_file($origen, $destino);
+            $imagen = imagecreatefromwebp($origen);
+            break;
+
 
         default:
             return false;
     }
 
-    $resultado = imagewebp($imagen, $destino, 85);
+
+    if (!$imagen) {
+        return false;
+    }
+
+
+    $resultado = imagewebp(
+        $imagen,
+        $destino,
+        85
+    );
+
+
+    imagedestroy($imagen);
+
 
     return $resultado;
 }
