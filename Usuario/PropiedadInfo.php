@@ -154,7 +154,7 @@ require_once ROOT_PATH . '/Includes/header.php';
     <section class="propiedad">
         <article class="info_propiedad">
             <h1>
-                <?= e($tipoTexto) ?> en <?= e($operacionTexto) ?> - <?= e($ciudadTexto) ?>
+                <?= e($titulo) ?>
             </h1>
 
             <!-- Ubicación y precio -->

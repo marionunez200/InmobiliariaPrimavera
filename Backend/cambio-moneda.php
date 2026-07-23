@@ -73,12 +73,9 @@ class MonedaService
     }
 
     public static function simbolo(string $moneda): string
-    {
-        return match ($moneda) {
-            'USD' => 'US$',
-            default => '$'
-        };
-    }
+{
+    return '$'; // Todas las monedas usarán simplemente '$'
+}
 
     public static function formato(
         float $cantidad,

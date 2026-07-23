@@ -206,12 +206,12 @@ require_once ROOT_PATH . '/Includes/header.php';
 
                     <option value="MXN"
                         <?= selectedOption($monedaMostrar, 'MXN') ?>>
-                        Pesos mexicanos
+                        MXN
                     </option>
 
                     <option value="USD"
                         <?= selectedOption($monedaMostrar, 'USD') ?>>
-                        Dólares estadounidenses
+                        USD
                     </option>
 
                 </select>
