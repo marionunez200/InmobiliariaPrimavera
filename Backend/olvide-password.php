@@ -25,7 +25,7 @@ if ($email === '') {
         'mensaje' => 'Debes ingresar un correo.'
     ];
 
-    header('Location: ' . BASE_URL . 'Admin/Login.php');
+    header('Location: ' . BASE_URL . 'Login.php');
     exit;
 }
 
@@ -47,7 +47,7 @@ if (!$usuario) {
         'mensaje' => 'Si el correo existe, recibirás un enlace para restablecer tu contraseña.'
     ];
 
-    header('Location: ' . BASE_URL . 'Admin/Login.php');
+    header('Location: ' . BASE_URL . 'Login.php');
     exit;
 }
 
@@ -132,7 +132,7 @@ try {
         'mensaje' => 'Se ha enviado un enlace de recuperación a tu correo.'
     ];
 
-    header('Location: ' . BASE_URL . 'Admin/Login.php');
+    header('Location: ' . BASE_URL . 'Login.php');
     exit;
 
 } catch (Exception $e) {

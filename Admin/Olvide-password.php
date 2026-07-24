@@ -60,7 +60,7 @@ if (session_status() === PHP_SESSION_NONE) {
             </button>
 
             <a
-                href="<?= BASE_URL ?>Admin/Login.php"
+                href="<?= BASE_URL ?>Login.php"
                 style="display:block; margin-top:20px; text-align:center;">
                 Volver al inicio de sesión
             </a>

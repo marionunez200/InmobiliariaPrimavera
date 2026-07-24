@@ -79,7 +79,7 @@ if ($token === '') {
             </button>
 
             <a
-                href="<?= BASE_URL ?>Admin/Login.php"
+                href="<?= BASE_URL ?>Login.php"
                 style="margin-top:20px; text-align:center;">
                 Volver al inicio de sesión
             </a>
