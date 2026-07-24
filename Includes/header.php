@@ -63,18 +63,18 @@ $cssPaginas = $cssPaginas ?? [];
                 <ul class="submenu">
                     <li><a href="<?= BASE_URL ?>Usuario/Catalogo?tipo_operacion=venta&categoria=2">Casas en venta</a></li>
                     <li><a href="<?= BASE_URL ?>Usuario/Catalogo?tipo_operacion=venta&categoria=3">Departamentos en venta</a></li>
-                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo?tipo_operacion=venta&categoria=4">Locales comerciales en venta</a></li>
-                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo?tipo_operacion=venta&categoria=5">Terrenos en venta</a></li>
+                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo?tipo_operacion=venta&categoria=5">Locales comerciales en venta</a></li>
+                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo?tipo_operacion=venta&categoria=4">Terrenos en venta</a></li>
                 </ul>
             </div>
 
             <div>
                 <a href="<?= BASE_URL ?>Usuario/Catalogo?tipo_operacion=renta">Renta</a>
                 <ul class="submenu">
-                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo?tipo_operacion=renta&categoria=1">Casas en renta</a></li>
-                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo?tipo_operacion=renta&categoria=2">Departamentos en renta</a></li>
-                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo?tipo_operacion=renta&categoria=4">Locales comerciales en renta</a></li>
-                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo?tipo_operacion=renta&categoria=5">Terrenos en renta</a></li>
+                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo?tipo_operacion=renta&categoria=2">Casas en renta</a></li>
+                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo?tipo_operacion=renta&categoria=3">Departamentos en renta</a></li>
+                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo?tipo_operacion=renta&categoria=5">Locales comerciales en renta</a></li>
+                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo?tipo_operacion=renta&categoria=4">Terrenos en renta</a></li>
                 </ul>
             </div>
             
@@ -84,7 +84,8 @@ $cssPaginas = $cssPaginas ?? [];
                 <ul class="submenu">
                     <li><a href="<?= BASE_URL ?>Usuario/Catalogo?tipo_operacion=traspaso&categoria=2">Casas en traspaso</a></li>
                     <li><a href="<?= BASE_URL ?>Usuario/Catalogo?tipo_operacion=traspaso&categoria=3">Departamentos en traspaso</a></li>
-                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo?tipo_operacion=traspaso&categoria=4">Locales comerciales en traspaso</a></li>
+                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo?tipo_operacion=traspaso&categoria=5">Locales comerciales en traspaso</a></li>
+                    <li><a href="<?= BASE_URL ?>Usuario/Catalogo?tipo_operacion=traspaso&categoria=4">Terrenos en traspaso</a></li>
                 </ul>
             </div>
         </div>

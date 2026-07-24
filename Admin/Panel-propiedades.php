@@ -443,7 +443,7 @@ $categorias = $stmtCategorias->fetchAll(PDO::FETCH_ASSOC);
                 <?php foreach ($ultimasPropiedades as $propiedad): ?>
                     <?php $imagen = $propiedad['imagen_principal'] ? BASE_URL . $propiedad['imagen_principal' ] : BASE_URL . 'Imagenes/casa1.jpg'; ?>
 
-                    <a class="card_link" href="<?= BASE_URL ?>Usuario/PropiedadInfo.php?id=<?= e((string)$propiedad['id']) ?>">
+                    <a class="card_link" href="<?= BASE_URL ?>Usuario/PropiedadInfo.php?slug=<?= urlencode($propiedad['slug']) ?>&moneda=MXN">
                         <article class="propiedad-card">
                             <img 
                                 class="propiedad-img" 
