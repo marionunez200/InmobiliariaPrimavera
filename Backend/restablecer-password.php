@@ -85,7 +85,7 @@ try {
         'mensaje' => 'Ahora puedes iniciar sesión con tu nueva contraseña.'
     ];
 
-    header('Location: ' . BASE_URL . 'Admin/Login.php');
+    header('Location: ' . BASE_URL . 'Login.php');
     exit;
 
 } catch (Exception $e) {

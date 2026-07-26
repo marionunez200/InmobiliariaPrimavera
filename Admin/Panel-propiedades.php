@@ -1064,6 +1064,7 @@ $categorias = $stmtCategorias->fetchAll(PDO::FETCH_ASSOC);
             value="<?= $_SESSION['csrf_token'] ?>"
         >
 
+        <input
             type="hidden"
             name="id"
             id="delete_categoria_id">
