@@ -208,6 +208,9 @@ $stmtCategorias = $pdo->query("
 
 $categorias = $stmtCategorias->fetchAll(PDO::FETCH_ASSOC);
 
+$mes = $_GET['mes'] ?? date('m');
+$anio = $_GET['anio'] ?? date('Y');
+
 ?>
 
 <!DOCTYPE html>
@@ -265,6 +268,7 @@ $categorias = $stmtCategorias->fetchAll(PDO::FETCH_ASSOC);
             <a href="<?= BASE_URL ?>Admin/Panel-propiedades.php">Propiedades</a>
             <a href="<?= BASE_URL ?>Admin/Panel-agente.php">Agentes</a>
             <a href="<?= BASE_URL ?>Admin/Panel-mensajes.php">Mensajes</a>
+            <a class="btn-exportar" href="<?= BASE_URL ?>Backend/Reportes/exportar-excel.php?mes=<?= $mes ?>&anio=<?= $anio ?>">Exportar Excel</a>        
         </nav>
     
         <form class="cerrar-sesion" action="<?= BASE_URL ?>Backend/cerrar-sesion.php" method="POST">
@@ -425,6 +429,18 @@ $categorias = $stmtCategorias->fetchAll(PDO::FETCH_ASSOC);
                             data-id="<?= e((string)$propiedad['id']) ?>"
                         >
                             Eliminar
+                        </button>
+                        
+                        <button
+                            class="operacion editar"
+                            type="button"
+                            data-operacion
+                            data-id="<?= $propiedad['id'] ?>"
+                            data-agente="<?= $propiedad['agente_id'] ?>"
+                            data-tipo="<?= $propiedad['tipo_operacion'] ?>"
+                            data-precio="<?= $propiedad['precio'] ?>"
+                            data-moneda="<?= $propiedad['moneda'] ?>">
+                            Operación realizada
                         </button>
                     </div>
                 </article>
@@ -1010,6 +1026,196 @@ $categorias = $stmtCategorias->fetchAll(PDO::FETCH_ASSOC);
     <?php endforeach; ?>
 
 </div>
+</dialog>
+
+    <!-- MODAL OPERACIÓN REALIZADA -->
+<dialog class="modal" id="modalOperacion">
+
+    <form
+        class="modal-content"
+        action="<?= BASE_URL ?>Backend/registrar-operacion.php"
+        method="POST">
+
+        <input
+            type="hidden"
+            name="csrf_token"
+            value="<?= $_SESSION['csrf_token'] ?>"
+        >
+
+        <input
+            type="hidden"
+            name="propiedad_id"
+            id="operacion_propiedad_id"
+        >
+
+        <input
+            type="hidden"
+            name="agente_id"
+            id="operacion_agente_id"
+        >
+
+        <div class="modal-header">
+
+            <h2>Registrar operación</h2>
+
+            <button
+                type="button"
+                class="modal-close"
+                data-close-modal>
+                &times;
+            </button>
+
+        </div>
+
+        <div class="modal-body">
+
+            <label>
+                Tipo de operación
+
+                <select
+                    name="tipo_operacion"
+                    id="operacion_tipo"
+                    required>
+
+                    <option value="venta">
+                        Venta
+                    </option>
+
+                    <option value="renta">
+                        Renta
+                    </option>
+
+                    <option value="traspaso">
+                        Traspaso
+                    </option>
+
+                </select>
+
+            </label>
+
+            <label>
+                Cliente
+
+                <input
+                    type="text"
+                    name="cliente_nombre"
+                    required>
+
+            </label>
+
+            <label>
+                Teléfono
+
+                <input
+                    type="text"
+                    name="cliente_telefono">
+
+            </label>
+
+            <label>
+                Correo electrónico
+
+                <input
+                    type="email"
+                    name="cliente_email">
+
+            </label>
+
+            <label>
+                Fecha
+
+                <input
+                    type="date"
+                    name="fecha_operacion"
+                    value="<?= date('Y-m-d') ?>"
+                    required>
+
+            </label>
+
+            <label>
+                Precio final
+
+                <input
+                    type="number"
+                    step="0.01"
+                    name="precio"
+                    id="operacion_precio"
+                    required>
+
+            </label>
+
+            <label>
+                Moneda
+
+                <select
+                    name="moneda"
+                    id="operacion_moneda">
+
+                    <option value="MXN">
+                        MXN
+                    </option>
+
+                    <option value="USD">
+                        USD
+                    </option>
+
+                </select>
+
+            </label>
+
+            <div id="grupo_renta">
+
+                <label>
+                    Tiempo de renta (meses)
+
+                    <input
+                        type="number"
+                        min="1"
+                        name="meses_renta">
+
+                </label>
+
+            </div>
+
+            <label>
+                Observaciones
+
+                <textarea
+                    name="observaciones"
+                    rows="4"></textarea>
+
+            </label>
+
+            <input
+                type="hidden"
+                name="estado_publicacion"
+                value="inactivo">
+
+        </div>
+
+        <div class="modal-actions">
+
+            <button
+                type="button"
+                class="btn-secondary"
+                data-close-modal>
+
+                Cancelar
+
+            </button>
+
+            <button
+                type="submit"
+                class="btn-primary">
+
+                Guardar operación
+
+            </button>
+
+        </div>
+
+    </form>
+
 </dialog>
     
 <!-- MODAL ELIMINAR PROPIEDAD -->
@@ -1617,9 +1823,7 @@ function actualizarMapa(inputDireccion, inputHidden, iframe){
     inputHidden.value = url;
 }
 
-/* ================================
-   MAPA - AGREGAR PROPIEDAD
-================================ */
+/* MAPA - AGREGAR PROPIEDAD */
 
 const direccionAgregar = document.getElementById("direccionAgregar");
 const iframeAgregar = document.getElementById("iframeAgregar");
@@ -1635,9 +1839,7 @@ direccionAgregar.addEventListener("input", () => {
 
 });
 
-/* ================================
-   MAPA - EDITAR PROPIEDAD
-================================ */
+/* MAPA - EDITAR PROPIEDAD */
 
 const direccionEditar = document.getElementById("edit_direccion_completa");
 const iframeEditar = document.getElementById("iframeEditar");
@@ -1664,6 +1866,58 @@ document.querySelectorAll(".btnNuevaCategoria").forEach((boton)=>{
     });
 
 });
+
+/* REGISTRAR OPERACIÓN */
+
+const modalOperacion = document.getElementById("modalOperacion");
+
+const operacionPropiedadId = document.getElementById("operacion_propiedad_id");
+const operacionAgenteId = document.getElementById("operacion_agente_id");
+
+const operacionTipo = document.getElementById("operacion_tipo");
+const operacionPrecio = document.getElementById("operacion_precio");
+const operacionMoneda = document.getElementById("operacion_moneda");
+
+const grupoRenta = document.getElementById("grupo_renta");
+
+document.querySelectorAll("[data-operacion]").forEach(btn => {
+
+    btn.addEventListener("click", () => {
+
+        operacionPropiedadId.value = btn.dataset.id;
+        operacionAgenteId.value = btn.dataset.agente;
+
+        operacionTipo.value = btn.dataset.tipo;
+        operacionPrecio.value = btn.dataset.precio;
+        operacionMoneda.value = btn.dataset.moneda;
+
+        mostrarCamposRenta();
+
+        modalOperacion.showModal();
+
+    });
+
+});
+
+/* MOSTRAR CAMPOS DE RENTA */
+
+function mostrarCamposRenta(){
+
+    if(operacionTipo.value === "renta"){
+
+        grupoRenta.style.display = "block";
+
+    }else{
+
+        grupoRenta.style.display = "none";
+
+    }
+
+}
+
+/* Cuando cambie el tipo */
+
+operacionTipo.addEventListener("change", mostrarCamposRenta);
 </script>
 </body>
 </html>
