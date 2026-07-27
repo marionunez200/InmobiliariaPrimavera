@@ -86,7 +86,12 @@ $stmtUltimos = $pdo->query("
     LIMIT 4
 ");
 
-$ultimosAgentes = $stmtUltimos->fetchAll();?>
+$ultimosAgentes = $stmtUltimos->fetchAll();
+
+$mes = $_GET['mes'] ?? date('m');
+$anio = $_GET['anio'] ?? date('Y');
+
+?>
 
 <!DOCTYPE html>
 <html lang="es-MX">
@@ -144,6 +149,7 @@ $ultimosAgentes = $stmtUltimos->fetchAll();?>
             <a href="<?= BASE_URL ?>Admin/Panel-propiedades.php">Propiedades</a>
             <a href="<?= BASE_URL ?>Admin/Panel-agente.php">Agentes</a>
             <a href="<?= BASE_URL ?>Admin/Panel-mensajes.php">Mensajes</a>
+            <a class="btn-exportar" href="<?= BASE_URL ?>Backend/Reportes/exportar-excel.php?mes=<?= $mes ?>&anio=<?= $anio ?>">Exportar Excel</a>        
         </nav>
     
         <form class="cerrar-sesion" action="<?= BASE_URL ?>Backend/cerrar-sesion.php" method="POST">
