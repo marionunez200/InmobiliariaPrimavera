@@ -561,12 +561,12 @@ $anio = $_GET['anio'] ?? date('Y');
 
             <label>
                 Terreno m²
-                <input type="number" name="terreno_m2" min="0" step="1">
+                <input type="number" name="terreno_m2" min="0" step="0.5">
             </label>
 
             <label>
                 Construcción m²
-                <input type="number" name="construccion_m2" min="0" step="1">
+                <input type="number" name="construccion_m2" min="0" step="0.5">
             </label>
 
             <div>
@@ -766,12 +766,12 @@ $anio = $_GET['anio'] ?? date('Y');
 
             <label>
                 Terreno m²
-                <input type="number" name="terreno_m2" id="edit_terreno_m2" min="0" step="1">
+                <input type="number" name="terreno_m2" id="edit_terreno_m2" min="0" step="0.5">
             </label>
 
             <label>
                 Construcción m²
-                <input type="number" name="construccion_m2" id="edit_construccion_m2" min="0" step="1">
+                <input type="number" name="construccion_m2" id="edit_construccion_m2" min="0" step="0.5">
             </label>
 
             <div class="imagenes-actuales-box">
@@ -1875,6 +1875,20 @@ function mostrarCamposRenta(){
 /* Cuando cambie el tipo */
 
 operacionTipo.addEventListener("change", mostrarCamposRenta);
+
+const input = document.getElementById("construccion_m2");
+
+input.addEventListener("wheel", e => {
+    e.preventDefault();
+
+    const valor = parseFloat(input.value || 0);
+
+    if (e.deltaY < 0) {
+        input.value = valor + 1;
+    } else {
+        input.value = Math.max(0, valor - 1);
+    }
+});
 </script>
 </body>
 </html>
