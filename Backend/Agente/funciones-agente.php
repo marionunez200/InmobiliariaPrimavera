@@ -4,6 +4,13 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
 require_once ROOT_PATH . '/Admin/auth.php';
 validar_csrf();
 
+if(!extension_loaded('gd')){
+
+    throw new Exception(
+        'GD no está habilitado.'
+    );
+
+}
 function convertirAWebp(string $origen, string $destino, string $extension): bool
 {
     $imagen = null;

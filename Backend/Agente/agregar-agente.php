@@ -15,13 +15,30 @@ if (session_status() === PHP_SESSION_NONE) {
 $pdo = db();
 
 
+// ===============================
+// RECIBIR DATOS
+// ===============================
+
 $nombre = trim($_POST['nombre'] ?? '');
 $telefono = trim($_POST['telefono'] ?? '');
-$email = trim($_POST['email'] ?? '');
-$password = trim($_POST['password'] ?? '');
-$rol = $_POST['rol'] ?? 'editor';
-$activo = isset($_POST['activo']) ? (int)$_POST['activo'] : 1;
 
+$email = strtolower(
+    trim($_POST['email'] ?? '')
+);
+
+$password = trim($_POST['password'] ?? '');
+
+$rol = $_POST['rol'] ?? 'editor';
+
+$activo = isset($_POST['activo']) 
+    ? (int)$_POST['activo'] 
+    : 1;
+
+
+
+// ===============================
+// VALIDACIONES
+// ===============================
 
 
 if ($nombre === '') {
@@ -34,8 +51,19 @@ if ($email === '') {
 }
 
 
+if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    die('El correo no tiene un formato válido.');
+}
+
+
+
 if ($password === '') {
     die('La contraseña es obligatoria.');
+}
+
+
+if (strlen($password) < 8) {
+    die('La contraseña debe tener mínimo 8 caracteres.');
 }
 
 
@@ -46,24 +74,63 @@ $rolesPermitidos = [
 ];
 
 
-if (!in_array($rol, $rolesPermitidos)) {
+if (!in_array($rol, $rolesPermitidos, true)) {
     die('Rol no válido.');
 }
 
 
 
+if (!in_array($activo, [0,1], true)) {
+    $activo = 1;
+}
+
+
+
+
 try {
+
+
+    // ===============================
+    // COMPROBAR EMAIL EXISTENTE
+    // ===============================
+
+
+    $stmt = $pdo->prepare("
+        SELECT id
+        FROM usuarios_admin
+        WHERE email = ?
+        LIMIT 1
+    ");
+
+
+    $stmt->execute([
+        $email
+    ]);
+
+
+    if ($stmt->fetch()) {
+
+        die('Ese correo ya está registrado.');
+
+    }
+
+
+
 
     $pdo->beginTransaction();
 
-    /*
-        Crear usuario
-    */
+
+
+    // ===============================
+    // CREAR USUARIO
+    // ===============================
+
 
     $passwordHash = password_hash(
         $password,
         PASSWORD_DEFAULT
     );
+
 
 
     $stmt = $pdo->prepare("
@@ -79,12 +146,15 @@ try {
     ");
 
 
+
     $stmt->execute([
+
         $nombre,
         $email,
         $passwordHash,
         $rol,
         $activo
+
     ]);
 
 
@@ -95,9 +165,9 @@ try {
 
 
 
-    /*
-        Si es editor creamos perfil de agente
-    */
+    // ===============================
+    // CREAR PERFIL AGENTE
+    // ===============================
 
 
     if ($rol === 'editor') {
@@ -106,7 +176,8 @@ try {
         $nuevaFoto = subirFotoAgente(null);
 
 
-        $fotoFinal = $nuevaFoto 
+
+        $fotoFinal = $nuevaFoto
             ?: 'Imagenes/agente1.webp';
 
 
@@ -125,6 +196,7 @@ try {
         ");
 
 
+
         $stmt->execute([
 
             $usuarioId,
@@ -140,7 +212,9 @@ try {
 
 
 
+
     $pdo->commit();
+
 
 
 
@@ -156,6 +230,7 @@ try {
 
 
 
+
     header(
         'Location: ' . BASE_URL . 'Admin/Panel-agente.php'
     );
@@ -168,13 +243,22 @@ try {
 
 
     if($pdo->inTransaction()){
+
         $pdo->rollBack();
+
     }
 
 
+    // Guardar error real en logs
+
+    error_log(
+        "Error al agregar agente: " . $e->getMessage()
+    );
+
+
+
     die(
-        'Error al guardar usuario: ' 
-        . $e->getMessage()
+        'Ocurrió un error al guardar los datos.'
     );
 
 }
