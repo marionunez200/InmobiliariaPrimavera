@@ -258,23 +258,23 @@ $anio = $_GET['anio'] ?? date('Y');
                         </span>
 
                         <div class="acciones">
-                            <button 
-                                class="editar" 
-                                type="button"
-                                data-edit
-                                data-agente='<?= e((string)$agenteJson) ?>'
-                            >
-                                Editar
-                            </button>
+                                <button
+                                    class="editar" 
+                                    type="button"
+                                    data-edit
+                                    data-agente='<?= e((string)$agenteJson) ?>'
+                                >
+                                    <i class="fa-regular fa-pen-to-square"></i>
+                                </button>
 
-                            <button 
-                                class="eliminar" 
-                                type="button"
-                                data-delete
-                                data-id="<?= e((string)$agente['id']) ?>"
-                            >
-                                Eliminar
-                            </button>
+                                <button
+                                    class="eliminar" 
+                                    type="button"
+                                    data-delete
+                                    data-id="<?= e((string)$agente['id']) ?>"
+                                >
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
                         </div>
                     </article>
                 <?php endforeach; ?>

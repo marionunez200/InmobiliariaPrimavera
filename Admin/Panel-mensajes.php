@@ -151,7 +151,7 @@ $anio = $_GET['anio'] ?? date('Y');
             </div>
 
             <div class="subtitulos_agente">
-                <span>Nombre</span>
+                <span>Información</span>
                 <span>Teléfono</span>
                 <span>Email</span>
                 <span>Mensaje</span>
@@ -205,9 +205,10 @@ $anio = $_GET['anio'] ?? date('Y');
                             </span>
 
                             <!-- Estado -->
-                            <span>
+                            <span class="text_dentro estado <?= e(strtolower($mensaje['estado_mensaje'])) ?>">
                                 <?= e($mensaje['estado_mensaje']) ?>
                             </span>
+
                             <!-- Fecha -->
                             <span class="text_dentro">
                                 <?= date('d/m/Y', strtotime($mensaje['creado_en'])) ?>
@@ -218,13 +219,13 @@ $anio = $_GET['anio'] ?? date('Y');
 
                                 <button
                                     type="button"
-                                    class="editar"
+                                    class="preview"
                                     data-ver
                                     data-nombre="<?= e($mensaje['nombre']) ?>"
                                     data-telefono="<?= e($mensaje['telefono']) ?>"
                                     data-email="<?= e($mensaje['email']) ?>"
                                     data-mensaje="<?= e($mensaje['mensaje']) ?>">
-                                    Ver
+                                    <i class="fa-solid fa-eye"></i>
                                 </button>
 
                                 <?php if (strtolower(trim($mensaje['estado_mensaje'])) == 'cerrado'): ?>
@@ -241,8 +242,9 @@ $anio = $_GET['anio'] ?? date('Y');
                                             type="button"
                                             class="eliminar"
                                             data-confirmar-eliminar>
-                                            Eliminar
+                                            <i class="fa-solid fa-trash"></i>
                                         </button>
+
                                     </form>
 
                                 <?php else: ?>
@@ -256,7 +258,7 @@ $anio = $_GET['anio'] ?? date('Y');
                                         <input type="hidden" name="id" value="<?= e($mensaje['id']) ?>">
 
                                         <button type="button" class="hecho" data-confirmar-hecho>
-                                            Hecho
+                                            <i class="fa-solid fa-check-double"></i>
                                         </button>
                                     </form>
 

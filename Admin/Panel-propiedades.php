@@ -176,29 +176,6 @@ if (!empty($idsPropiedades)) {
     }
 }
 
-$stmtUltimas = $pdo->query("
-    SELECT
-        p.*,
-        c.nombre AS categoria_nombre,
-        (
-            SELECT ip.imagen_url
-            FROM imagenes_propiedades ip
-            WHERE ip.propiedad_id = p.id
-            ORDER BY ip.es_principal DESC, ip.orden ASC, ip.id ASC
-            LIMIT 1
-        ) AS imagen_principal
-
-    FROM propiedades p
-
-    LEFT JOIN categorias_propiedad c
-    ON c.id = p.categoria_id
-
-    ORDER BY p.creado_en DESC, p.id DESC
-    LIMIT 4
-");
-
-$ultimasPropiedades = $stmtUltimas->fetchAll();
-
 $stmtCategorias = $pdo->query("
     SELECT *
     FROM categorias_propiedad
@@ -341,6 +318,7 @@ $anio = $_GET['anio'] ?? date('Y');
                 <span>Tipo</span>
                 <span>Precio</span>
                 <span>Estado</span>
+                <span>Fecha/Creación</span>
                 <span>Acciones</span>
             </div>
 
@@ -412,6 +390,10 @@ $anio = $_GET['anio'] ?? date('Y');
                         <?= e((string)$propiedad['estado_publicacion']) ?>
                     </span>
 
+                    <span class="text_dentro">
+                        <?= date('d/m/Y', strtotime($propiedad['creado_en'])) ?>
+                    </span>
+
                     <div class="acciones">
                         <button
                             class="editar"
@@ -419,7 +401,7 @@ $anio = $_GET['anio'] ?? date('Y');
                             data-edit
                             data-propiedad='<?= e((string)($propiedadJson ?: "{}")) ?>'
                         >
-                            Editar
+                            <i class="fa-regular fa-pen-to-square"></i>
                         </button>
 
                         <button
@@ -428,11 +410,11 @@ $anio = $_GET['anio'] ?? date('Y');
                             data-delete
                             data-id="<?= e((string)$propiedad['id']) ?>"
                         >
-                            Eliminar
+                            <i class="fa-solid fa-trash"></i>
                         </button>
                         
                         <button
-                            class="operacion editar"
+                            class="operacion"
                             type="button"
                             data-operacion
                             data-id="<?= $propiedad['id'] ?>"
@@ -440,7 +422,14 @@ $anio = $_GET['anio'] ?? date('Y');
                             data-tipo="<?= $propiedad['tipo_operacion'] ?>"
                             data-precio="<?= $propiedad['precio'] ?>"
                             data-moneda="<?= $propiedad['moneda'] ?>">
-                            Operación realizada
+                            <i class="fa-solid fa-clipboard-check"></i>
+                        </button>
+
+                        <button
+                            class="preview"
+                            type="button"
+                            onclick="window.location.href='<?= BASE_URL ?>Usuario/PropiedadInfo.php?slug=<?= urlencode($propiedad['slug']) ?>&moneda=MXN'">
+                            <i class="fa-solid fa-eye"></i>
                         </button>
                     </div>
                 </article>
@@ -449,38 +438,6 @@ $anio = $_GET['anio'] ?? date('Y');
 
             </div>
         </section>
-
-        <section class="cards_propiedades">
-            <div class="text_top">
-                <h2>Últimas propiedades añadidas</h2>
-            </div>
-
-            <div class="contenedor_cards">
-                <?php foreach ($ultimasPropiedades as $propiedad): ?>
-                    <?php $imagen = $propiedad['imagen_principal'] ? BASE_URL . $propiedad['imagen_principal' ] : BASE_URL . 'Imagenes/casa1.jpg'; ?>
-
-                    <a class="card_link" href="<?= BASE_URL ?>Usuario/PropiedadInfo.php?slug=<?= urlencode($propiedad['slug']) ?>&moneda=MXN">
-                        <article class="propiedad-card">
-                            <img 
-                                class="propiedad-img" 
-                                src="<?= e((string)$imagen) ?>" 
-                                alt="<?= e((string)$propiedad['titulo']) ?>"
-                            >
-
-                            <div class="text_top_info">
-                                <h2><?= e((string)$propiedad['titulo']) ?></h2>
-
-                                <p class="precio-mxn">
-                                    $<?= number_format((float)$propiedad['precio'], 0) ?>
-                                    <?= e((string)$propiedad['moneda']) ?>
-                                </p>
-                            </div>
-                        </article>
-                    </a>
-                <?php endforeach; ?>
-            </div>
-        </section>
-
     </main>
 </div>
 
