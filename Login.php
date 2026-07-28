@@ -117,10 +117,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
 
                 /* 2. Si NO tiene 2FA activado, iniciamos sesión y lo mandamos directamente a escanear el QR */
-                $_SESSION['admin_id']     = $usuario['id'];
-                $_SESSION['admin_nombre'] = $usuario['nombre'];
-                $_SESSION['admin_email']  = $usuario['email'];
-                $_SESSION['admin_rol']    = $usuario['rol'];
+                    $_SESSION['admin_id']     = $usuario['id'];
+                    $_SESSION['admin_nombre'] = $usuario['nombre'];
+                    $_SESSION['admin_email']  = $usuario['email'];
+                    
+                    $_SESSION['admin_rol']    = $usuario['rol'];
+                    $_SESSION['rol']          = $usuario['rol'];
 
                 header('Location: ' . BASE_URL . 'Admin/Seguridad-2FA.php');
                 exit;

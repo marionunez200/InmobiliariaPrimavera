@@ -57,13 +57,33 @@ if (!$tfa->verifyCode($usuario['two_factor_secret'], $codigo)) {
 }
 
 /* Login definitivo */
+
 $_SESSION['admin_id'] = $usuario['id'];
+
 $_SESSION['admin_nombre'] = $_SESSION['2fa_nombre'];
+
 $_SESSION['admin_email'] = $_SESSION['2fa_email'];
+
 $_SESSION['admin_rol'] = $_SESSION['2fa_rol'];
 
-// Limpiar variables temporales de 2FA
-unset($_SESSION['2fa_user'], $_SESSION['2fa_nombre'], $_SESSION['2fa_email'], $_SESSION['2fa_rol']);
 
-header('Location: ' . BASE_URL . 'Admin/Panel-propiedades.php');
+// Variable utilizada por auth.php
+
+$_SESSION['rol'] = $_SESSION['2fa_rol'];
+
+
+// Limpiar variables temporales de 2FA
+
+unset(
+    $_SESSION['2fa_user'],
+    $_SESSION['2fa_nombre'],
+    $_SESSION['2fa_email'],
+    $_SESSION['2fa_rol']
+);
+
+
+header(
+    'Location: ' . BASE_URL . 'Admin/Panel-propiedades.php'
+);
+
 exit;
