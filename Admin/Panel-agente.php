@@ -103,15 +103,9 @@ if ($buscar !== '') {
             a.id DESC
     ";
 
-
-
     $stmt = $pdo->prepare($sql);
 
-
-
     $texto = "%{$buscar}%";
-
-
 
     $stmt->execute([
 
