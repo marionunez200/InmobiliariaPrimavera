@@ -9,20 +9,31 @@ $modalExitoTitulo = '';
 $modalExitoMensaje = '';
 
 if (!empty($_SESSION['modal_exito'])) {
+
     $modalExitoTitulo = $_SESSION['modal_exito']['titulo'] ?? '';
     $modalExitoMensaje = $_SESSION['modal_exito']['mensaje'] ?? '';
 
     unset($_SESSION['modal_exito']);
 }
+
+
 function agenteActivoTexto($activo): string
 {
     return (int)$activo === 1 ? 'Activo' : 'Inactivo';
 }
 
+
 function agenteSelected($actual, $valor): string
 {
     return (string)$actual === (string)$valor ? 'selected' : '';
 }
+
+
+/*
+================================
+TOTALES DEL PANEL
+================================
+*/
 
 $totalPropiedadesActivas = (int)$pdo->query("
     SELECT COUNT(*)
@@ -30,63 +41,145 @@ $totalPropiedadesActivas = (int)$pdo->query("
     WHERE estado_publicacion = 'activo'
 ")->fetchColumn();
 
+
 $totalAgentesActivos = (int)$pdo->query("
     SELECT COUNT(*)
     FROM agentes
     WHERE activo = 1
 ")->fetchColumn();
 
+
+
+/*
+================================
+BUSCADOR DE AGENTES
+================================
+*/
+
+
 $buscar = trim($_GET['buscar'] ?? '');
+
+
 
 if ($buscar !== '') {
 
+
     $sql = "
-        SELECT *
-        FROM agentes
-        WHERE nombre LIKE :nombre
-            OR email LIKE :email
-            OR telefono LIKE :telefono
+        SELECT 
+            a.*,
+            u.rol
+
+        FROM agentes a
+
+        INNER JOIN usuarios_admin u
+            ON u.id = a.usuario_id
+
+        WHERE a.nombre LIKE :nombre
+            OR a.email LIKE :email
+            OR a.telefono LIKE :telefono
     ";
 
+
+
     if (strtolower($buscar) === 'activo') {
-        $sql .= " OR activo = 1";
+
+        $sql .= " OR a.activo = 1";
+
     }
+
+
 
     if (strtolower($buscar) === 'inactivo') {
-        $sql .= " OR activo = 0";
+
+        $sql .= " OR a.activo = 0";
+
     }
 
-    $sql .= " ORDER BY creado_en DESC, id DESC";
+
+
+    $sql .= "
+        ORDER BY 
+            a.creado_en DESC,
+            a.id DESC
+    ";
+
+
 
     $stmt = $pdo->prepare($sql);
 
+
+
     $texto = "%{$buscar}%";
 
+
+
     $stmt->execute([
+
         ':nombre' => $texto,
         ':email' => $texto,
         ':telefono' => $texto
+
     ]);
+
+
 
 } else {
 
+
     $stmt = $pdo->query("
-        SELECT *
-        FROM agentes
-        ORDER BY creado_en DESC, id DESC
+
+        SELECT 
+            a.*,
+            u.rol
+
+        FROM agentes a
+
+        INNER JOIN usuarios_admin u
+            ON u.id = a.usuario_id
+
+        ORDER BY 
+            a.creado_en DESC,
+            a.id DESC
+
     ");
+
 }
 
-$agentes = $stmt->fetchAll();
+
+
+$agentes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+
+
+
+/*
+================================
+ULTIMOS AGENTES
+================================
+*/
+
 
 $stmtUltimos = $pdo->query("
-    SELECT *
-    FROM agentes
-    ORDER BY creado_en DESC, id DESC
+
+    SELECT 
+        a.*,
+        u.rol
+
+    FROM agentes a
+
+    INNER JOIN usuarios_admin u
+        ON u.id = a.usuario_id
+
+    ORDER BY 
+        a.creado_en DESC,
+        a.id DESC
+
     LIMIT 4
+
 ");
 
-$ultimosAgentes = $stmtUltimos->fetchAll();?>
+$ultimosAgentes = $stmtUltimos->fetchAll(PDO::FETCH_ASSOC);
+?>
 
 <!DOCTYPE html>
 <html lang="es-MX">
@@ -325,7 +418,7 @@ $ultimosAgentes = $stmtUltimos->fetchAll();?>
             <button type="button" class="modal-close" data-close-modal>
                 &times;
             </button>
-        </div>
+        </div> 
 
         <div class="modal-body">
 
@@ -356,7 +449,26 @@ $ultimosAgentes = $stmtUltimos->fetchAll();?>
                     placeholder="sucorreo@gmail.com"
                 >
             </label>
-
+            <label>
+                Contraseña
+                <input 
+                type="password" 
+                name="password"
+                placeholder="Contraseña inicial"
+                required
+                >
+            </label>
+            <label>
+                Tipo de usuario
+                <select name="rol" required>
+                    <option value="editor">
+                        Agente (Editor)
+                    </option>
+                    <option value="admin">
+                        Administrador
+                    </option>
+                </select>
+            </label>
             <label>
                 Estado
                 <select name="activo">
@@ -386,7 +498,6 @@ $ultimosAgentes = $stmtUltimos->fetchAll();?>
                             
                 <div class="lista-archivos" id="previewAgenteAgregar"></div>
             </label>
-
         </div>
 
         <div class="modal-actions">
@@ -440,7 +551,6 @@ $ultimosAgentes = $stmtUltimos->fetchAll();?>
                     id="edit_telefono"
                 >
             </label>
-
             <label>
                 Correo electrónico
                 <input 
@@ -449,7 +559,25 @@ $ultimosAgentes = $stmtUltimos->fetchAll();?>
                     id="edit_email"
                 >
             </label>
-
+            <label>
+                Contraseña
+                <input 
+                type="password" 
+                name="password"
+                placeholder="Dejar en blanco para mantener la contraseña actual"
+                >
+            </label>
+            <label>
+                Tipo de usuario
+                <select name="rol" id="edit_rol" required>
+                    <option value="editor">
+                        Agente (Editor)
+                    </option>
+                    <option value="admin">
+                        Administrador
+                    </option>
+                </select>
+            </label>
             <label>
                 Estado
                 <select name="activo" id="edit_activo">
@@ -660,49 +788,88 @@ function renderizarFotoActualAgente(fotoUrl, nombreAgente) {
 
     contenedor.appendChild(card);
 }
-
 /* ================================
    EDITAR AGENTE
 ================================ */
 
 document.addEventListener('click', (event) => {
+
     const editButton = event.target.closest('[data-edit]');
 
     if (!editButton) {
         return;
     }
 
+
     let agente = {};
 
     try {
+
         agente = JSON.parse(editButton.dataset.agente);
+
     } catch (error) {
+
         console.error('Error leyendo data-agente:', error);
         return;
+
     }
 
+
+
+    // Datos del agente
     ponerValorSeguro('edit_id', agente.id);
     ponerValorSeguro('edit_nombre', agente.nombre);
     ponerValorSeguro('edit_telefono', agente.telefono);
     ponerValorSeguro('edit_email', agente.email);
     ponerValorSeguro('edit_activo', agente.activo ?? 1);
 
-    renderizarFotoActualAgente(agente.foto_url, agente.nombre);
 
-    const previewEditar = document.getElementById('previewAgenteEditar');
-    const inputEditar = document.getElementById('inputAgenteEditar');
+
+    // Datos del usuario
+    ponerValorSeguro(
+        'edit_rol',
+        agente.rol ?? 'editor'
+    );
+
+
+
+    renderizarFotoActualAgente(
+        agente.foto_url,
+        agente.nombre
+    );
+
+
+
+    const previewEditar = document.getElementById(
+        'previewAgenteEditar'
+    );
+
+
+    const inputEditar = document.getElementById(
+        'inputAgenteEditar'
+    );
+
+
 
     if (previewEditar) {
+
         previewEditar.innerHTML = '';
+
     }
+
+
 
     if (inputEditar) {
+
         inputEditar.value = '';
+
     }
 
-    abrirModal(modalEditar);
-});
 
+
+    abrirModal(modalEditar);
+
+});
 /* ================================
    ELIMINAR AGENTE
 ================================ */
