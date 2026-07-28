@@ -168,7 +168,7 @@ body {
 .subtitulos,
 .detalles_fila {
     display: grid;
-    grid-template-columns: 3fr 2fr 1.5fr 1.5fr 1fr 2fr;
+    grid-template-columns: 4fr 1.5fr 1.5fr 1.5fr 1fr 1fr 2fr;
     align-items: center;
     column-gap: 20px;
 
@@ -176,10 +176,21 @@ body {
 }
 
 .subtitulos {
+    display: grid;
+    grid-template-columns: 4fr 2fr 1.5fr 1.5fr 1fr 1fr 3fr;
+    align-items: center;
     margin-bottom: 15px;
-
     font-weight: 600;
     color: #122548;
+}
+
+.subtitulos span{
+    text-align:center;
+}
+
+.subtitulos span:first-child{
+    text-align:left;
+    padding-left:75px;
 }
 
 .detalles_fila {
@@ -192,7 +203,20 @@ body {
 
 .detalles_fila span {
     border-right: 1px solid #b8b8b8;
-    padding-right: 20px;
+    padding: 0 10px;
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    height: 100%;
+}
+
+.text_dentro {
+    color: #122548;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .info_propiedad {
@@ -337,19 +361,43 @@ body {
     text-overflow: ellipsis;
 }
 
-.detalles_agente_fila .text_dentro {
+/* Encabezados centrados */
+.subtitulos_agente span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.subtitulos_agente span:first-child {
+    justify-content: flex-start;
+    padding-left: 85px; /* Compensa el espacio de la foto */
+}
+
+/* Contenido de las columnas */
+.detalles_agente_fila > span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+
     color: #122548;
 
     border-right: 1px solid #b8b8b8;
     padding-right: 20px;
-
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }
 
-.text_dentro {
-    color: #122548;
+/* Primera columna (foto + nombre) */
+.info_agente {
+    justify-content: flex-start;
+}
+
+/* Última columna (acciones) */
+.acciones {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
 }
 
 /* ================================
@@ -362,10 +410,14 @@ body {
 }
 
 .acciones button {
-    width: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
-    padding: 8px 15px;
-    margin: 20px auto;
+    width: 50px;
+
+    padding: 15px 15px;
+    margin: 8px;
 
     border: none;
     border-radius: 30px;
@@ -380,13 +432,25 @@ body {
 }
 
 .editar:hover {
-    background-color: #42c705;
+    background-color: #2d7eb4;
     color: #fff5e0;
     transform: scale(1.05);
 }
 
 .eliminar:hover {
     background-color: #ca0303;
+    color: #fff5e0;
+    transform: scale(1.05);
+}
+
+.operacion:hover {
+    background-color: #14ca3b;
+    color: #fff5e0;
+    transform: scale(1.05);
+}
+
+.preview:hover {
+    background-color: #c78228;
     color: #fff5e0;
     transform: scale(1.05);
 }
@@ -1450,7 +1514,7 @@ MODAL DE ÉXITO
 }
 
 .contenedor_agentes {
-    max-height: 520px;
+    max-height: 650px;
     overflow-y: auto;
     padding-bottom: 20px;
 }

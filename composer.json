@@ -1,6 +1,7 @@
 {
     "require": {
         "phpmailer/phpmailer": "^7.1",
-        "phpoffice/phpspreadsheet": "^2.1"
+        "phpoffice/phpspreadsheet": "^2.1",
+        "robthree/twofactorauth": "^1.8"
     }
 }

@@ -178,7 +178,11 @@ $stmtUltimos = $pdo->query("
 
 ");
 
-$ultimosAgentes = $stmtUltimos->fetchAll(PDO::FETCH_ASSOC);
+$ultimosAgentes = $stmtUltimos->fetchAll();
+
+$mes = $_GET['mes'] ?? date('m');
+$anio = $_GET['anio'] ?? date('Y');
+
 ?>
 
 <!DOCTYPE html>
@@ -237,6 +241,7 @@ $ultimosAgentes = $stmtUltimos->fetchAll(PDO::FETCH_ASSOC);
             <a href="<?= BASE_URL ?>Admin/Panel-propiedades.php">Propiedades</a>
             <a href="<?= BASE_URL ?>Admin/Panel-agente.php">Agentes</a>
             <a href="<?= BASE_URL ?>Admin/Panel-mensajes.php">Mensajes</a>
+            <a class="btn-exportar" href="<?= BASE_URL ?>Backend/Reportes/exportar-excel.php?mes=<?= $mes ?>&anio=<?= $anio ?>">Exportar Excel</a>        
         </nav>
     
         <form class="cerrar-sesion" action="<?= BASE_URL ?>Backend/cerrar-sesion.php" method="POST">
@@ -345,23 +350,23 @@ $ultimosAgentes = $stmtUltimos->fetchAll(PDO::FETCH_ASSOC);
                         </span>
 
                         <div class="acciones">
-                            <button 
-                                class="editar" 
-                                type="button"
-                                data-edit
-                                data-agente='<?= e((string)$agenteJson) ?>'
-                            >
-                                Editar
-                            </button>
+                                <button
+                                    class="editar" 
+                                    type="button"
+                                    data-edit
+                                    data-agente='<?= e((string)$agenteJson) ?>'
+                                >
+                                    <i class="fa-regular fa-pen-to-square"></i>
+                                </button>
 
-                            <button 
-                                class="eliminar" 
-                                type="button"
-                                data-delete
-                                data-id="<?= e((string)$agente['id']) ?>"
-                            >
-                                Eliminar
-                            </button>
+                                <button
+                                    class="eliminar" 
+                                    type="button"
+                                    data-delete
+                                    data-id="<?= e((string)$agente['id']) ?>"
+                                >
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
                         </div>
                     </article>
                 <?php endforeach; ?>

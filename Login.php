@@ -83,7 +83,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     email,
                     rol,
                     activo,
-                    password_hash
+                    password_hash,
+                    two_factor_enabled,
+                    two_factor_secret
                 FROM usuarios_admin
                 WHERE (email = ? OR nombre = ?)
                 AND activo = 1
@@ -94,8 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if ($usuario && password_verify($password, $usuario['password_hash'])) {
-
-                // Login correcto: eliminar intentos fallidos
+                /* Eliminar intentos fallidos */
                 $stmt = $pdo->prepare("
                     DELETE FROM intentos_login
                     WHERE usuario = ? AND ip = ?
@@ -104,36 +105,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 session_regenerate_id(true);
 
-                $_SESSION['admin_id'] = $usuario['id'];
-                $_SESSION['admin_nombre'] = $usuario['nombre'];
-                $_SESSION['admin_email'] = $usuario['email'];
-                $_SESSION['admin_rol'] = $usuario['rol'];
+                /* 1. Si ya tiene 2FA activado, pedir código de 6 dígitos */
+                if ((int)$usuario['two_factor_enabled'] === 1) {
+                    $_SESSION['2fa_user']   = $usuario['id'];
+                    $_SESSION['2fa_nombre'] = $usuario['nombre'];
+                    $_SESSION['2fa_email']  = $usuario['email'];
+                    $_SESSION['2fa_rol']    = $usuario['rol'];
 
-                header('Location: ' . BASE_URL . 'Admin/Panel-propiedades.php');
-                exit;
-
-            } else {
-
-                // Login incorrecto: sumar intento
-                if ($registroIntentos) {
-                    $stmt = $pdo->prepare("
-                        UPDATE intentos_login
-                        SET
-                            intentos = intentos + 1,
-                            ultimo_intento = NOW()
-                        WHERE id = ?
-                    ");
-                    $stmt->execute([$registroIntentos['id']]);
-                } else {
-                    $stmt = $pdo->prepare("
-                        INSERT INTO intentos_login
-                        (usuario, ip, intentos, ultimo_intento)
-                        VALUES (?, ?, 1, NOW())
-                    ");
-                    $stmt->execute([$usuarioLogin, $ip]);
+                    header('Location: ' . BASE_URL . 'Admin/Verificar-2FA.php');
+                    exit;
                 }
 
-                $error = 'Usuario, correo o contraseña incorrectos.';
+                /* 2. Si NO tiene 2FA activado, iniciamos sesión y lo mandamos directamente a escanear el QR */
+                $_SESSION['admin_id']     = $usuario['id'];
+                $_SESSION['admin_nombre'] = $usuario['nombre'];
+                $_SESSION['admin_email']  = $usuario['email'];
+                $_SESSION['admin_rol']    = $usuario['rol'];
+
+                header('Location: ' . BASE_URL . 'Admin/Seguridad-2FA.php');
+                exit;
             }
         }
     }
@@ -220,7 +210,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             id="usuario"
                             name="usuario"
                             autocomplete="username"
-                            placeholder=" "
+                            placeholder=""
                             required
                             value="<?= e($_POST['usuario'] ?? '') ?>"
                         >
@@ -238,7 +228,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             id="password"
                             name="password"
                             autocomplete="current-password"
-                            placeholder=" "
+                            placeholder=""
                             required
                         >
 

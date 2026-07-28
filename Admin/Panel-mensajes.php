@@ -46,6 +46,9 @@ $stmt = $pdo->query("
 
 $mensajes = $stmt->fetchAll();
 
+$mes = $_GET['mes'] ?? date('m');
+$anio = $_GET['anio'] ?? date('Y');
+
 ?>
 
 <!DOCTYPE html>
@@ -101,6 +104,7 @@ $mensajes = $stmt->fetchAll();
             <a href="<?= BASE_URL ?>Admin/Panel-propiedades.php">Propiedades</a>
             <a href="<?= BASE_URL ?>Admin/Panel-agente.php">Agentes</a>
             <a href="<?= BASE_URL ?>Admin/Panel-mensajes.php">Mensajes</a>
+            <a class="btn-exportar" href="<?= BASE_URL ?>Backend/Reportes/exportar-excel.php?mes=<?= $mes ?>&anio=<?= $anio ?>">Exportar Excel</a>        
         </nav>
     
         <form class="cerrar-sesion" action="<?= BASE_URL ?>Backend/cerrar-sesion.php" method="POST">
@@ -147,7 +151,7 @@ $mensajes = $stmt->fetchAll();
             </div>
 
             <div class="subtitulos_agente">
-                <span>Nombre</span>
+                <span>Información</span>
                 <span>Teléfono</span>
                 <span>Email</span>
                 <span>Mensaje</span>
@@ -201,9 +205,10 @@ $mensajes = $stmt->fetchAll();
                             </span>
 
                             <!-- Estado -->
-                            <span>
+                            <span class="text_dentro estado <?= e(strtolower($mensaje['estado_mensaje'])) ?>">
                                 <?= e($mensaje['estado_mensaje']) ?>
                             </span>
+
                             <!-- Fecha -->
                             <span class="text_dentro">
                                 <?= date('d/m/Y', strtotime($mensaje['creado_en'])) ?>
@@ -214,13 +219,13 @@ $mensajes = $stmt->fetchAll();
 
                                 <button
                                     type="button"
-                                    class="editar"
+                                    class="preview"
                                     data-ver
                                     data-nombre="<?= e($mensaje['nombre']) ?>"
                                     data-telefono="<?= e($mensaje['telefono']) ?>"
                                     data-email="<?= e($mensaje['email']) ?>"
                                     data-mensaje="<?= e($mensaje['mensaje']) ?>">
-                                    Ver
+                                    <i class="fa-solid fa-eye"></i>
                                 </button>
 
                                 <?php if (strtolower(trim($mensaje['estado_mensaje'])) == 'cerrado'): ?>
@@ -237,8 +242,9 @@ $mensajes = $stmt->fetchAll();
                                             type="button"
                                             class="eliminar"
                                             data-confirmar-eliminar>
-                                            Eliminar
+                                            <i class="fa-solid fa-trash"></i>
                                         </button>
+
                                     </form>
 
                                 <?php else: ?>
@@ -252,7 +258,7 @@ $mensajes = $stmt->fetchAll();
                                         <input type="hidden" name="id" value="<?= e($mensaje['id']) ?>">
 
                                         <button type="button" class="hecho" data-confirmar-hecho>
-                                            Hecho
+                                            <i class="fa-solid fa-check-double"></i>
                                         </button>
                                     </form>
 

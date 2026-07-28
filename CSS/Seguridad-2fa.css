@@ -1,0 +1,145 @@
+
+body{
+    margin:0;
+    background:#fff5e0;
+    font-family:'Montserrat',sans-serif;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
+}
+
+.configuracion{
+    width:650px;
+    background:#ffffff;
+    border-radius:20px;
+    padding:40px;
+    box-shadow:0 10px 30px rgba(0,0,0,.15);
+    text-align:center;
+}
+
+.configuracion h1{
+    color:#122548;
+    margin-bottom:25px;
+    font-family:"Sole Serif Display",serif;
+}
+
+.configuracion p{
+    color:#444;
+    line-height:1.6;
+}
+
+.box-qr{
+    margin:30px auto;
+    background:#f8f8f8;
+    border-radius:15px;
+    padding:20px;
+    width:260px;
+}
+
+.box-qr img{
+    width:220px;
+    height:220px;
+    border-radius:10px;
+}
+
+.secret-code{
+    display:inline-block;
+    margin-top:12px;
+    background:#122548;
+    color:#fff5e0;
+    padding:10px 15px;
+    border-radius:10px;
+    letter-spacing:2px;
+    font-size:17px;
+}
+
+input[name="codigo"]{
+    width:250px;
+    padding:14px;
+    border-radius:40px;
+    border:2px solid #122548;
+    text-align:center;
+    font-size:18px;
+    letter-spacing:6px;
+    outline:none;
+}
+
+input[name="codigo"]:focus{
+    border-color:#c78228;
+}
+
+button{
+    margin-top:25px;
+    width:280px;
+    padding:14px;
+    border:none;
+    border-radius:40px;
+    background:#122548;
+    color:#fff5e0;
+    font-size:16px;
+    cursor:pointer;
+    transition:.3s;
+}
+
+button:hover{
+    background:#1d3a70;
+}
+
+.estado{
+    padding:20px;
+    background:#eaf8ed;
+    border-radius:15px;
+    color:#14813b;
+    font-weight:600;
+}
+
+/* MODAL */
+
+.modal{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.5);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    z-index:9999;
+}
+
+.modal-box{
+    width:380px;
+    background:white;
+    border-radius:20px;
+    padding:40px;
+    text-align:center;
+    animation:aparecer .35s ease;
+}
+
+.modal-box i{
+    font-size:70px;
+    color:#19b65a;
+    margin-bottom:20px;
+}
+
+.modal-box h2{
+    margin:0;
+    color:#122548;
+}
+
+.modal-box p{
+    margin-top:15px;
+}
+
+@keyframes aparecer{
+
+    from{
+        opacity:0;
+        transform:translateY(-30px);
+    }
+
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+
+}

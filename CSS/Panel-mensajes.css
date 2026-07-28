@@ -152,63 +152,70 @@ body {
 ================================ */
 
 .subtitulos_agente,
-.detalles_agente_fila{
-    display:grid;
-    grid-template-columns:
-        1.8fr
-        1.1fr
-        1.5fr
-        2fr
-        .8fr
-        1fr
-        140px;
-
-    align-items:center;
-    gap:18px;
+.detalles_agente_fila {
+    display: grid;
+    grid-template-columns: 1.8fr 1.1fr 1.5fr 2fr 1fr 1fr 1fr;
+    align-items: center;
+    width: 100%;
 }
 
-.subtitulos_agente{
-    margin-bottom:15px;
+.subtitulos_agente {
+    margin-bottom: 15px;
+    padding: 0 10px;
+    font-weight: 600;
+    color: #122548;
+}
 
-    color:#122548;
-    font-weight:700;
+.subtitulos_agente span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.subtitulos_agente span:first-child {
+    justify-content: flex-start;
+    text-align: left;
+    padding-left: 10px;
 }
 
 /* ================================
    FILAS
 ================================ */
 
-.detalles_agente_fila{
-    margin-bottom:12px;
-    padding:18px 20px;
-
-    background:#ebdfc6;
-    border-radius:16px;
+.detalles_agente_fila {
+    margin-bottom: 12px;
+    padding: 12px 10px;
+    background: #ebdfc6;
+    border-radius: 16px;
 }
 
-.info_mensaje{
-    color:#122548;
+.info_mensaje {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    color: #122548;
+    border-right: 1px solid #b8b8b8;
+    padding-right: 15px;
+    padding-left: 10px;
 }
 
-.info_mensaje h3{
-    margin:0;
-    font-size:1rem;
+.detalles_agente_fila > span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: #122548;
+    border-right: 1px solid #b8b8b8;
+    padding: 0 10px;
+    height: 100%;
+    min-width: 0;
 }
 
-.info_mensaje p{
-    margin-top:4px;
-    margin-bottom:0;
-
-    color:#666;
-    font-size:.9rem;
-}
-
-.text_dentro{
-    color:#122548;
-
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
+.text_dentro {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 /* ================================
@@ -232,51 +239,43 @@ body {
    ACCIONES
 ================================ */
 
-.acciones{
+.acciones {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 10px;
-    flex-wrap: nowrap;
+    gap: 8px;
+    border-right: none !important;
 }
 
-.acciones form{
-    margin: 0;
-}
-
-.acciones button{
-    width: 95px;
+.acciones button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 38px;
     height: 38px;
-
-    padding: 0 15px;
-
+    padding: 0;
+    margin: 0;
     border: none;
-    border-radius: 20px;
-
-    background: #122548;
+    border-radius: 50%; /* Botones circulares compactos para iconos */
     color: #fff5e0;
-
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 600;
-
     cursor: pointer;
-    transition: .25s;
+    transition: 0.25s ease;
 }
 
-.acciones button:hover{
-    transform: scale(1.04);
+.preview {
+    background: #122548;
 }
 
-.editar:hover{
-    background: #2d8dff;
+.hecho {
+    background: #1d8a3b;
 }
 
-.hecho{
-    background: #16a34a;
+.eliminar {
+    background: #b22222;
 }
 
-.hecho:hover{
-    background: #15803d;
+.acciones button:hover {
+    transform: scale(1.1);
 }
 
 /* ================================
@@ -347,14 +346,28 @@ body {
 }
 
 .detalles_agente_fila .text_dentro {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
     color: #122548;
 
     border-right: 1px solid #b8b8b8;
     padding-right: 20px;
 
+    text-align: center;
+
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.detalles_agente_fila .acciones {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    border-right: none !important;
 }
 
 .text_dentro {
@@ -365,16 +378,22 @@ body {
    ACCIONES
 ================================ */
 
-.acciones {
-    display: flex;
-    gap: 10px;
+.acciones{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:10px;
 }
 
-.acciones button {
-    width: 100px;
+.acciones button{
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
-    padding: 8px 15px;
-    margin: 20px auto;
+    width: 50px;
+
+    padding: 15px 15px;
+    margin: 8px;
 
     border: none;
     border-radius: 30px;
@@ -388,21 +407,19 @@ body {
     font-family: 'Montserrat', sans-serif;
 }
 
-.editar:hover {
-    background-color: #42c705;
-    color: #fff5e0;
-    transform: scale(1.05);
+.preview{
+    background:#122548;
+    color:#fff5e0;
 }
 
-.eliminar:hover {
-    background-color: #ca0303;
-    color: #fff5e0;
-    transform: scale(1.05);
+.hecho{
+    background:#1d8a3b;
+    color:#fff5e0;
 }
 
-#aplicar_filtro:hover {
-    background: #17305e;
-    color: gray;
+.eliminar{
+    background:#b22222;
+    color:#fff5e0;
 }
 
 /* ================================
