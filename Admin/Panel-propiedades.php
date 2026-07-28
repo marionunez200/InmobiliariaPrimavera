@@ -561,12 +561,12 @@ $anio = $_GET['anio'] ?? date('Y');
 
             <label>
                 Terreno m²
-                <input type="number" name="terreno_m2" min="0" step="0.5">
+                <input type="number" id="add_terreno_m2" name="terreno_m2" min="0" step="any" class="incremento-personalizado">
             </label>
 
             <label>
                 Construcción m²
-                <input type="number" name="construccion_m2" min="0" step="0.5">
+                <input type="number" id="add_construccion_m2" name="construccion_m2" min="0" step="any" class="incremento-personalizado">
             </label>
 
             <div>
@@ -766,12 +766,12 @@ $anio = $_GET['anio'] ?? date('Y');
 
             <label>
                 Terreno m²
-                <input type="number" name="terreno_m2" id="edit_terreno_m2" min="0" step="0.5">
+                <input type="number" id="edit_terreno_m2" name="terreno_m2" min="0" step="any" class="incremento-personalizado">
             </label>
 
             <label>
                 Construcción m²
-                <input type="number" name="construccion_m2" id="edit_construccion_m2" min="0" step="0.5">
+                <input type="number" id="edit_construccion_m2" name="construccion_m2" min="0" step="any" class="incremento-personalizado">
             </label>
 
             <div class="imagenes-actuales-box">
@@ -1876,18 +1876,32 @@ function mostrarCamposRenta(){
 
 operacionTipo.addEventListener("change", mostrarCamposRenta);
 
-const input = document.getElementById("construccion_m2");
+document.querySelectorAll('.incremento-personalizado').forEach(input => {
 
-input.addEventListener("wheel", e => {
-    e.preventDefault();
+    input.addEventListener('keydown', function (e) {
 
-    const valor = parseFloat(input.value || 0);
+        if (e.key === 'ArrowUp') {
+            e.preventDefault();
 
-    if (e.deltaY < 0) {
-        input.value = valor + 1;
-    } else {
-        input.value = Math.max(0, valor - 1);
-    }
+            let valor = parseFloat(this.value);
+
+            if (isNaN(valor)) valor = 0;
+
+            this.value = valor + 1;
+        }
+
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+
+            let valor = parseFloat(this.value);
+
+            if (isNaN(valor)) valor = 0;
+
+            this.value = Math.max(0, valor - 1);
+        }
+
+    });
+
 });
 </script>
 </body>
