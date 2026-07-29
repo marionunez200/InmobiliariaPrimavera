@@ -2,7 +2,7 @@
 require_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
 require_once ROOT_PATH . '/Config/database.php';
 require_once ROOT_PATH . '/Admin/auth.php';
-
+requiere_admin();
 $pdo = db();
 
 $modalExitoTitulo = '';

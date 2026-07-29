@@ -6,7 +6,7 @@ require_once ROOT_PATH . '/Config/database.php';
 require_once ROOT_PATH . '/Admin/auth.php';
 require_once ROOT_PATH . '/Backend/Propiedades/funciones-propiedad.php';
 validar_csrf();
-
+requiere_editor();
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }

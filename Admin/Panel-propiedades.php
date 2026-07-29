@@ -3,6 +3,8 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
 
 require_once ROOT_PATH . '/Config/database.php';
 require_once ROOT_PATH . '/Admin/auth.php';
+requiere_editor();
+$esAdmin = es_admin();
 $pdo = db();
 
 /* ================================
@@ -221,7 +223,7 @@ $anio = $_GET['anio'] ?? date('Y');
                 <img class="logo-panel" src="<?= BASE_URL ?>Imagenes/Logosolo.png" alt="Logo de Primavera inmobiliaria">
             </a>
         </div>
-
+    
         <div class="left-adminh">
             <div class="header-top-panel">
                 <h1>Panel Administrativo</h1>
@@ -243,9 +245,11 @@ $anio = $_GET['anio'] ?? date('Y');
     
         <nav class="admin-opciones">
             <a href="<?= BASE_URL ?>Admin/Panel-propiedades.php">Propiedades</a>
+            <?php if ($esAdmin): ?>
             <a href="<?= BASE_URL ?>Admin/Panel-agente.php">Agentes</a>
             <a href="<?= BASE_URL ?>Admin/Panel-mensajes.php">Mensajes</a>
-            <a class="btn-exportar" href="<?= BASE_URL ?>Backend/Reportes/exportar-excel.php?mes=<?= $mes ?>&anio=<?= $anio ?>">Exportar Excel</a>        
+            <a class="btn-exportar" href="<?= BASE_URL ?>Backend/Reportes/exportar-excel.php?mes=<?= $mes ?>&anio=<?= $anio ?>">Exportar Excel</a>
+            <?php endif; ?>        
         </nav>
     
         <form class="cerrar-sesion" action="<?= BASE_URL ?>Backend/cerrar-sesion.php" method="POST">
@@ -403,7 +407,7 @@ $anio = $_GET['anio'] ?? date('Y');
                         >
                             <i class="fa-regular fa-pen-to-square"></i>
                         </button>
-
+                        <?php if ($esAdmin): ?>
                         <button
                             class="eliminar"
                             type="button"
@@ -424,7 +428,7 @@ $anio = $_GET['anio'] ?? date('Y');
                             data-moneda="<?= $propiedad['moneda'] ?>">
                             <i class="fa-solid fa-clipboard-check"></i>
                         </button>
-
+                        <?php endif; ?>
                         <button
                             class="preview"
                             type="button"

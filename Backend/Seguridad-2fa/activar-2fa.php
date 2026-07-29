@@ -5,7 +5,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
 require_once ROOT_PATH . '/vendor/autoload.php';
 require_once ROOT_PATH . '/Config/database.php';
 require_once ROOT_PATH . '/Admin/auth.php';
-
+requiere_admin();
 use RobThree\Auth\TwoFactorAuth;
 
 if (session_status() === PHP_SESSION_NONE) {

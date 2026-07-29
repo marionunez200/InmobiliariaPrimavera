@@ -20,7 +20,6 @@ if (!isset($_SESSION['admin_id'])) {
 }
 
 
-
 // =================================
 // Crear token CSRF
 // =================================
@@ -32,7 +31,6 @@ if (!isset($_SESSION['csrf_token'])) {
     );
 
 }
-
 
 
 // =================================
@@ -61,7 +59,6 @@ function validar_csrf()
 }
 
 
-
 // =================================
 // Solo administrador
 // =================================
@@ -79,7 +76,6 @@ function requiere_admin()
     }
 
 }
-
 
 
 // =================================
@@ -102,4 +98,30 @@ function requiere_editor()
 
     }
 
+}
+
+
+// =================================
+// Comprobar si es administrador
+// =================================
+
+function es_admin(): bool
+{
+    return isset($_SESSION['rol'])
+        && $_SESSION['rol'] === 'admin';
+}
+
+
+// =================================
+// Comprobar si es editor o administrador
+// =================================
+
+function es_editor(): bool
+{
+    return isset($_SESSION['rol'])
+        && in_array(
+            $_SESSION['rol'],
+            ['admin','editor'],
+            true
+        );
 }
