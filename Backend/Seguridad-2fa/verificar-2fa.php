@@ -71,6 +71,8 @@ $_SESSION['admin_rol'] = $_SESSION['2fa_rol'];
 
 $_SESSION['rol'] = $_SESSION['2fa_rol'];
 
+$_SESSION['id_agente'] = $_SESSION['2fa_agente'];
+
 
 // Limpiar variables temporales de 2FA
 

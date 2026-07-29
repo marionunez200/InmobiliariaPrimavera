@@ -14,7 +14,43 @@ if (session_status() === PHP_SESSION_NONE) {
 
 $pdo = db();
 
-$agente_id = (int)($_POST['agente_id'] ?? 0);
+/*
+================================
+CONTROL DE AGENTE POR ROL
+================================
+
+Administrador:
+- Puede elegir cualquier agente
+
+Editor:
+- Solo puede crear propiedades para su propio agente
+*/
+
+if ($_SESSION['rol'] === 'editor') {
+
+    if (empty($_SESSION['id_agente'])) {
+        die('El usuario editor no tiene un agente asignado.');
+    }
+
+    $agente_id = (int)$_SESSION['id_agente'];
+
+} else {
+
+    $agente_id = (int)($_POST['agente_id'] ?? 0);
+
+}
+$stmtAgente = $pdo->prepare("
+    SELECT COUNT(*)
+    FROM agentes
+    WHERE id = ?
+    AND activo = 1
+");
+
+$stmtAgente->execute([$agente_id]);
+
+if ((int)$stmtAgente->fetchColumn() === 0) {
+    die('El agente seleccionado no existe o está inactivo.');
+}
 $titulo = trim($_POST['titulo'] ?? '');
 $descripcion = trim($_POST['descripcion'] ?? '');
 $precio = (float)($_POST['precio'] ?? 0);

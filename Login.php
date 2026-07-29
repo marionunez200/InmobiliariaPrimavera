@@ -77,23 +77,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!$bloqueado && $error === '') {
 
             $stmt = $pdo->prepare("
-                SELECT
-                    id,
-                    nombre,
-                    email,
-                    rol,
-                    activo,
-                    password_hash,
-                    two_factor_enabled,
-                    two_factor_secret
-                FROM usuarios_admin
-                WHERE (email = ? OR nombre = ?)
-                AND activo = 1
-                LIMIT 1
+            SELECT
+                ua.id,
+                ua.nombre,
+                ua.email,
+                ua.rol,
+                ua.activo,
+                ua.password_hash,
+                ua.two_factor_enabled,
+                ua.two_factor_secret,
+                a.id AS agente_id
+            FROM usuarios_admin ua
+            LEFT JOIN agentes a
+                ON a.usuario_id = ua.id
+            WHERE (ua.email = ? OR ua.nombre = ?)
+            AND ua.activo = 1
+            LIMIT 1
             ");
 
             $stmt->execute([$usuarioLogin, $usuarioLogin]);
             $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+            
 
             if ($usuario && password_verify($password, $usuario['password_hash'])) {
                 /* Eliminar intentos fallidos */
@@ -107,23 +111,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 /* 1. Si ya tiene 2FA activado, pedir código de 6 dígitos */
                 if ((int)$usuario['two_factor_enabled'] === 1) {
+                
                     $_SESSION['2fa_user']   = $usuario['id'];
                     $_SESSION['2fa_nombre'] = $usuario['nombre'];
                     $_SESSION['2fa_email']  = $usuario['email'];
                     $_SESSION['2fa_rol']    = $usuario['rol'];
-
+                    $_SESSION['2fa_agente'] = $usuario['agente_id'];
+                
                     header('Location: ' . BASE_URL . 'Admin/Verificar-2FA.php');
                     exit;
                 }
 
                 /* 2. Si NO tiene 2FA activado, iniciamos sesión y lo mandamos directamente a escanear el QR */
-                    $_SESSION['admin_id']     = $usuario['id'];
-                    $_SESSION['admin_nombre'] = $usuario['nombre'];
-                    $_SESSION['admin_email']  = $usuario['email'];
-                    
-                    $_SESSION['admin_rol']    = $usuario['rol'];
-                    $_SESSION['rol']          = $usuario['rol'];
+                $_SESSION['admin_id']     = $usuario['id'];
+                $_SESSION['admin_nombre'] = $usuario['nombre'];
+                $_SESSION['admin_email']  = $usuario['email'];
 
+                $_SESSION['admin_rol']    = $usuario['rol'];
+                $_SESSION['rol']          = $usuario['rol'];
+
+                /*
+                ================================
+                RELACIÓN USUARIO - AGENTE
+                ================================
+                */
+
+                $_SESSION['2fa_agente'] = $usuario['agente_id'];
                 header('Location: ' . BASE_URL . 'Admin/Seguridad-2FA.php');
                 exit;
             }

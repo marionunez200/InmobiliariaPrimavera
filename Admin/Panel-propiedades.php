@@ -53,12 +53,29 @@ function tipoPanelTexto(?string $tipo): string
 
 $buscar = trim($_GET['buscar'] ?? '');
 
-$agentes = $pdo->query("
-    SELECT id, nombre
-    FROM agentes
-    WHERE activo = 1
-    ORDER BY nombre ASC
-")->fetchAll();
+if ($esAdmin) {
+
+    $agentes = $pdo->query("
+        SELECT id, nombre
+        FROM agentes
+        WHERE activo = 1
+        ORDER BY nombre ASC
+    ")->fetchAll();
+
+} else {
+
+    $stmt = $pdo->prepare("
+        SELECT id, nombre
+        FROM agentes
+        WHERE id = ?
+        AND activo = 1
+    ");
+
+    $stmt->execute([$_SESSION['id_agente']]);
+
+    $agentes = $stmt->fetchAll();
+
+}
 
 $totalPropiedadesActivas = (int)$pdo->query("
     SELECT COUNT(*)
@@ -96,25 +113,52 @@ $sql = "
 ";
 
 $params = [];
+$where = [];
+
+
+/*
+================================
+ FILTRO POR ROL
+================================
+
+Admin:
+- Ve todas las propiedades
+
+Editor:
+- Solo ve propiedades de su agente
+*/
+
+if (!$esAdmin) {
+
+    $where[] = "p.agente_id = ?";
+    $params[] = $_SESSION['id_agente'];
+
+}
+
+
+/*
+================================
+ BUSCADOR
+================================
+*/
 
 if ($buscar !== '') {
 
     if (strtolower($buscar) === 'activo') {
 
-        $sql .= "
-            WHERE p.estado_publicacion = 'activo'
-        ";
+        $where[] = "p.estado_publicacion = 'activo'";
+
 
     } elseif (strtolower($buscar) === 'inactivo') {
 
-        $sql .= "
-            WHERE p.estado_publicacion = 'inactivo'
-        ";
+        $where[] = "p.estado_publicacion = 'inactivo'";
+
 
     } else {
 
-        $sql .= "
-            WHERE
+
+        $where[] = "
+            (
                 p.titulo LIKE ?
                 OR p.direccion_completa LIKE ?
                 OR p.ciudad LIKE ?
@@ -122,11 +166,14 @@ if ($buscar !== '') {
                 OR p.tipo_operacion LIKE ?
                 OR p.estado_publicacion LIKE ?
                 OR a.nombre LIKE ?
+            )
         ";
+
 
         $like = "%{$buscar}%";
 
-        $params = [
+
+        $params = array_merge($params, [
             $like,
             $like,
             $like,
@@ -134,16 +181,34 @@ if ($buscar !== '') {
             $like,
             $like,
             $like
-        ];
+        ]);
+
     }
+
 }
+
+
+/*
+================================
+ARMAR WHERE FINAL
+================================
+*/
+
+if (!empty($where)) {
+
+    $sql .= " WHERE " . implode(" AND ", $where);
+
+}
+
 
 $sql .= "
     ORDER BY p.creado_en DESC, p.id DESC
 ";
 
+
 $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
+
 
 $propiedades = $stmt->fetchAll();
 
@@ -219,7 +284,7 @@ $anio = $_GET['anio'] ?? date('Y');
 
     <header class="admin-header">
         <div class="contenedor-logo">
-            <a href="<?= BASE_URL ?>Admin/Panel-agente.php">
+            <a href="<?= BASE_URL ?>Admin/Panel-propiedades.php">
                 <img class="logo-panel" src="<?= BASE_URL ?>Imagenes/Logosolo.png" alt="Logo de Primavera inmobiliaria">
             </a>
         </div>
@@ -463,18 +528,45 @@ $anio = $_GET['anio'] ?? date('Y');
 
         <div class="modal-body">
 
-            <label>
-                Agente
+        <label>
+            
+            Agente
+            
+            <?php if ($esAdmin): ?>
+            
                 <select name="agente_id" required>
-                    <option value="">Selecciona un agente</option>
-
+            
+                    <option value="">
+                        Selecciona un agente
+                    </option>
+            
                     <?php foreach ($agentes as $agente): ?>
+                    
                         <option value="<?= e((string)$agente['id']) ?>">
                             <?= e((string)$agente['nombre']) ?>
                         </option>
+                    
                     <?php endforeach; ?>
+                    
                 </select>
-            </label>
+                    
+            <?php else: ?>
+            
+                <input 
+                    type="text"
+                    value="<?= e($agentes[0]['nombre'] ?? '') ?>"
+                    disabled
+                >
+            
+                <input 
+                    type="hidden"
+                    name="agente_id"
+                    value="<?= e((string)$_SESSION['id_agente']) ?>"
+                >
+            
+            <?php endif; ?>
+            
+        </label>
 
             <label>
                 Título
@@ -665,18 +757,45 @@ $anio = $_GET['anio'] ?? date('Y');
 
         <div class="modal-body">
 
-            <label>
-                Agente
-                <select name="agente_id" id="edit_agente_id" required>
-                    <option value="">Selecciona un agente</option>
-
+        <label>
+            
+            Agente
+            
+            <?php if ($esAdmin): ?>
+            
+                <select name="agente_id" required>
+            
+                    <option value="">
+                        Selecciona un agente
+                    </option>
+            
                     <?php foreach ($agentes as $agente): ?>
+                    
                         <option value="<?= e((string)$agente['id']) ?>">
                             <?= e((string)$agente['nombre']) ?>
                         </option>
+                    
                     <?php endforeach; ?>
+                    
                 </select>
-            </label>
+                    
+            <?php else: ?>
+            
+                <input 
+                    type="text"
+                    value="<?= e($agentes[0]['nombre'] ?? '') ?>"
+                    disabled
+                >
+            
+                <input 
+                    type="hidden"
+                    name="agente_id"
+                    value="<?= e((string)$_SESSION['id_agente']) ?>"
+                >
+            
+            <?php endif; ?>
+            
+        </label>
 
             <label>
                 Título

@@ -14,11 +14,50 @@ if (session_status() === PHP_SESSION_NONE) {
 $pdo = db();
 
 $id = trim($_POST['id'] ?? '');
+if ($_SESSION['rol'] === 'editor') {
+
+    $stmtPropiedad = $pdo->prepare("
+        SELECT id
+        FROM propiedades
+        WHERE id = ?
+        AND agente_id = ?
+    ");
+
+    $stmtPropiedad->execute([
+        $id,
+        $_SESSION['id_agente']
+    ]);
+
+    if (!$stmtPropiedad->fetch()) {
+        die('No tienes permiso para editar esta propiedad.');
+    }
+
+}
 if ($id === '') {
     die('No se recibió el ID de la propiedad.');
 }
 
-$agente_id = (int)($_POST['agente_id'] ?? 0);
+/*
+================================
+ CONTROL DE AGENTE POR ROL
+================================
+*/
+
+if ($_SESSION['rol'] === 'editor') {
+
+    if (empty($_SESSION['id_agente'])) {
+        die('El usuario editor no tiene un agente asignado.');
+    }
+
+    // El editor siempre usa su propio agente
+    $agente_id = (int)$_SESSION['id_agente'];
+
+} else {
+
+    // El administrador puede cambiar agente
+    $agente_id = (int)($_POST['agente_id'] ?? 0);
+
+}
 $titulo = trim($_POST['titulo'] ?? '');
 $descripcion = trim($_POST['descripcion'] ?? '');
 $precio = (float)($_POST['precio'] ?? 0);
@@ -90,6 +129,33 @@ $banos = (float)$banos;
 
 try {
     $pdo->beginTransaction();
+    if ($_SESSION['rol'] === 'editor') {
+    
+        $sql = "
+            UPDATE propiedades SET
+                agente_id = ?,
+                titulo = ?,
+                descripcion = ?,
+                precio = ?,
+                moneda = ?,
+                tipo_operacion = ?,
+                categoria_id = ?,
+                estado_publicacion = ?,
+                destacada = ?,
+                ciudad = ?,
+                direccion_completa = ?,
+                google_maps_url = ?,
+                recamaras = ?,
+                banos = ?,
+                estacionamientos = ?,
+                terreno_m2 = ?,
+                construccion_m2 = ?
+            WHERE id = ?
+            AND agente_id = ?
+        ";
+    
+    } else {
+    
         $sql = "
             UPDATE propiedades SET
                 agente_id = ?,
@@ -111,30 +177,57 @@ try {
                 construccion_m2 = ?
             WHERE id = ?
         ";
+    
+    }
 
         $stmt = $pdo->prepare($sql);
-
-        $stmt->execute([
-            $agente_id,
-            $titulo,
-            $descripcion,
-            $precio,
-            $moneda,
-            $tipo_operacion,
-            $categoria_id,
-            $estado_publicacion,
-            $destacada,
-            $ciudad,
-            $direccion_completa,
-            $google_maps_url,
-            $recamaras,
-            $banos,
-            $estacionamientos,
-            $terreno_m2,
-            $construccion_m2,
-            $id
-        ]);
-
+        if ($_SESSION['rol'] === 'editor') {
+        
+            $stmt->execute([
+                $agente_id,
+                $titulo,
+                $descripcion,
+                $precio,
+                $moneda,
+                $tipo_operacion,
+                $categoria_id,
+                $estado_publicacion,
+                $destacada,
+                $ciudad,
+                $direccion_completa,
+                $google_maps_url,
+                $recamaras,
+                $banos,
+                $estacionamientos,
+                $terreno_m2,
+                $construccion_m2,
+                $id,
+                $_SESSION['id_agente']
+            ]);
+        
+        } else {
+        
+            $stmt->execute([
+                $agente_id,
+                $titulo,
+                $descripcion,
+                $precio,
+                $moneda,
+                $tipo_operacion,
+                $categoria_id,
+                $estado_publicacion,
+                $destacada,
+                $ciudad,
+                $direccion_completa,
+                $google_maps_url,
+                $recamaras,
+                $banos,
+                $estacionamientos,
+                $terreno_m2,
+                $construccion_m2,
+                $id
+            ]);
+        }
         $propiedad_id = (int)$id;
 
 
