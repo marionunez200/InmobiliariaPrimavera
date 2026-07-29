@@ -296,6 +296,7 @@ $anio = $_GET['anio'] ?? date('Y');
 
             <div class="subtitulos_agente">
                 <span>Nombre</span>
+                <span>Rol</span>
                 <span>Correo electrónico</span>
                 <span>Teléfono</span>
                 <span>Estado</span>
@@ -330,6 +331,10 @@ $anio = $_GET['anio'] ?? date('Y');
                                 <p>ID: <?= e((string)$agente['id']) ?></p>
                             </div>
                         </div>
+
+                        <span>
+                            <?= e((string)($agente['rol'])) ?>
+                        </span>
 
                         <span class="text_dentro">
                             <?= e((string)($agente['email'] ?: 'Sin correo')) ?>
