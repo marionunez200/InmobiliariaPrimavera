@@ -60,42 +60,28 @@ BUSCADOR DE AGENTES
 $buscar = trim($_GET['buscar'] ?? '');
 
 
-
 if ($buscar !== '') {
-
 
     $sql = "
         SELECT 
             a.*,
-            u.rol
-
+            u.rol,
+            u.two_factor_enabled
         FROM agentes a
-
         INNER JOIN usuarios_admin u
             ON u.id = a.usuario_id
-
         WHERE a.nombre LIKE :nombre
             OR a.email LIKE :email
             OR a.telefono LIKE :telefono
     ";
 
-
-
     if (strtolower($buscar) === 'activo') {
-
         $sql .= " OR a.activo = 1";
-
     }
-
-
 
     if (strtolower($buscar) === 'inactivo') {
-
         $sql .= " OR a.activo = 0";
-
     }
-
-
 
     $sql .= "
         ORDER BY 
@@ -104,46 +90,34 @@ if ($buscar !== '') {
     ";
 
     $stmt = $pdo->prepare($sql);
-
     $texto = "%{$buscar}%";
 
     $stmt->execute([
-
         ':nombre' => $texto,
         ':email' => $texto,
         ':telefono' => $texto
-
     ]);
-
-
 
 } else {
 
-
+    // AQUÍ ESTABA EL ERROR: Faltaba seleccionar u.two_factor_enabled
     $stmt = $pdo->query("
-
         SELECT 
             a.*,
-            u.rol
-
+            u.rol,
+            u.two_factor_enabled
         FROM agentes a
-
         INNER JOIN usuarios_admin u
             ON u.id = a.usuario_id
-
         ORDER BY 
             a.creado_en DESC,
             a.id DESC
-
     ");
 
 }
 
 
-
 $agentes = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-
 
 
 /*
@@ -319,6 +293,7 @@ $anio = $_GET['anio'] ?? date('Y');
                             'email' => $agente['email'],
                             'foto_url' => $agente['foto_url'],
                             'activo' => $agente['activo'],
+                            'two_factor_enabled' => $agente['two_factor_enabled'] ?? 0
                         ], JSON_UNESCAPED_UNICODE);
                     ?>
 
@@ -582,6 +557,15 @@ $anio = $_GET['anio'] ?? date('Y');
                     </option>
                 </select>
             </label>
+
+            <label>
+                Estado de Verificación 2FA
+                <select name="desactivar_2fa" id="edit_2fa">
+                    <option value="0">2FA Activo</option>
+                    <option value="1">Desactivar 2FA</option>
+                </select>
+            </label>
+
             <label>
                 Estado
                 <select name="activo" id="edit_activo">
@@ -674,6 +658,7 @@ $anio = $_GET['anio'] ?? date('Y');
 
     </form>
 </dialog>
+
 <!-- MODAL DE ÉXITO -->
 <?php if ($modalExitoTitulo !== ''): ?>
     <dialog class="modal-exito" id="modalExito">
@@ -694,6 +679,7 @@ $anio = $_GET['anio'] ?? date('Y');
         </div>
     </dialog>
 <?php endif; ?>
+
 <script>
 const BASE_URL = '<?= BASE_URL ?>';
 
@@ -792,33 +778,25 @@ function renderizarFotoActualAgente(fotoUrl, nombreAgente) {
 
     contenedor.appendChild(card);
 }
+
 /* ================================
    EDITAR AGENTE
 ================================ */
-
 document.addEventListener('click', (event) => {
 
     const editButton = event.target.closest('[data-edit]');
-
-    if (!editButton) {
-        return;
-    }
-
+    if (!editButton) return;
 
     let agente = {};
-
     try {
-
         agente = JSON.parse(editButton.dataset.agente);
-
     } catch (error) {
-
         console.error('Error leyendo data-agente:', error);
         return;
-
     }
 
-
+    // Muestra en la consola de F12 lo que se recibe para diagnóstico
+    console.log("Datos del agente recibidos:", agente);
 
     // Datos del agente
     ponerValorSeguro('edit_id', agente.id);
@@ -826,54 +804,39 @@ document.addEventListener('click', (event) => {
     ponerValorSeguro('edit_telefono', agente.telefono);
     ponerValorSeguro('edit_email', agente.email);
     ponerValorSeguro('edit_activo', agente.activo ?? 1);
+    ponerValorSeguro('edit_rol', agente.rol ?? 'editor');
 
+    // Configurar estado del selector de 2FA
+    ponerValorSeguro('edit_2fa', '0'); // Seleccionar por defecto "no desactivar"
 
+    const select2FA = document.getElementById('edit_2fa');
+    if (select2FA) {
+        // Se valida tanto si viene como número (1) o como string ("1")
+        if (parseInt(agente.two_factor_enabled, 10) === 1) {
+            select2FA.disabled = false;
+            select2FA.options[0].text = "2FA Activo";
+        } else {
+            select2FA.disabled = true;
+            select2FA.options[0].text = "2FA No activado por el agente";
+        }
+    }
 
-    // Datos del usuario
-    ponerValorSeguro(
-        'edit_rol',
-        agente.rol ?? 'editor'
-    );
+    renderizarFotoActualAgente(agente.foto_url, agente.nombre);
 
-
-
-    renderizarFotoActualAgente(
-        agente.foto_url,
-        agente.nombre
-    );
-
-
-
-    const previewEditar = document.getElementById(
-        'previewAgenteEditar'
-    );
-
-
-    const inputEditar = document.getElementById(
-        'inputAgenteEditar'
-    );
-
-
+    const previewEditar = document.getElementById('previewAgenteEditar');
+    const inputEditar = document.getElementById('inputAgenteEditar');
 
     if (previewEditar) {
-
         previewEditar.innerHTML = '';
-
     }
-
-
 
     if (inputEditar) {
-
         inputEditar.value = '';
-
     }
 
-
-
     abrirModal(modalEditar);
-
 });
+
 /* ================================
    ELIMINAR AGENTE
 ================================ */
