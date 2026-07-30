@@ -79,7 +79,7 @@ if (empty($imagenes)) {
 
     $imagenes[] = [
 
-        'imagen_url' => 'Imagenes/casa2.jpg',
+        'imagen_url' => 'Imagenes/casa2.webp',
 
         'texto_alternativo' => $propiedad['titulo']
 
@@ -151,7 +151,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
     <div class="logo">
 
         <img
-        src="<?= BASE_URL ?>Imagenes/Logosolo.png"
+        src="<?= BASE_URL ?>Imagenes/Logosolo.webp"
         alt="Primavera">
 
         <div>
@@ -399,7 +399,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
 
         <img
 
-        src="<?= BASE_URL ?>Imagenes/Logosolo.png"
+        src="<?= BASE_URL ?>Imagenes/Logosolo.webp"
 
         alt="Primavera">
 

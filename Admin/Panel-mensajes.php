@@ -80,14 +80,14 @@ $anio = $_GET['anio'] ?? date('Y');
     <header class="admin-header">
         <div class="contenedor-logo">
             <a href="<?= BASE_URL ?>Admin/Panel-propiedades.php">
-                <img class="logo-panel" src="<?= BASE_URL ?>Imagenes/Logosolo.png" alt="Logo Primavera inmobiliaria">
+                <img class="logo-panel" src="<?= BASE_URL ?>Imagenes/Logosolo.webp" alt="Logo Primavera inmobiliaria">
             </a>
         </div>
 
         <div class="left-adminh">
             <div class="header-top-panel">
                 <h1>Panel Administrativo</h1>
-                <p>Gestión de agentes inmobiliarios</p>
+                <p>Gestión de mensajes</p>
 
                 <?php if (!empty($_SESSION['admin_nombre'])): ?>
                     <p>Sesión: <?= e((string)$_SESSION['admin_nombre']) ?></p>

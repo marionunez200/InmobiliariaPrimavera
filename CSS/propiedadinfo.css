@@ -16,10 +16,62 @@
     object-position: center;
 
     border-radius: 10px;
+
     margin-top: 15px;
     margin-bottom: 15px;
 
     display: block;
+
+    touch-action: pan-y;
+    user-select: none;
+}
+
+/* Animación cambio de imagen */
+
+.animacion-derecha {
+    animation: entrarDerecha 0.7s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+
+.animacion-izquierda {
+    animation: entrarIzquierda 0.7s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+
+@keyframes entrarDerecha {
+
+    from {
+        opacity: 0;
+        transform: translateX(50px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+}
+
+
+@keyframes entrarIzquierda {
+
+    from {
+        opacity: 0;
+        transform: translateX(-50px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+}
+.contenedor-imagen {
+    overflow: hidden;
+}
+
+#imagenPrincipal {
+    transition: opacity .4s ease;
 }
 
 .contenedor_miniaturas{
@@ -29,18 +81,22 @@
 }
 
 .miniaturas{
+
     width: 100%;
     overflow-x: auto;
     overflow-y: hidden;
 
     display: flex;
-    justify-content: center;
+
+    justify-content: flex-start; /* cambia esto */
 
     scroll-behavior: smooth;
     scrollbar-width: none;
 
     padding: 0 15px;
+
     box-sizing: border-box;
+
 }
 
 .miniaturas::-webkit-scrollbar{
@@ -124,6 +180,15 @@
     padding-bottom: 10px;
 }
 
+.descripcion_propiedad h2{
+    margin-bottom: 30px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.8rem;
+}
+.descripcion_propiedad p{
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1rem;
+}
 .ubicacion_precio{
     display: flex;
     justify-content: space-between;
@@ -390,10 +455,10 @@
     /* Imágenes */
 
     .imagen_principal{
-        width: 95%;
-        height: 260px;
-        margin-top: 10px;
-        margin-bottom: 10px;
+        width:95%;
+        height:260px;
+
+        transition: transform .3s ease;
     }
 
     .contenedor_miniaturas{

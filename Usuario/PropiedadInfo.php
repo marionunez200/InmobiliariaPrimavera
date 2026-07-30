@@ -73,12 +73,12 @@ $imagenes = $stmtImagenes->fetchAll();
 
 if (empty($imagenes)) {
     $imagenes[] = [
-        'imagen_url' => 'Imagenes/casa2.jpg',
+        'imagen_url' => 'Imagenes/casa2.webp',
         'texto_alternativo' => $propiedad['titulo']
     ];
 }
 
-$imagenPrincipal = $imagenes[0]['imagen_url'] ?? 'Imagenes/casa2.jpg';
+$imagenPrincipal = $imagenes[0]['imagen_url'] ?? 'Imagenes/casa2.webp';
 
 $precioConvertido = MonedaService::convertir(
     (float)$propiedad['precio'],
@@ -218,8 +218,7 @@ require_once ROOT_PATH . '/Includes/header.php';
                     <li>
                         <i class="fa-solid fa-car"></i>
                         <p>
-                            Cochera para 
-                            <?= e((string)$propiedad['estacionamientos']) ?> auto(s)
+                            <?= e((string)$propiedad['estacionamientos']) ?> Estacionamientos
                         </p>
                     </li>
                 </ul>
@@ -364,13 +363,118 @@ require_once ROOT_PATH . '/Includes/header.php';
 <?php require_once ROOT_PATH . '/Includes/footer.php'; ?>
 
 <script>
-function cambiarImagen(src) {
-    const imagenPrincipal = document.getElementById('imagenPrincipal');
-    if (imagenPrincipal) {
-        imagenPrincipal.src = src;
+let imagenActual = 0;
+
+function cambiarImagen(src, direccion = "derecha") {
+
+    const imagen = document.getElementById("imagenPrincipal");
+
+    if (!imagen) return;
+
+
+    imagen.classList.remove(
+        "animacion-derecha",
+        "animacion-izquierda"
+    );
+
+
+    // Reinicia animación
+    void imagen.offsetWidth;
+
+
+    imagen.src = src;
+
+
+    if(direccion === "derecha"){
+
+        imagen.classList.add("animacion-derecha");
+
+    }else{
+
+        imagen.classList.add("animacion-izquierda");
+
     }
+
 }
 
+
+let inicioX = 0;
+let finalX = 0;
+
+
+// Capturar inicio del movimiento
+document.addEventListener("DOMContentLoaded", () => {
+
+    const imagenPrincipal = document.getElementById('imagenPrincipal');
+
+    if(!imagenPrincipal) return;
+
+
+    const miniaturas = document.querySelectorAll(".miniaturas img");
+
+
+    // Guardar las rutas de las imágenes
+    const fotos = Array.from(miniaturas).map(img => img.src);
+
+
+    imagenPrincipal.addEventListener("touchstart", (e)=>{
+
+        inicioX = e.touches[0].clientX;
+
+    });
+
+
+    imagenPrincipal.addEventListener("touchend", (e)=>{
+
+        finalX = e.changedTouches[0].clientX;
+
+
+        // Deslizar izquierda
+        if(inicioX - finalX > 50){
+
+            siguienteFoto(fotos);
+
+        }
+
+
+        // Deslizar derecha
+        if(finalX - inicioX > 50){
+
+            anteriorFoto(fotos);
+
+        }
+
+    });
+
+});
+
+
+
+function siguienteFoto(fotos){
+
+    if(imagenActual < fotos.length - 1){
+
+        imagenActual++;
+
+        cambiarImagen(fotos[imagenActual]);
+
+    }
+
+}
+
+
+
+function anteriorFoto(fotos){
+
+    if(imagenActual > 0){
+
+        imagenActual--;
+
+        cambiarImagen(fotos[imagenActual]);
+
+    }
+
+}
 const miniaturas = document.getElementById('miniaturas');
 const btnIzquierda = document.getElementById('btnMiniaturasIzquierda');
 const btnDerecha = document.getElementById('btnMiniaturasDerecha');

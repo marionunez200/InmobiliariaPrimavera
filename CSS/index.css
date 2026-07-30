@@ -372,21 +372,21 @@ body {
     background-image: linear-gradient(
         rgba(0, 0, 0, 0.45),
         rgba(0, 0, 0, 0.45)
-    ), url("../Imagenes/casa1.jpg");
+    ), url("../Imagenes/casa1.webp");
 }
 
 .card-terreno {
     background-image: linear-gradient(
         rgba(0, 0, 0, 0.45),
         rgba(0, 0, 0, 0.45)
-    ), url("../Imagenes/terreno.jpg");
+    ), url("../Imagenes/terreno.webp");
 }
 
 .card-renta {
     background-image: linear-gradient(
         rgba(0, 0, 0, 0.45),
         rgba(0, 0, 0, 0.45)
-    ), url("../Imagenes/departamento1.jpg");
+    ), url("../Imagenes/departamento1.webp");
 }
 
 .category-card h3,
@@ -550,28 +550,28 @@ body {
     background-image: linear-gradient(
         rgba(0, 0, 0, 0.35),
         rgba(0, 0, 0, 0.55)
-    ), url("../Imagenes/CiudadObregon.jpg");
+    ), url("../Imagenes/CiudadObregon.webp");
 }
 
 .city-san-carlos {
     background-image: linear-gradient(
         rgba(0, 0, 0, 0.35),
         rgba(0, 0, 0, 0.55)
-    ), url("../Imagenes/Sancarlos.jpg");
+    ), url("../Imagenes/Sancarlos.webp");
 }
 
 .city-guaymas {
     background-image: linear-gradient(
         rgba(0, 0, 0, 0.35),
         rgba(0, 0, 0, 0.55)
-    ), url("../Imagenes/Guaymas.jpg");
+    ), url("../Imagenes/Guaymas.webp");
 }
 
 .city-navojoa {
     background-image: linear-gradient(
         rgba(0, 0, 0, 0.35),
         rgba(0, 0, 0, 0.55)
-    ), url("../Imagenes/Navojoa.jpg");
+    ), url("../Imagenes/Navojoa.webp");
 }
 
 /* Animación */
