@@ -73,6 +73,7 @@ if ($buscar !== '') {
         WHERE a.nombre LIKE :nombre
             OR a.email LIKE :email
             OR a.telefono LIKE :telefono
+            OR u.rol LIKE :rol
     ";
 
     if (strtolower($buscar) === 'activo') {
@@ -95,12 +96,12 @@ if ($buscar !== '') {
     $stmt->execute([
         ':nombre' => $texto,
         ':email' => $texto,
-        ':telefono' => $texto
+        ':telefono' => $texto,
+        ':rol'      => $texto
     ]);
 
 } else {
 
-    // AQUÍ ESTABA EL ERROR: Faltaba seleccionar u.two_factor_enabled
     $stmt = $pdo->query("
         SELECT 
             a.*,
