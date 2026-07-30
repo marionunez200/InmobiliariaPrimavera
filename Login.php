@@ -176,7 +176,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="login-brand">
 
                 <img
-                    src="<?= BASE_URL ?>Imagenes/Logosolo.png"
+                    src="<?= BASE_URL ?>Imagenes/Logosolo.webp"
                     alt="Logo de Primavera inmobiliaria"
                     class="login-logo"
                 >

@@ -9,7 +9,7 @@ if (!defined('BASE_URL')) {
 
             <div class="footer-logo">
                 <a href="<?= BASE_URL ?>index" aria-label="Ir al inicio">
-                    <img src="<?= BASE_URL ?>Imagenes/Logosolo.png" alt="Logo de Primavera inmobiliaria">
+                    <img src="<?= BASE_URL ?>Imagenes/Logosolo.webp" alt="Logo de Primavera inmobiliaria">
                 </a>
             </div>
 

@@ -148,7 +148,7 @@ $propiedades = $stmt->fetchAll(PDO::FETCH_ASSOC);
 $imagen = limpiarTexto($propiedad['imagen_principal']);
 
 if ($imagen === '') {
-    $imagen = 'Imagenes/casa1.jpg';
+    $imagen = 'Imagenes/casa1.webp';
 }
 
 $titulo = limpiarTexto($propiedad['titulo']);

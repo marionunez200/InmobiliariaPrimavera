@@ -268,7 +268,7 @@ require_once ROOT_PATH . '/Includes/header.php';
                     $imagen = limpiarTexto($propiedad['imagen_principal'] ?? '');
 
                     if ($imagen === '') {
-                        $imagen = 'Imagenes/casa1.jpg';
+                        $imagen = 'Imagenes/casa1.webp';
                     }
 
                     // Usamos $tituloPropiedad para evitar sobrescribir $titulo de la página

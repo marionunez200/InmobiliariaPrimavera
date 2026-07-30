@@ -285,7 +285,7 @@ $anio = $_GET['anio'] ?? date('Y');
     <header class="admin-header">
         <div class="contenedor-logo">
             <a href="<?= BASE_URL ?>Admin/Panel-propiedades.php">
-                <img class="logo-panel" src="<?= BASE_URL ?>Imagenes/Logosolo.png" alt="Logo de Primavera inmobiliaria">
+                <img class="logo-panel" src="<?= BASE_URL ?>Imagenes/Logosolo.webp" alt="Logo de Primavera inmobiliaria">
             </a>
         </div>
     
@@ -398,7 +398,7 @@ $anio = $_GET['anio'] ?? date('Y');
 
                 <?php foreach ($propiedades as $propiedad): ?>
                     <?php
-                        $imagen = $propiedad['imagen_principal'] ? BASE_URL . $propiedad['imagen_principal' ] : BASE_URL . 'Imagenes/casa1.jpg';
+                        $imagen = $propiedad['imagen_principal'] ? BASE_URL . $propiedad['imagen_principal' ] : BASE_URL . 'Imagenes/casa1.webp';
 
                     $imagenesJson = array_map(function ($imagenItem) {
                         return [
