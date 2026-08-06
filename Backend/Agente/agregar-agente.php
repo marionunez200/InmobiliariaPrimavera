@@ -4,13 +4,13 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
 require_once ROOT_PATH . '/Admin/auth.php';
 require_once ROOT_PATH . '/Config/database.php';
 require_once ROOT_PATH . '/Backend/Agente/funciones-agente.php';
+
 requiere_admin();
 validar_csrf();
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-
 
 $pdo = db();
 
@@ -30,8 +30,8 @@ $password = trim($_POST['password'] ?? '');
 
 $rol = $_POST['rol'] ?? 'editor';
 
-$activo = isset($_POST['activo']) 
-    ? (int)$_POST['activo'] 
+$activo = isset($_POST['activo'])
+    ? (int)$_POST['activo']
     : 1;
 
 
@@ -39,7 +39,6 @@ $activo = isset($_POST['activo'])
 // ===============================
 // VALIDACIONES
 // ===============================
-
 
 if ($nombre === '') {
     die('El nombre es obligatorio.');
@@ -52,9 +51,8 @@ if ($email === '') {
 
 
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    die('El correo no tiene un formato válido.');
+    die('Correo inválido.');
 }
-
 
 
 if ($password === '') {
@@ -75,15 +73,14 @@ $rolesPermitidos = [
 
 
 if (!in_array($rol, $rolesPermitidos, true)) {
-    die('Rol no válido.');
+    die('Rol inválido.');
 }
 
 
 
-if (!in_array($activo, [0,1], true)) {
+if (!in_array($activo, [0, 1], true)) {
     $activo = 1;
 }
-
 
 
 
@@ -91,7 +88,7 @@ try {
 
 
     // ===============================
-    // COMPROBAR EMAIL EXISTENTE
+    // VERIFICAR CORREO
     // ===============================
 
 
@@ -102,18 +99,14 @@ try {
         LIMIT 1
     ");
 
-
     $stmt->execute([
         $email
     ]);
 
 
     if ($stmt->fetch()) {
-
-        die('Ese correo ya está registrado.');
-
+        die('Ese correo ya existe.');
     }
-
 
 
 
@@ -132,7 +125,6 @@ try {
     );
 
 
-
     $stmt = $pdo->prepare("
         INSERT INTO usuarios_admin
         (
@@ -142,19 +134,20 @@ try {
             rol,
             activo
         )
-        VALUES (?, ?, ?, ?, ?)
+        VALUES
+        (
+            ?, ?, ?, ?, ?
+        )
     ");
 
 
 
     $stmt->execute([
-
         $nombre,
         $email,
         $passwordHash,
         $rol,
         $activo
-
     ]);
 
 
@@ -163,53 +156,44 @@ try {
 
 
 
-
-
     // ===============================
-    // CREAR PERFIL AGENTE
+    // CREAR AGENTE (PARA CUALQUIER ROL)
     // ===============================
 
+    $foto = subirFotoAgente(null);
 
-    if ($rol === 'editor') {
-
-
-        $nuevaFoto = subirFotoAgente(null);
-
-
-
-        $fotoFinal = $nuevaFoto
-            ?: 'Imagenes/agente1.webp';
-
-
-
-        $stmt = $pdo->prepare("
-            INSERT INTO agentes
-            (
-                usuario_id,
-                nombre,
-                telefono,
-                email,
-                foto_url,
-                activo
-            )
-            VALUES (?, ?, ?, ?, ?, ?)
-        ");
-
-
-
-        $stmt->execute([
-
-            $usuarioId,
-            $nombre,
-            $telefono,
-            $email,
-            $fotoFinal,
-            $activo
-
-        ]);
-
+    if (!$foto) {
+        $foto = 'Imagenes/agente1.webp';
     }
 
+
+
+    $stmt = $pdo->prepare("
+        INSERT INTO agentes
+        (
+            usuario_id,
+            nombre,
+            telefono,
+            email,
+            foto_url,
+            activo
+        )
+        VALUES
+        (
+            ?, ?, ?, ?, ?, ?
+        )
+    ");
+
+
+
+    $stmt->execute([
+        $usuarioId,
+        $nombre,
+        $telefono,
+        $email,
+        $foto,
+        $activo
+    ]);
 
 
 
@@ -217,17 +201,12 @@ try {
 
 
 
-
     $_SESSION['modal_exito'] = [
-
         'titulo' => 'Usuario creado',
-
-        'mensaje' => $rol === 'editor'
+        'mensaje' => ($rol === 'editor')
             ? 'El agente se agregó correctamente.'
-            : 'El administrador se agregó correctamente.'
-
+            : 'El administrador y su agente se agregaron correctamente.'
     ];
-
 
 
 
@@ -236,29 +215,16 @@ try {
     );
 
     exit;
+} catch (Exception $e) {
 
 
-
-} catch(Exception $e) {
-
-
-    if($pdo->inTransaction()){
-
+    if ($pdo->inTransaction()) {
         $pdo->rollBack();
-
     }
 
 
-    // Guardar error real en logs
-
-    error_log(
-        "Error al agregar agente: " . $e->getMessage()
-    );
-
-
-
+    // MODO PRUEBA
     die(
-        'Ocurrió un error al guardar los datos.'
+        "Error BD: " . $e->getMessage()
     );
-
 }
