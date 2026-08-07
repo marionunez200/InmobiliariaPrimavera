@@ -67,7 +67,9 @@ $estado_publicacion = $_POST['estado_publicacion'] ?? 'activo';
 $ciudad = $_POST['ciudad'] ?? 'ciudad_obregon';
 
 $direccion_completa = trim($_POST['direccion_completa'] ?? '');
+$direccion_completa = $direccion_completa === '' ? null : $direccion_completa;
 $google_maps_url = trim($_POST['google_maps_url'] ?? '');
+$google_maps_url = $google_maps_url === '' ? null : $google_maps_url;
 
 $recamaras = max(0, (int)($_POST['recamaras'] ?? 0));
 $banos = max(0, (int)($_POST['banos'] ?? 0));
@@ -99,15 +101,17 @@ if ($titulo === '') {
     die('El título es obligatorio.');
 }
 
-if ($direccion_completa === '') {
-    die('La dirección completa es obligatoria.');
-}
-
 if (!in_array($tipo_operacion, ['venta', 'renta', 'traspaso'], true)) {
     die('Tipo de operación inválido.');
 }
 
-if (!in_array($estado_publicacion, ['activo', 'inactivo'], true)) {
+if (!in_array($estado_publicacion, [
+    'activo',
+    'inactivo',
+    'vendido',
+    'rentado',
+    'traspasado'
+], true)) {
     die('Estado de publicación inválido.');
 }
 

@@ -204,7 +204,7 @@ if ($buscar !== '') {
         ]);
     }
 
-    }
+}
 
 
 /*
@@ -474,8 +474,10 @@ $anio = $_GET['anio'] ?? date('Y');
                         <?= e((string)$propiedad['moneda']) ?>
                     </span>
 
-                    <span class="text_dentro">
-                        <?= e(estadoPublicacionTexto($propiedad['estado_publicacion'])) ?>
+                    <?php $estado = $propiedad['estado_publicacion']; ?>
+
+                    <span class="estado estado-<?= $estado ?>">
+                        <?= estadoPublicacionTexto($estado) ?>
                     </span>
 
                     <span class="text_dentro">
@@ -643,7 +645,7 @@ $anio = $_GET['anio'] ?? date('Y');
 
             <label>
                 Precio
-                <input type="number" name="precio" placeholder="2500000" min="0" step="1" required>
+                <input class="input-precio" type="text" name="precio" placeholder="2,500,000" inputmode="numeric" autocomplete="off" required>
             </label>
 
             <label>
@@ -713,8 +715,7 @@ $anio = $_GET['anio'] ?? date('Y');
                     type="text"
                     name="direccion_completa"
                     id="direccionAgregar"
-                    placeholder="Calle, número, colonia"
-                    required>
+                    placeholder="Calle, número, colonia">
             </label>
 
             <input
@@ -875,7 +876,7 @@ $anio = $_GET['anio'] ?? date('Y');
 
             <label>
                 Precio
-                <input type="number" name="precio" id="edit_precio" min="0" step="1" required>
+                <input class="input-precio" type="text" name="precio" placeholder="2,500,000" inputmode="numeric" autocomplete="off" required>
             </label>
 
             <label>
@@ -958,8 +959,7 @@ $anio = $_GET['anio'] ?? date('Y');
                 <input
                     type="text"
                     name="direccion_completa"
-                    id="edit_direccion_completa"
-                    required>
+                    id="edit_direccion_completa">
             </label>
 
             <input
@@ -2041,6 +2041,34 @@ document.querySelectorAll('.incremento-personalizado').forEach(input => {
 
             this.value = Math.max(0, valor - 1);
         }
+
+    });
+
+});
+
+document.querySelectorAll(".input-precio").forEach(input => {
+
+    input.addEventListener("input", function () {
+
+        let valor = this.value.replace(/\D/g, "");
+
+        if (valor === "") {
+            this.value = "";
+            return;
+        }
+
+        this.value = Number(valor).toLocaleString("en-US");
+    });
+
+});
+
+document.querySelectorAll("form").forEach(form => {
+
+    form.addEventListener("submit", function () {
+
+        form.querySelectorAll(".input-precio").forEach(input => {
+            input.value = input.value.replace(/,/g, "");
+        });
 
     });
 
