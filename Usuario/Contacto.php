@@ -3,8 +3,8 @@ if (!defined('BASE_URL')) {
     require_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
 }
 
-$titulo = "Contacto - Primavera inmobiliaria";
-$descripcion = "Encuentra la ubicación, horario de atención y formas de contacto de Primavera inmobiliaria.";
+$titulo = "Contacto - Primavera Inmobiliaria";
+$descripcion = "Encuentra la ubicación, horario de atención y formas de contacto de Primavera Inmobiliaria.";
 $cssPaginas = [BASE_URL . 'CSS/contacto.css'];
 
 require ROOT_PATH . 'Includes/header.php';

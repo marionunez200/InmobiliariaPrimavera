@@ -149,7 +149,7 @@ $propiedades = $stmt->fetchAll();
 ?>
 
 <?php
-$titulo = "Primavera inmobiliaria | Catálogo de propiedades";
+$titulo = "Primavera Inmobiliaria | Catálogo de propiedades";
 $descripcion = "Encuentra casas, terrenos, departamentos y locales comerciales en venta y renta en Sonora.";
 $cssPaginas = [BASE_URL . 'CSS/catalogo.css', BASE_URL . 'CSS/burbuja.css'];
 
