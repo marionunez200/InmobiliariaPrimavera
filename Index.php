@@ -51,10 +51,10 @@ require_once ROOT_PATH . '/Includes/header.php';
             <div class="hero-content">
             
                 <div class="hero-center">
-                    <p class="hero-brand">Primavera inmobiliaria</p>
+                    <p class="hero-brand">PRIMAVERA INMOBILIARIA, S.C</p>
                 
                     <h1 id="hero-title">
-                        Casas, terrenos y propiedades en venta y renta en Sonora
+                        Contigo en cada paso hacia tu nuevo proyecto
                     </h1>
                 
                     <form class="search-form" action="<?= BASE_URL ?>Usuario/Catalogo.php" method="GET">
