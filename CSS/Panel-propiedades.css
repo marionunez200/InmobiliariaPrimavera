@@ -1643,3 +1643,20 @@ MODAL DE ÉXITO
 .btn-danger:hover{
     background:#a61f1f;
 }
+
+
+.estado-activo{
+    background:#2ecc71;
+}
+
+.estado-vendido{
+    background:#e74c3c;
+}
+
+.estado-rentado{
+    background:#3498db;
+}
+
+.estado-traspasado{
+    background:#f39c12;
+}

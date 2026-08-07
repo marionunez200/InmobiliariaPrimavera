@@ -61,13 +61,35 @@ try {
         $observaciones
     ]);
 
+    switch ($tipo_operacion) {
+
+        case 'venta':
+            $estado = 'vendido';
+            break;
+
+        case 'traspaso':
+            $estado = 'traspasado';
+            break;
+
+        case 'renta':
+            $estado = 'rentado';
+            break;
+
+        default:
+            $estado = 'activo';
+            break;
+    }
+
     $stmt = $pdo->prepare("
         UPDATE propiedades
-        SET estado_publicacion = 'inactivo'
+        SET estado_publicacion = ?
         WHERE id = ?
     ");
 
-    $stmt->execute([$propiedad_id]);
+    $stmt->execute([
+        $estado,
+        $propiedad_id
+    ]);
 
     $pdo->commit();
 
