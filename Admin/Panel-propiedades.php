@@ -25,6 +25,27 @@ if (!empty($_SESSION['modal_exito'])) {
     FUNCIONES
 ================================ */
 
+function estadoPublicacionTexto($estado)
+{
+    switch ($estado) {
+
+        case 'activo':
+            return 'Activo';
+
+        case 'vendido':
+            return 'Vendido';
+
+        case 'rentado':
+            return 'Rentado';
+
+        case 'traspasado':
+            return 'Traspasado';
+
+        default:
+            return 'Inactivo';
+    }
+}
+
 function ciudadPanelTexto(?string $ciudad): string
 {
     return match ($ciudad) {
@@ -144,34 +165,33 @@ if (!$esAdmin) {
 
 if ($buscar !== '') {
 
-    if (strtolower($buscar) === 'activo') {
+    $estadoBuscado = strtolower($buscar);
 
-        $where[] = "p.estado_publicacion = 'activo'";
+    if (in_array($estadoBuscado, [
+        'activo',
+        'inactivo',
+        'vendido',
+        'rentado',
+        'traspasado'
+    ])) {
 
-
-    } elseif (strtolower($buscar) === 'inactivo') {
-
-        $where[] = "p.estado_publicacion = 'inactivo'";
-
+        $where[] = "p.estado_publicacion = ?";
+        $params[] = $estadoBuscado;
 
     } else {
 
-
         $where[] = "
-            (
-                p.titulo LIKE ?
-                OR p.direccion_completa LIKE ?
-                OR p.ciudad LIKE ?
-                OR c.nombre LIKE ?
-                OR p.tipo_operacion LIKE ?
-                OR p.estado_publicacion LIKE ?
-                OR a.nombre LIKE ?
-            )
-        ";
-
+        (
+            p.titulo LIKE ?
+            OR p.direccion_completa LIKE ?
+            OR p.ciudad LIKE ?
+            OR c.nombre LIKE ?
+            OR p.tipo_operacion LIKE ?
+            OR p.estado_publicacion LIKE ?
+            OR a.nombre LIKE ?
+        )";
 
         $like = "%{$buscar}%";
-
 
         $params = array_merge($params, [
             $like,
@@ -182,10 +202,9 @@ if ($buscar !== '') {
             $like,
             $like
         ]);
-
     }
 
-}
+    }
 
 
 /*
@@ -456,7 +475,7 @@ $anio = $_GET['anio'] ?? date('Y');
                     </span>
 
                     <span class="text_dentro">
-                        <?= e((string)$propiedad['estado_publicacion']) ?>
+                        <?= e(estadoPublicacionTexto($propiedad['estado_publicacion'])) ?>
                     </span>
 
                     <span class="text_dentro">
