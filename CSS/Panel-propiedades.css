@@ -1644,19 +1644,18 @@ MODAL DE ÉXITO
     background:#a61f1f;
 }
 
-
 .estado-activo{
-    background:#2ecc71;
+    color:#2ecc71;
 }
 
 .estado-vendido{
-    background:#e74c3c;
+    color:#e74c3c;
 }
 
 .estado-rentado{
-    background:#3498db;
+    color:#3498db;
 }
 
 .estado-traspasado{
-    background:#f39c12;
+    color:#f39c12;
 }

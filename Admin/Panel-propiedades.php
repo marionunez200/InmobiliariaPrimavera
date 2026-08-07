@@ -204,7 +204,7 @@ if ($buscar !== '') {
         ]);
     }
 
-    }
+}
 
 
 /*
@@ -474,8 +474,10 @@ $anio = $_GET['anio'] ?? date('Y');
                         <?= e((string)$propiedad['moneda']) ?>
                     </span>
 
-                    <span class="text_dentro">
-                        <?= e(estadoPublicacionTexto($propiedad['estado_publicacion'])) ?>
+                    <?php $estado = $propiedad['estado_publicacion']; ?>
+
+                    <span class="estado estado-<?= $estado ?>">
+                        <?= estadoPublicacionTexto($estado) ?>
                     </span>
 
                     <span class="text_dentro">
@@ -713,8 +715,7 @@ $anio = $_GET['anio'] ?? date('Y');
                     type="text"
                     name="direccion_completa"
                     id="direccionAgregar"
-                    placeholder="Calle, número, colonia"
-                    required>
+                    placeholder="Calle, número, colonia">
             </label>
 
             <input
@@ -958,8 +959,7 @@ $anio = $_GET['anio'] ?? date('Y');
                 <input
                     type="text"
                     name="direccion_completa"
-                    id="edit_direccion_completa"
-                    required>
+                    id="edit_direccion_completa">
             </label>
 
             <input
