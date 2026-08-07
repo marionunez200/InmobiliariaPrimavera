@@ -349,7 +349,7 @@ require_once ROOT_PATH . '/Includes/header.php';
                 <h2>¡Mensaje enviado!</h2>
                 <p>
                     Gracias por contactarnos.<br>
-                    Un asesor de Inmobiliaria Primavera se comunicará contigo lo antes posible.
+                    Un asesor de Primavera Inmobiliaria se comunicará contigo lo antes posible.
                 </p>
                 <button id="cerrarModalMensaje">
                     Aceptar

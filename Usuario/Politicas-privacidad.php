@@ -1,8 +1,8 @@
 <?php
     require_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
 
-    $titulo = "Política de privacidad | Primavera inmobiliaria";
-    $descripcion = "Consulta cómo Primavera inmobiliaria recopila, utiliza y protege la información enviada por los usuarios del sitio web.";
+    $titulo = "Política de privacidad | Primavera Inmobiliaria";
+    $descripcion = "Consulta cómo Primavera Inmobiliaria recopila, utiliza y protege la información enviada por los usuarios del sitio web.";
     $cssPaginas = [BASE_URL . "CSS/politicas.css"];
 
     require_once ROOT_PATH . '/Includes/header.php';
@@ -14,14 +14,14 @@
 
         <header class="legal-header">
             <h1 class="pol-h1">Política de privacidad</h1>
-            <p class="pol-p">Última actualización: 2027</p>
+            <p class="pol-p">Última actualización: 2026</p>
         </header>
 
         <section class="pol-section">
             <h2 class="pol-h2">Información que recopilamos</h2>
 
             <p class="pol-p">
-                Primavera inmobiliaria puede recopilar información proporcionada
+                Primavera Inmobiliaria puede recopilar información proporcionada
                 voluntariamente por los usuarios, como nombre, correo electrónico,
                 número telefónico y datos enviados mediante formularios de contacto,
                 solicitudes de información o consultas relacionadas con propiedades.
@@ -53,7 +53,7 @@
             <h2 class="pol-h2">Protección de datos</h2>
 
             <p class="pol-p">
-                Primavera inmobiliaria se compromete a tratar la información de los usuarios
+                Primavera Inmobiliaria se compromete a tratar la información de los usuarios
                 de manera responsable y a implementar medidas razonables para proteger los
                 datos personales proporcionados mediante el sitio web.
             </p>
@@ -84,7 +84,7 @@
 
             <p class="pol-p">
                 El sitio puede contener enlaces hacia redes sociales u otros sitios externos.
-                Primavera inmobiliaria no se hace responsable por las prácticas de privacidad,
+                Primavera Inmobiliaria no se hace responsable por las prácticas de privacidad,
                 contenido o funcionamiento de sitios web ajenos.
             </p>
         </section>
@@ -103,7 +103,7 @@
             <h2 class="pol-h2">Cambios en la política de privacidad</h2>
 
             <p class="pol-p">
-                Primavera inmobiliaria puede actualizar esta política de privacidad en cualquier
+                Primavera Inmobiliaria puede actualizar esta política de privacidad en cualquier
                 momento. Las modificaciones serán publicadas en esta misma página y entrarán en
                 vigor desde su publicación.
             </p>

@@ -1,8 +1,8 @@
 ﻿<?php 
 require_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
 
-$titulo = "Términos y condiciones - Primavera inmobiliaria";
-$descripcion = "Consulta los términos y condiciones de uso del sitio web de Primavera inmobiliaria.";
+$titulo = "Términos y condiciones - Primavera Inmobiliaria";
+$descripcion = "Consulta los términos y condiciones de uso del sitio web de Primavera Inmobiliaria.";
 $cssPaginas = [BASE_URL . "CSS/terminos.css"];
 
 require_once ROOT_PATH . '/Includes/header.php'; ?>
@@ -12,7 +12,7 @@ require_once ROOT_PATH . '/Includes/header.php'; ?>
 
         <header class="legal-header">
             <h1 class="terms-h1">Términos y condiciones</h1>
-            <p class="terms-p">Última actualización: 2027</p>
+            <p class="terms-p">Última actualización: 2026</p>
         </header>
 
         <section class="terms-section">
@@ -31,7 +31,7 @@ require_once ROOT_PATH . '/Includes/header.php'; ?>
                 Los precios, ubicaciones, características, medidas, imágenes y disponibilidad
                 de las propiedades publicadas en este sitio pueden cambiar sin previo aviso.
                 La información mostrada tiene fines informativos y deberá confirmarse
-                directamente con Primavera inmobiliaria.
+                directamente con Primavera Inmobiliaria.
             </p>
         </section>
 
@@ -57,7 +57,7 @@ require_once ROOT_PATH . '/Includes/header.php'; ?>
             <h2 class="terms-h2">Uso de imágenes y contenido</h2>
             <p class="terms-p">
                 Las imágenes, textos, logotipos y demás contenido publicado en este sitio
-                pertenecen a Primavera inmobiliaria o se utilizan con autorización. Queda
+                pertenecen a Primavera Inmobiliaria o se utilizan con autorización. Queda
                 prohibida su reproducción, distribución o uso no autorizado.
             </p>
         </section>
@@ -66,7 +66,7 @@ require_once ROOT_PATH . '/Includes/header.php'; ?>
             <h2 class="terms-h2">Enlaces externos</h2>
             <p class="terms-p">
                 Este sitio puede incluir enlaces hacia redes sociales u otros sitios externos.
-                Primavera inmobiliaria no se hace responsable por el contenido, políticas o
+                Primavera Inmobiliaria no se hace responsable por el contenido, políticas o
                 prácticas de privacidad de sitios ajenos.
             </p>
         </section>
@@ -74,7 +74,7 @@ require_once ROOT_PATH . '/Includes/header.php'; ?>
         <section class="terms-section">
             <h2 class="terms-h2">Modificaciones</h2>
             <p class="terms-p">
-                Primavera inmobiliaria se reserva el derecho de modificar estos términos y
+                Primavera Inmobiliaria se reserva el derecho de modificar estos términos y
                 condiciones en cualquier momento. Los cambios serán publicados en esta misma
                 página.
             </p>
