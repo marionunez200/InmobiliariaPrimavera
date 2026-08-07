@@ -777,45 +777,37 @@ $anio = $_GET['anio'] ?? date('Y');
 
         <div class="modal-body">
 
-        <label>
-            
-            Agente
-            
-            <?php if ($esAdmin): ?>
-            
-                <select name="agente_id" required>
-            
-                    <option value="">
-                        Selecciona un agente
-                    </option>
-            
-                    <?php foreach ($agentes as $agente): ?>
-                    
-                        <option value="<?= e((string)$agente['id']) ?>">
-                            <?= e((string)$agente['nombre']) ?>
-                        </option>
-                    
-                    <?php endforeach; ?>
-                    
-                </select>
-                    
-            <?php else: ?>
-            
-                <input 
-                    type="text"
-                    value="<?= e($agentes[0]['nombre'] ?? '') ?>"
-                    disabled
-                >
-            
-                <input 
-                    type="hidden"
-                    name="agente_id"
-                    value="<?= e((string)$_SESSION['id_agente']) ?>"
-                >
-            
-            <?php endif; ?>
-            
-        </label>
+            <label>
+                
+                Agente
+                
+                <?php if ($esAdmin): ?>
+                
+                    <select name="agente_id" id="edit_agente_id" required>
+                        <option value="">Selecciona un agente</option>
+                        <?php foreach ($agentes as $agente): ?>
+                            <option value="<?= e((string)$agente['id']) ?>">
+                                <?= e((string)$agente['nombre']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                        
+                <?php else: ?>
+                
+                    <input 
+                        type="text"
+                        value="<?= e($agentes[0]['nombre'] ?? '') ?>"
+                        disabled
+                    >
+                
+                    <input 
+                        type="hidden"
+                        name="agente_id"
+                        value="<?= e((string)$_SESSION['id_agente']) ?>"
+                    >
+                
+                <?php endif; ?>
+            </label>
 
             <label>
                 Título
