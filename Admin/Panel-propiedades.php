@@ -645,7 +645,7 @@ $anio = $_GET['anio'] ?? date('Y');
 
             <label>
                 Precio
-                <input type="number" name="precio" placeholder="2500000" min="0" step="1" required>
+                <input class="input-precio" type="text" name="precio" placeholder="2,500,000" inputmode="numeric" autocomplete="off" required>
             </label>
 
             <label>
@@ -876,7 +876,7 @@ $anio = $_GET['anio'] ?? date('Y');
 
             <label>
                 Precio
-                <input type="number" name="precio" id="edit_precio" min="0" step="1" required>
+                <input class="input-precio" type="text" name="precio" placeholder="2,500,000" inputmode="numeric" autocomplete="off" required>
             </label>
 
             <label>
@@ -2041,6 +2041,34 @@ document.querySelectorAll('.incremento-personalizado').forEach(input => {
 
             this.value = Math.max(0, valor - 1);
         }
+
+    });
+
+});
+
+document.querySelectorAll(".input-precio").forEach(input => {
+
+    input.addEventListener("input", function () {
+
+        let valor = this.value.replace(/\D/g, "");
+
+        if (valor === "") {
+            this.value = "";
+            return;
+        }
+
+        this.value = Number(valor).toLocaleString("en-US");
+    });
+
+});
+
+document.querySelectorAll("form").forEach(form => {
+
+    form.addEventListener("submit", function () {
+
+        form.querySelectorAll(".input-precio").forEach(input => {
+            input.value = input.value.replace(/,/g, "");
+        });
 
     });
 
