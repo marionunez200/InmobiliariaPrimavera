@@ -412,7 +412,7 @@ require_once ROOT_PATH . '/Includes/header.php';
                         <img src="<?= BASE_URL ?>Uploads/agentes/agente-6a4caae0ba02f.webp" alt="Asesora">
 
                         <div>
-                            <strong>María Fernanda</strong>
+                            <strong>Sandra Castillo</strong>
                             <span>Asesora inmobiliaria</span>
                         </div>
                     </div>
