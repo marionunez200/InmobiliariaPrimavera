@@ -22,9 +22,16 @@ $pagina = isset($_GET['pagina'])
 
 $offset = ($pagina - 1) * $porPagina;
 
+// Cargar categorías y ciudades dinámicamente
 $categorias = $pdo->query("
     SELECT id, nombre
     FROM categorias_propiedad
+    ORDER BY nombre
+")->fetchAll(PDO::FETCH_ASSOC);
+
+$ciudadesLista = $pdo->query("
+    SELECT id, nombre
+    FROM ciudades
     ORDER BY nombre
 ")->fetchAll(PDO::FETCH_ASSOC);
 
@@ -33,6 +40,8 @@ $sqlCount = "
     FROM propiedades p
     INNER JOIN categorias_propiedad c
         ON c.id = p.categoria_id
+    LEFT JOIN ciudades ci
+        ON ci.id = p.ciudad_id
     WHERE p.estado_publicacion = 'activo'
 ";
 
@@ -50,17 +59,6 @@ function selectedOption(string $actual, string $valor): string
     return $actual === $valor ? 'selected' : '';
 }
 
-function ciudadTexto(?string $ciudad): string
-{
-    return match ($ciudad) {
-        'navojoa' => 'Navojoa',
-        'san_carlos' => 'San Carlos',
-        'ciudad_obregon' => 'Ciudad Obregón',
-        'guaymas' => 'Guaymas',
-        default => 'Ciudad Obregón'
-    };
-}
-
 function operacionTexto(?string $operacion): string
 {
     return match ($operacion) {
@@ -70,7 +68,7 @@ function operacionTexto(?string $operacion): string
     };
 }
 
-$ciudad = $_GET['ciudad'] ?? '';
+$ciudadId = (int)($_GET['ciudad'] ?? 0);
 $tipoOperacion = $_GET['tipo_operacion'] ?? '';
 $categoria = (int)($_GET['categoria'] ?? 0);
 $precioMin = $_GET['precio_min'] ?? '';
@@ -80,6 +78,7 @@ $sql = "
     SELECT
         p.*,
         c.nombre AS categoria_nombre,
+        ci.nombre AS ciudad_nombre,
         (
             SELECT ip.imagen_url
             FROM imagenes_propiedades ip
@@ -90,16 +89,18 @@ $sql = "
     FROM propiedades p
     INNER JOIN categorias_propiedad c
         ON c.id = p.categoria_id
+    LEFT JOIN ciudades ci
+        ON ci.id = p.ciudad_id
     WHERE p.estado_publicacion = 'activo'
 ";
 
 $params = [];
 
-if ($ciudad !== '') {
-    $sqlCount .= " AND p.ciudad = ?";
-    $sql      .= " AND p.ciudad = ?";
-    $paramsCount[] = $ciudad;
-    $params[]      = $ciudad;
+if ($ciudadId > 0) {
+    $sqlCount .= " AND p.ciudad_id = ?";
+    $sql      .= " AND p.ciudad_id = ?";
+    $paramsCount[] = $ciudadId;
+    $params[]      = $ciudadId;
 }
 
 if ($tipoOperacion !== '') {
@@ -154,7 +155,6 @@ $descripcion = "Encuentra casas, terrenos, departamentos y locales comerciales e
 $cssPaginas = [BASE_URL . 'CSS/catalogo.css', BASE_URL . 'CSS/burbuja.css'];
 
 require_once ROOT_PATH . '/Includes/header.php';
-
 ?>
 
 <main class="site-main">
@@ -171,11 +171,12 @@ require_once ROOT_PATH . '/Includes/header.php';
 
                 <label for="ciudad">Ubicación:</label>
                 <select id="ciudad" name="ciudad">
-                    <option value="">Cualquiera</option>
-                    <option value="ciudad_obregon" <?= selectedOption($ciudad, 'ciudad_obregon') ?>>Ciudad Obregón</option>
-                    <option value="navojoa" <?= selectedOption($ciudad, 'navojoa') ?>>Navojoa</option>
-                    <option value="san_carlos" <?= selectedOption($ciudad, 'san_carlos') ?>>San Carlos</option>
-                    <option value="guaymas" <?= selectedOption($ciudad, 'guaymas') ?>>Guaymas</option>
+                    <option value="0">Cualquiera</option>
+                    <?php foreach ($ciudadesLista as $c): ?>
+                        <option value="<?= $c['id'] ?>" <?= $ciudadId == $c['id'] ? 'selected' : '' ?>>
+                            <?= e($c['nombre']) ?>
+                        </option>
+                    <?php endforeach; ?>
                 </select>
 
                 <label for="tipo_operacion">Venta/Renta:</label>
@@ -234,8 +235,8 @@ require_once ROOT_PATH . '/Includes/header.php';
                 <div>
                     <div>
                         <div class="slider-container">
-                            <input class="range-slider" type="range" class="range-slider" id="min-range" min="0" max="10000000" value="0" step="100">
-                            <input class="range-slider" type="range" class="range-slider" id="max-range" min="0" max="10000000" value="10000000" step="100">
+                            <input class="range-slider" type="range" id="min-range" min="0" max="10000000" value="0" step="100">
+                            <input class="range-slider" type="range" id="max-range" min="0" max="10000000" value="10000000" step="100">
                         </div>
                     </div>
                 </div>
@@ -271,9 +272,8 @@ require_once ROOT_PATH . '/Includes/header.php';
                         $imagen = 'Imagenes/casa1.webp';
                     }
 
-                    // Usamos $tituloPropiedad para evitar sobrescribir $titulo de la página
                     $tituloPropiedad = limpiarTexto($propiedad['titulo']);
-                    $ciudadLegible = ciudadTexto($propiedad['ciudad']);
+                    $ciudadNombre = $propiedad['ciudad_nombre'] ?? 'Sin ciudad';
                     $operacionLegible = operacionTexto($propiedad['tipo_operacion']);
 
                     $precioConvertido = MonedaService::convertir(
@@ -317,7 +317,7 @@ require_once ROOT_PATH . '/Includes/header.php';
 
                         <a
                             class="propiedad_detalles"
-                            href="<?= BASE_URL ?>Usuario/propiedades/<?= e($propiedad['slug'] ?? '') ?>?moneda=<?= e($monedaMostrar) ?>"
+                            href="<?= BASE_URL ?>Usuario/PropiedadInfo.php?slug=<?= e($propiedad['slug'] ?? '') ?>&moneda=<?= e($monedaMostrar) ?>"
                         >
                             Ver detalles
                         </a>
@@ -397,57 +397,51 @@ require_once ROOT_PATH . '/Includes/header.php';
 
     </section>
         
-        <div class="chat-widget">
-            <!-- Tarjeta desplegable (Modal de WhatsApp) -->
-            <div class="chat-card" id="chatCard">
-                <div class="chat-texto">
-                    <h3>¿No encontraste lo que buscabas?</h3>
+    <div class="chat-widget">
+        <div class="chat-card" id="chatCard">
+            <div class="chat-texto">
+                <h3>¿No encontraste lo que buscabas?</h3>
 
-                    <p>
-                        Contáctame y con gusto te ayudaré a encontrar
-                        la propiedad ideal para ti.
-                    </p>
+                <p>
+                    Contáctame y con gusto te ayudaré a encontrar
+                    la propiedad ideal para ti.
+                </p>
 
-                    <div class="asesor">
-                        <img src="<?= BASE_URL ?>Uploads/agentes/agente-6a4caae0ba02f.webp" alt="Asesora">
-
-                        <div>
-                            <strong>Sandra Castillo</strong>
-                            <span>Asesora inmobiliaria</span>
-                        </div>
-                    </div>
-
-                    <a
-                        href="https://wa.me/526441435244"
-                        target="_blank"
-                        class="btn-whatsapp"
-                        rel="noopener noreferrer"
-                    >
-                        <i class="fa-brands fa-whatsapp"></i>
-                        Enviar mensaje
-                    </a>
-                </div>
-            </div>
-            
-            <!-- Contenedor alineado: Mensaje a la izquierda, foto a la derecha -->
-            <div class="chat-burbuja-container">
-                <button class="burbuja" id="abrirChat">
+                <div class="asesor">
                     <img src="<?= BASE_URL ?>Uploads/agentes/agente-6a4caae0ba02f.webp" alt="Asesora">
-                </button>
-                
-                <div class="mensaje-burbuja">👋 Estoy aquí para ayudarte</div>
+
+                    <div>
+                        <strong>Sandra Castillo</strong>
+                        <span>Asesora inmobiliaria</span>
+                    </div>
+                </div>
+
+                <a
+                    href="https://wa.me/526441435244"
+                    target="_blank"
+                    class="btn-whatsapp"
+                    rel="noopener noreferrer"
+                >
+                    <i class="fa-brands fa-whatsapp"></i>
+                    Enviar mensaje
+                </a>
             </div>
         </div>
+        
+        <div class="chat-burbuja-container">
+            <button class="burbuja" id="abrirChat">
+                <img src="<?= BASE_URL ?>Uploads/agentes/agente-6a4caae0ba02f.webp" alt="Asesora">
+            </button>
+            
+            <div class="mensaje-burbuja">👋 Estoy aquí para ayudarte</div>
+        </div>
+    </div>
 
 </main>
 
 <?php require_once ROOT_PATH . '/Includes/footer.php'; ?>
 
 <script>
-
-    // ==========================
-    // MENÚ RESPONSIVO
-    // ==========================
     const menu = document.getElementById("navbar");
     const boton = document.getElementById("menu-toggle");
 
@@ -457,9 +451,6 @@ require_once ROOT_PATH . '/Includes/header.php';
         });
     }
 
-    // ==========================
-    // CHAT
-    // ==========================
     const chatCard = document.getElementById("chatCard");
     const abrirChat = document.getElementById("abrirChat");
     const cerrarChat = document.getElementById("cerrarChat");
@@ -473,13 +464,11 @@ require_once ROOT_PATH . '/Includes/header.php';
 
     if (abrirChat) {
         abrirChat.addEventListener("click", () => {
-
             chatCard.classList.toggle("activo");
 
             if (mensajeBurbuja) {
                 mensajeBurbuja.style.display = "none";
             }
-
         });
     }
 
@@ -489,36 +478,26 @@ require_once ROOT_PATH . '/Includes/header.php';
         });
     }
 
-    // ==========================
-    // FILTROS
-    // ==========================
     const formulario = document.querySelector(".filtro-form");
     const catalogo = document.querySelector(".catalogo");
 
-    
     const precioMin = document.getElementById("precio_min");
     const precioMax = document.getElementById("precio_max");
     const minRange = document.getElementById("min-range");
     const maxRange = document.getElementById("max-range");
     
-    
     function cargarPropiedades() {
-
         const datos = new FormData(formulario);
-
-        // Actualizar la URL
         const nuevaURL = new URL(window.location);
 
         nuevaURL.searchParams.set("pagina", "1");
 
         for (const [clave, valor] of datos.entries()) {
-
-            if (valor !== "") {
+            if (valor !== "" && valor !== "0") {
                 nuevaURL.searchParams.set(clave, valor);
             } else {
                 nuevaURL.searchParams.delete(clave);
             }
-
         }
 
         history.replaceState({}, "", nuevaURL);
@@ -531,77 +510,46 @@ require_once ROOT_PATH . '/Includes/header.php';
             .catch(error => console.error(error));
     }
 
-    // Selects
     document.querySelectorAll(".filtro-form select").forEach(select => {
         select.addEventListener("change", cargarPropiedades);
     });
+
     if (minRange && precioMin) {
-
         minRange.addEventListener("input", () => {
-
             precioMin.value = minRange.value;
-
             cargarPropiedades();
-
         });
-
     }
 
-
-    // Slider precio máximo
     if (maxRange && precioMax) {
-
         maxRange.addEventListener("input", () => {
-
             precioMax.value = maxRange.value;
-
             cargarPropiedades();
-
         });
-
     }
 
-
-    // Input precio mínimo
     if (precioMin && minRange) {
-
         precioMin.addEventListener("input", () => {
-
             minRange.value = precioMin.value;
-
             cargarPropiedades();
-
         });
-
     }
 
-
-    // Input precio máximo
     if (precioMax && maxRange) {
-
         precioMax.addEventListener("input", () => {
-
             maxRange.value = precioMax.value;
-
             cargarPropiedades();
-
         });
-
     }
 
-        // Esperar a que cargue el DOM
     document.addEventListener('DOMContentLoaded', function() {
         const cerrarBtn = document.getElementById('cerrarChat');
         const chatCard = document.getElementById('chatCard');
-        // const abrirBtn = document.getElementById('abrirChat'); // Si lo necesitas
 
-        // Función para cerrar la tarjeta
-        cerrarBtn.addEventListener('click', function() {
-            // Opción 1: Ocultar con display
-            chatCard.style.display = 'none';
-
-            // Opción 2: Si usas clases CSS para animar (ej: .active { display: block })
-            // chatCard.classList.remove('active');
-        });
+        if (cerrarBtn && chatCard) {
+            cerrarBtn.addEventListener('click', function() {
+                chatCard.style.display = 'none';
+            });
+        }
     });
 </script>

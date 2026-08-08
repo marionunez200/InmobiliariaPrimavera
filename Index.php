@@ -9,9 +9,13 @@ require_once 'Config/database.php';
 $pdo = db();
 
 $conteos = [];
-
 $conteosPorCategoria = [];
 
+// 1. Obtener lista de ciudades
+$stmtCiudades = $pdo->query("SELECT id, nombre FROM ciudades ORDER BY nombre ASC");
+$ciudades = $stmtCiudades->fetchAll(PDO::FETCH_ASSOC);
+
+// 2. Obtener conteos por tipo de operación
 $stmt = $pdo->query("
     SELECT
         categoria_id,
@@ -26,7 +30,7 @@ while ($fila = $stmt->fetch(PDO::FETCH_ASSOC)) {
     $conteos[$fila['tipo_operacion']][$fila['categoria_id']] = (int)$fila['total'];
 }
 
-// 2. Obtener conteos totales por categoría (Casas, Terrenos, Locales, etc.)
+// 3. Obtener conteos totales por categoría
 $stmtCat = $pdo->query("
     SELECT
         categoria_id,
@@ -38,6 +42,28 @@ $stmtCat = $pdo->query("
 
 while ($fila = $stmtCat->fetch(PDO::FETCH_ASSOC)) {
     $conteosPorCategoria[$fila['categoria_id']] = (int)$fila['total'];
+}
+
+/**
+ * Función auxiliar para generar la clase CSS correspondiente a cada ciudad
+ */
+function obtenerClaseCssCiudad($nombre) {
+    $nombreLimpio = mb_strtolower(trim($nombre), 'UTF-8');
+    
+    // Si contiene 'obreg', forzamos 'obregon' para que coincida con .city-obregon
+    if (strpos($nombreLimpio, 'obreg') !== false) {
+        return 'obregon';
+    }
+    
+    // Remueve tildes, eñes y espacios
+    $remplazos = [
+        'á' => 'a', 'é' => 'e', 'í' => 'i', 'ó' => 'o', 'ú' => 'u',
+        'ñ' => 'n', ' ' => '-'
+    ];
+    $clase = strtr($nombreLimpio, $remplazos);
+    
+    // Remueve el prefijo "ciudad-" si existe
+    return str_replace('ciudad-', '', $clase);
 }
 
 require_once ROOT_PATH . '/Includes/header.php';
@@ -61,10 +87,11 @@ require_once ROOT_PATH . '/Includes/header.php';
                         <div class="select-wrapper">
                             <select name="ciudad" id="ciudad" aria-label="Selecciona una ubicación">
                                 <option value="">Seleccione ubicación...</option>
-                                <option value="ciudad_obregon">Ciudad Obregón</option>
-                                <option value="navojoa">Navojoa</option>
-                                <option value="san_carlos">San Carlos</option>
-                                <option value="guaymas">Guaymas</option>
+                                <?php foreach ($ciudades as $ciudad): ?>
+                                    <option value="<?= htmlspecialchars($ciudad['id']) ?>">
+                                        <?= htmlspecialchars($ciudad['nombre']) ?>
+                                    </option>
+                                <?php endforeach; ?>
                             </select>
 
                             <i class="fa-solid fa-chevron-down"></i>
@@ -137,43 +164,29 @@ require_once ROOT_PATH . '/Includes/header.php';
 
             <div class="cities-carousel">
                 <div class="cities-track">
+                    <?php if (!empty($ciudades)): ?>
+                        <!-- Primer bloque de tarjetas -->
+                        <?php foreach ($ciudades as $ciudad): 
+                            $claseCss = obtenerClaseCssCiudad($ciudad['nombre']);
+                        ?>
+                            <a href="<?= BASE_URL ?>Usuario/Catalogo.php?ciudad=<?= htmlspecialchars($ciudad['id']) ?>" class="city-card city-<?= htmlspecialchars($claseCss) ?>">
+                                <h3><?= htmlspecialchars($ciudad['nombre']) ?></h3>
+                            </a>
+                        <?php endforeach; ?>
 
-                    <a href="<?= BASE_URL ?>Usuario/Catalogo.php?ciudad=ciudad_obregon" class="city-card city-obregon">
-                        <h3>Obregón</h3>
-                    </a>
-
-                    <a href="<?= BASE_URL ?>Usuario/Catalogo.php?ciudad=san_carlos" class="city-card city-san-carlos">
-                        <h3>San Carlos</h3>
-                    </a>
-
-                    <a href="<?= BASE_URL ?>Usuario/Catalogo.php?ciudad=guaymas" class="city-card city-guaymas">
-                        <h3>Guaymas</h3>
-                    </a>
-
-                    <a href="<?= BASE_URL ?>Usuario/Catalogo.php?ciudad=navojoa" class="city-card city-navojoa">
-                        <h3>Navojoa</h3>
-                    </a>
-
-                    <!-- Se repiten para que el carrusel sea infinito -->
-                    <a href="<?= BASE_URL ?>Usuario/Catalogo.php?ciudad=ciudad_obregon" class="city-card city-obregon">
-                        <h3>Obregón</h3>
-                    </a>
-
-                    <a href="<?= BASE_URL ?>Usuario/Catalogo.php?ciudad=san_carlos" class="city-card city-san-carlos">
-                        <h3>San Carlos</h3>
-                    </a>
-
-                    <a href="<?= BASE_URL ?>Usuario/Catalogo.php?ciudad=guaymas" class="city-card city-guaymas">
-                        <h3>Guaymas</h3>
-                    </a>
-
-                    <a href="<?= BASE_URL ?>Usuario/Catalogo.php?ciudad=navojoa" class="city-card city-navojoa">
-                        <h3>Navojoa</h3>
-                    </a>
-
+                        <!-- Bloque duplicado para el carrusel infinito -->
+                        <?php foreach ($ciudades as $ciudad): 
+                            $claseCss = obtenerClaseCssCiudad($ciudad['nombre']);
+                        ?>
+                            <a href="<?= BASE_URL ?>Usuario/Catalogo.php?ciudad=<?= htmlspecialchars($ciudad['id']) ?>" class="city-card city-<?= htmlspecialchars($claseCss) ?>">
+                                <h3><?= htmlspecialchars($ciudad['nombre']) ?></h3>
+                            </a>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </div>
             </div>
         </section>
+
         <!-- QUIÉNES SOMOS -->
         <section class="about-section" aria-labelledby="about-title">
 
@@ -250,4 +263,4 @@ require_once ROOT_PATH . '/Includes/header.php';
 
     </main>
 
-<?php require 'includes/footer.php'; ?>
+<?php require_once ROOT_PATH . '/Includes/footer.php'; ?>

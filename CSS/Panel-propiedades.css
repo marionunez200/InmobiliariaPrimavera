@@ -12,7 +12,7 @@ body {
 }
 
 /* ================================
-   LAYOUT PRINCIPAL
+   LAYOUT CON SIDEBAR Y HEADER FIJOS
 ================================ */
 
 .admin-panel {
@@ -23,9 +23,49 @@ body {
         "header header"
         "sidebar main";
 
-    min-height: 100vh;
+    height: 100vh; /* Altura fija a la pantalla */
+    overflow: hidden; /* Evita que la ventana completa haga scroll */
     background: #fff5e0;
     margin: 0;
+}
+
+/* Header superior fijo */
+.admin-header {
+    grid-area: header;
+    height: 110px;
+    z-index: 1000;
+}
+
+/* Sidebar lateral fijo de arriba a abajo */
+.admin-sidebar {
+    grid-area: sidebar;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: calc(100vh - 110px);
+    padding-bottom: 20px;
+}
+
+/* Contenedor principal con Scroll Interno */
+.admin-main {
+    grid-area: main;
+    height: calc(100vh - 110px);
+    overflow-y: auto; /* El scroll ocurre SOLO aquí dentro */
+    padding: 20px;
+    min-width: 0;
+}
+
+/* ================================
+   AJUSTE DE TABLAS Y TARJETAS
+================================ */
+
+/* Asegura que los contenedores grandes no fuercen un desborde hacia el sidebar */
+.detalles_propiedad,
+.cards_propiedades,
+.tabla-propiedades {
+    width: 100%;
+    max-width: 100%;
+    margin: 20px 0;
 }
 
 .detalles_agente {

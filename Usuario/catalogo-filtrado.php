@@ -1,4 +1,3 @@
-
 <?php
 require_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
 require_once ROOT_PATH . '/Config/database.php';
@@ -21,7 +20,8 @@ function limpiarTexto(?string $texto): string
     return trim($texto);
 }
 
-$ciudad = $_GET['ciudad'] ?? '';
+// 1. Convertimos ciudad a INT (ciudad_id)
+$ciudadId = (int)($_GET['ciudad'] ?? 0);
 $tipoOperacion = $_GET['tipo_operacion'] ?? '';
 $categoria = (int)($_GET['categoria'] ?? 0);
 $precioMin = $_GET['precio_min'] ?? '';
@@ -32,11 +32,14 @@ if (!in_array($monedaMostrar, ['MXN', 'USD'], true)) {
     $monedaMostrar = 'MXN';
 }
 
+// 2. Agregamos LEFT JOIN a la tabla ciudades en ambas consultas
 $sqlCount = "
     SELECT COUNT(*)
     FROM propiedades p
     INNER JOIN categorias_propiedad c
         ON c.id = p.categoria_id
+    LEFT JOIN ciudades ci
+        ON ci.id = p.ciudad_id
     WHERE p.estado_publicacion = 'activo'
 ";
 
@@ -44,6 +47,7 @@ $sql = "
     SELECT
         p.*,
         c.nombre AS categoria_nombre,
+        ci.nombre AS ciudad_nombre,
         (
             SELECT ip.imagen_url
             FROM imagenes_propiedades ip
@@ -54,17 +58,20 @@ $sql = "
     FROM propiedades p
     INNER JOIN categorias_propiedad c
         ON c.id = p.categoria_id
+    LEFT JOIN ciudades ci
+        ON ci.id = p.ciudad_id
     WHERE p.estado_publicacion = 'activo'
 ";
 
 $params = [];
 $paramsCount = [];
 
-if ($ciudad !== '') {
-    $sql .= " AND p.ciudad = ?";
-    $sqlCount .= " AND p.ciudad = ?";
-    $params[] = $ciudad;
-    $paramsCount[] = $ciudad;
+// 3. Filtramos por p.ciudad_id numérico
+if ($ciudadId > 0) {
+    $sql .= " AND p.ciudad_id = ?";
+    $sqlCount .= " AND p.ciudad_id = ?";
+    $params[] = $ciudadId;
+    $paramsCount[] = $ciudadId;
 }
 
 if ($tipoOperacion !== '') {
@@ -139,13 +146,11 @@ $propiedades = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <p>No hay propiedades disponibles con esos filtros.</p>
 <?php endif; ?>
 
-
-
 <?php foreach ($propiedades as $propiedad): ?>
 
 <?php
 
-$imagen = limpiarTexto($propiedad['imagen_principal']);
+$imagen = limpiarTexto($propiedad['imagen_principal'] ?? '');
 
 if ($imagen === '') {
     $imagen = 'Imagenes/casa1.webp';
@@ -193,7 +198,7 @@ if ($propiedad['tipo_operacion'] === 'renta') {
 
         <a
             class="propiedad_detalles"
-            href="<?= BASE_URL ?>Usuario/propiedades/<?= e($propiedad['slug']) ?>?moneda=<?= e($monedaMostrar) ?>"
+            href="<?= BASE_URL ?>Usuario/PropiedadInfo.php?slug=<?= e($propiedad['slug'] ?? '') ?>&moneda=<?= e($monedaMostrar) ?>"
         >
             Ver detalles
         </a>
@@ -232,7 +237,6 @@ if ($propiedad['tipo_operacion'] === 'renta') {
 
     <?php endif; ?>
 
-
     <?php
 
     $rango = 1;
@@ -241,7 +245,6 @@ if ($propiedad['tipo_operacion'] === 'renta') {
     $fin = min($totalPaginas, $pagina + $rango);
 
     ?>
-
 
     <?php if ($inicio > 1): ?>
 
@@ -263,7 +266,6 @@ if ($propiedad['tipo_operacion'] === 'renta') {
 
     <?php endif; ?>
 
-
     <?php for ($i = $inicio; $i <= $fin; $i++): ?>
 
         <?php
@@ -279,7 +281,6 @@ if ($propiedad['tipo_operacion'] === 'renta') {
         </a>
 
     <?php endfor; ?>
-
 
     <?php if ($fin < $totalPaginas): ?>
 
@@ -300,7 +301,6 @@ if ($propiedad['tipo_operacion'] === 'renta') {
         </a>
 
     <?php endif; ?>
-
 
     <?php if ($pagina < $totalPaginas): ?>
 

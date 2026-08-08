@@ -111,14 +111,14 @@ $totalAgentesActivos = (int)$pdo->query("
 ")->fetchColumn();
 
 /* ================================
-    CONSULTA PROPIEDADES
+    CONSULTA CIUDADES
 ================================ */
-
 $sql = "
     SELECT
         p.*,
         a.nombre AS agente_nombre,
         c.nombre AS categoria_nombre,
+        ci.nombre AS ciudad_nombre,
         (
             SELECT ip.imagen_url
             FROM imagenes_propiedades ip
@@ -131,12 +131,38 @@ $sql = "
         ON p.agente_id = a.id
     LEFT JOIN categorias_propiedad c
         ON p.categoria_id = c.id
+    LEFT JOIN ciudades ci
+        ON p.ciudad_id = ci.id
+";
+
+/* ================================
+    CONSULTA PROPIEDADES
+================================ */
+
+$sql = "
+    SELECT
+        p.*,
+        a.nombre AS agente_nombre,
+        c.nombre AS categoria_nombre,
+        ci.nombre AS ciudad_nombre,
+        (
+            SELECT ip.imagen_url
+            FROM imagenes_propiedades ip
+            WHERE ip.propiedad_id = p.id
+            ORDER BY ip.es_principal DESC, ip.orden ASC, ip.id ASC
+            LIMIT 1
+        ) AS imagen_principal
+    FROM propiedades p
+    LEFT JOIN agentes a
+        ON p.agente_id = a.id
+    LEFT JOIN categorias_propiedad c
+        ON p.categoria_id = c.id
+    LEFT JOIN ciudades ci
+        ON p.ciudad_id = ci.id
 ";
 
 $params = [];
 $where = [];
-
-
 /*
 ================================
  FILTRO POR ROL
@@ -184,7 +210,7 @@ if ($buscar !== '') {
         (
             p.titulo LIKE ?
             OR p.direccion_completa LIKE ?
-            OR p.ciudad LIKE ?
+            OR ci.nombre LIKE ?
             OR c.nombre LIKE ?
             OR p.tipo_operacion LIKE ?
             OR p.estado_publicacion LIKE ?
@@ -271,9 +297,44 @@ $stmtCategorias = $pdo->query("
 
 $categorias = $stmtCategorias->fetchAll(PDO::FETCH_ASSOC);
 
+/* ================================
+    CONSULTA DE CIUDADES
+================================ */
+$stmtCiudades = $pdo->query("
+    SELECT *
+    FROM ciudades
+    WHERE activo = 1
+    ORDER BY nombre ASC
+");
+
+$ciudades = $stmtCiudades->fetchAll(PDO::FETCH_ASSOC);
+
+
 $mes = $_GET['mes'] ?? date('m');
 $anio = $_GET['anio'] ?? date('Y');
 
+$stmtUltimas = $pdo->query("
+    SELECT
+        p.*,
+        c.nombre AS categoria_nombre,
+        (
+            SELECT ip.imagen_url
+            FROM imagenes_propiedades ip
+            WHERE ip.propiedad_id = p.id
+            ORDER BY ip.es_principal DESC, ip.orden ASC, ip.id ASC
+            LIMIT 1
+        ) AS imagen_principal
+
+    FROM propiedades p
+
+    LEFT JOIN categorias_propiedad c
+    ON c.id = p.categoria_id
+
+    ORDER BY p.creado_en DESC, p.id DESC
+    LIMIT 4
+");
+
+$ultimasPropiedades = $stmtUltimas->fetchAll();
 ?>
 
 <!DOCTYPE html>
@@ -379,7 +440,6 @@ $anio = $_GET['anio'] ?? date('Y');
                 </li>
             </ul>
         </section>
-
         <section class="detalles_propiedad">
 
             <div class="contenedor-busqueda">
@@ -414,11 +474,11 @@ $anio = $_GET['anio'] ?? date('Y');
                 <?php if (empty($propiedades)): ?>
                     <p>No hay propiedades registradas.</p>
                 <?php endif; ?>
-
+                
                 <?php foreach ($propiedades as $propiedad): ?>
                     <?php
-                        $imagen = $propiedad['imagen_principal'] ? BASE_URL . $propiedad['imagen_principal' ] : BASE_URL . 'Imagenes/casa1.webp';
-
+                        $imagen = $propiedad['imagen_principal'] ? BASE_URL . $propiedad['imagen_principal'] : BASE_URL . 'Imagenes/casa1.webp';
+                
                     $imagenesJson = array_map(function ($imagenItem) {
                         return [
                             'id' => (int)$imagenItem['id'],
@@ -427,7 +487,7 @@ $anio = $_GET['anio'] ?? date('Y');
                             'es_principal' => (int)$imagenItem['es_principal'],
                         ];
                     }, $imagenesPorPropiedad[(int)$propiedad['id']] ?? []);
-
+                
                     $propiedadJson = json_encode([
                         'id' => $propiedad['id'],
                         'agente_id' => $propiedad['agente_id'],
@@ -439,7 +499,8 @@ $anio = $_GET['anio'] ?? date('Y');
                         'categoria_id' => $propiedad['categoria_id'],
                         'estado_publicacion' => $propiedad['estado_publicacion'],
                         'destacada' => $propiedad['destacada'],
-                        'ciudad' => $propiedad['ciudad'],
+                        'ciudad_id' => $propiedad['ciudad_id'],
+                        'ciudad_nombre' => $propiedad['ciudad_nombre'] ?? '',
                         'direccion_completa' => $propiedad['direccion_completa'],
                         'google_maps_url' => $propiedad['google_maps_url'],
                         'recamaras' => $propiedad['recamaras'],
@@ -454,36 +515,37 @@ $anio = $_GET['anio'] ?? date('Y');
                 <article class="detalles_fila" data-property-row>
                     <div class="info_propiedad">
                         <img src="<?= e((string)$imagen) ?>" alt="<?= e((string)$propiedad['titulo']) ?>">
-
+                
                         <div>
                             <h3><?= e((string)$propiedad['titulo']) ?></h3>
                             <p>ID: <?= e((string)$propiedad['id']) ?></p>
                         </div>
                     </div>
-
+                
+                    <!-- UBICACIÓN ACTUALIZADA -->
                     <span class="text_dentro">
-                        <?= e(ciudadPanelTexto($propiedad['ciudad'])) ?>
+                        <?= e($propiedad['ciudad_nombre'] ?? 'Sin ciudad') ?>
                     </span>
-
+                
                     <span class="text_dentro">
                         <?= e($propiedad['categoria_nombre'] ?? 'Sin categoría') ?>
                     </span>
-
+                
                     <span class="text_dentro">
                         $<?= number_format((float)$propiedad['precio'], 0) ?>
                         <?= e((string)$propiedad['moneda']) ?>
                     </span>
-
+                
                     <?php $estado = $propiedad['estado_publicacion']; ?>
-
+                
                     <span class="estado estado-<?= $estado ?>">
                         <?= estadoPublicacionTexto($estado) ?>
                     </span>
-
+                
                     <span class="text_dentro">
                         <?= date('d/m/Y', strtotime($propiedad['creado_en'])) ?>
                     </span>
-
+                
                     <div class="acciones">
                         <button
                             class="editar"
@@ -523,14 +585,45 @@ $anio = $_GET['anio'] ?? date('Y');
                         </button>
                     </div>
                 </article>
-
+                        
                 <?php endforeach; ?>
-
+                        
             </div>
         </section>
+
+                <section class="cards_propiedades">
+            <div class="text_top">
+                <h2>Últimas propiedades añadidas</h2>
+            </div>
+
+            <div class="contenedor_cards">
+                <?php foreach ($ultimasPropiedades as $propiedad): ?>
+                    <?php $imagen = $propiedad['imagen_principal'] ? BASE_URL . $propiedad['imagen_principal' ] : BASE_URL . 'Imagenes/casa1.jpg'; ?>
+
+                    <a class="card_link" href="<?= BASE_URL ?>Usuario/PropiedadInfo.php?slug=<?= urlencode($propiedad['slug']) ?>&moneda=MXN">
+                        <article class="propiedad-card">
+                            <img 
+                                class="propiedad-img" 
+                                src="<?= e((string)$imagen) ?>" 
+                                alt="<?= e((string)$propiedad['titulo']) ?>"
+                            >
+
+                            <div class="text_top_info">
+                                <h2><?= e((string)$propiedad['titulo']) ?></h2>
+
+                                <p class="precio-mxn">
+                                    $<?= number_format((float)$propiedad['precio'], 0) ?>
+                                    <?= e((string)$propiedad['moneda']) ?>
+                                </p>
+                            </div>
+                        </article>
+                    </a>
+                <?php endforeach; ?>
+            </div>
+        </section>
+
     </main>
 </div>
-
 <!-- MODAL AGREGAR PROPIEDAD -->
 <dialog class="modal" id="modalAgregar">
     <form class="modal-content" action="<?= BASE_URL ?>Backend/Propiedades/agregar-propiedad.php" method="POST" enctype="multipart/form-data">
@@ -549,45 +642,36 @@ $anio = $_GET['anio'] ?? date('Y');
 
         <div class="modal-body">
 
-        <label>
-            
-            Agente
-            
-            <?php if ($esAdmin): ?>
-            
-                <select name="agente_id" required>
-            
-                    <option value="">
-                        Selecciona un agente
-                    </option>
-            
-                    <?php foreach ($agentes as $agente): ?>
-                    
-                        <option value="<?= e((string)$agente['id']) ?>">
-                            <?= e((string)$agente['nombre']) ?>
-                        </option>
-                    
-                    <?php endforeach; ?>
-                    
-                </select>
-                    
-            <?php else: ?>
-            
-                <input 
-                    type="text"
-                    value="<?= e($agentes[0]['nombre'] ?? '') ?>"
-                    disabled
-                >
-            
-                <input 
-                    type="hidden"
-                    name="agente_id"
-                    value="<?= e((string)$_SESSION['id_agente']) ?>"
-                >
-            
-            <?php endif; ?>
-            
-        </label>
+            <label>
+                Agente
+                
+                <?php if ($esAdmin): ?>
+                
+                    <select name="agente_id" required>
+                        <option value="">Selecciona un agente</option>
+                        <?php foreach ($agentes as $agente): ?>
+                            <option value="<?= e((string)$agente['id']) ?>">
+                                <?= e((string)$agente['nombre']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                        
+                <?php else: ?>
+                
+                    <input 
+                        type="text"
+                        value="<?= e($agentes[0]['nombre'] ?? '') ?>"
+                        disabled
+                    >
+                
+                    <input 
+                        type="hidden"
+                        name="agente_id"
+                        value="<?= e((string)$_SESSION['id_agente']) ?>"
+                    >
+                
+                <?php endif; ?>
+            </label>
 
             <label>
                 Título
@@ -607,15 +691,11 @@ $anio = $_GET['anio'] ?? date('Y');
                 Tipo de propiedad
                 <div class="tipo-propiedad-box">
                     <select name="categoria_id" required>
-
                         <option value="">Selecciona una categoría</option>
-
                         <?php foreach($categorias as $categoria): ?>
-
                             <option value="<?= e((string)$categoria['id']) ?>">
                                 <?= e((string)$categoria['nombre']) ?>
                             </option>
-
                         <?php endforeach; ?>
                     </select>
 
@@ -635,12 +715,30 @@ $anio = $_GET['anio'] ?? date('Y');
 
             <label>
                 Ciudad
-                <select name="ciudad" required>
-                    <option value="ciudad_obregon">Ciudad Obregón</option>
-                    <option value="navojoa">Navojoa</option>
-                    <option value="san_carlos">San Carlos</option>
-                    <option value="guaymas">Guaymas</option>
-                </select>
+                <div class="tipo-propiedad-box">
+                    <select name="ciudad_id" required>
+                        <option value="">Selecciona una ciudad</option>
+                        <?php foreach($ciudades as $ciudad): ?>
+                            <option value="<?= e((string)$ciudad['id']) ?>">
+                                <?= e((string)$ciudad['nombre']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                        
+                    <button
+                        type="button"
+                        class="btnNuevaCiudad plus"
+                        data-open-modal="modalCiudad">
+                        +
+                    </button>
+                        
+                    <button
+                        type="button"
+                        class="btnAdministrarCiudades minus"
+                        data-open-modal="modalCiudades">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>
             </label>
 
             <label>
@@ -778,7 +876,6 @@ $anio = $_GET['anio'] ?? date('Y');
         <div class="modal-body">
 
             <label>
-                
                 Agente
                 
                 <?php if ($esAdmin): ?>
@@ -827,17 +924,13 @@ $anio = $_GET['anio'] ?? date('Y');
                 Tipo de propiedad
 
                 <div class="tipo-propiedad-box">
-
                     <select name="categoria_id" id="edit_categoria_id" required>
-
                         <option value="">Selecciona una categoría</option>
-
                         <?php foreach ($categorias as $categoria): ?>
-                            <option value="<?= e($categoria['id']) ?>">
-                                <?= e($categoria['nombre']) ?>
+                            <option value="<?= e((string)$categoria['id']) ?>">
+                                <?= e((string)$categoria['nombre']) ?>
                             </option>
                         <?php endforeach; ?>
-
                     </select>
 
                     <button
@@ -851,19 +944,35 @@ $anio = $_GET['anio'] ?? date('Y');
                         class="btnAdministrarCategorias minus">
                         <i class="fa-solid fa-trash"></i>
                     </button>
-
                 </div>
-
             </label>
 
             <label>
                 Ciudad
-                <select name="ciudad" id="edit_ciudad" required>
-                    <option value="ciudad_obregon">Ciudad Obregón</option>
-                    <option value="navojoa">Navojoa</option>
-                    <option value="san_carlos">San Carlos</option>
-                    <option value="guaymas">Guaymas</option>
-                </select>
+                <div class="tipo-propiedad-box">
+                    <select name="ciudad_id" id="edit_ciudad_id" required>
+                        <option value="">Selecciona una ciudad</option>
+                        <?php foreach($ciudades as $ciudad): ?>
+                            <option value="<?= e((string)$ciudad['id']) ?>">
+                                <?= e((string)$ciudad['nombre']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+
+                    <button
+                        type="button"
+                        class="btnNuevaCiudad plus"
+                        data-open-modal="modalCiudad">
+                        +
+                    </button>
+                        
+                    <button
+                        type="button"
+                        class="btnAdministrarCiudades minus"
+                        data-open-modal="modalCiudades">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>
             </label>
 
             <label>
@@ -1118,7 +1227,138 @@ $anio = $_GET['anio'] ?? date('Y');
 
 </div>
 </dialog>
+<!-- MODAL NUEVA CIUDAD -->
+<dialog class="modal modal-small" id="modalCiudad">
 
+    <form class="modal-content"
+        action="<?= BASE_URL ?>Backend/guardar-ciudad.php"
+        method="POST">
+        
+        <input 
+            type="hidden"
+            name="csrf_token"
+            value="<?= $_SESSION['csrf_token'] ?>"
+        >
+        
+        <div class="modal-header">
+            <h2>Nueva ciudad</h2>
+
+            <button
+                type="button"
+                class="modal-close"
+                data-close-modal>
+                &times;
+            </button>
+        </div>
+
+        <div class="modal-body">
+
+            <label>
+
+                Nombre de la ciudad
+
+                <input
+                    type="text"
+                    name="nombre"
+                    placeholder="Ej. Guaymas"
+                    required>
+
+            </label>
+
+        </div>
+
+        <div class="modal-actions">
+
+            <button
+                type="button"
+                class="btn-secondary"
+                data-close-modal>
+
+                Cancelar
+
+            </button>
+
+            <button
+                type="submit"
+                class="btn-primary">
+
+                Guardar
+
+            </button>
+
+        </div>
+
+    </form>
+
+</dialog>
+
+<!-- MODAL ELIMINAR CIUDAD -->
+<dialog class="modal" id="modalCiudades">
+
+    <div class="modal-header">
+        <h2>Administrar ciudades</h2>
+
+        <button type="button" class="modal-close" data-close-modal>
+            &times;
+        </button>
+    </div>
+
+    <div class="categorias-admin-list">
+
+    <?php foreach ($ciudades as $ciudad): ?>
+
+        <div class="categoria-item">
+
+            <div class="categoria-info">
+                <span class="categoria-nombre">
+                    <?= e($ciudad['nombre']) ?>
+                </span>
+
+                <?php if (!empty($ciudad['protegida'])): ?>
+                    <span class="categoria-badge protegida">
+                        Protegida
+                    </span>
+                <?php endif; ?>
+            </div>
+
+            <?php if (empty($ciudad['protegida'])): ?>
+
+                <form       
+                    action="<?= BASE_URL ?>Backend/eliminar-ciudad.php"
+                    method="POST"
+                    onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta ciudad?');">
+
+                    <input 
+                        type="hidden"
+                        name="csrf_token"
+                        value="<?= $_SESSION['csrf_token'] ?>"
+                    >
+
+                    <input
+                        type="hidden"
+                        name="id"
+                        value="<?= $ciudad['id'] ?>">
+
+                    <!-- DENTRO DEL FOREACH DE ADMINISTRAR CIUDADES -->
+                    <form action="<?= BASE_URL ?>Backend/eliminar-ciudad.php" method="POST">
+                        <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+                        <input type="hidden" name="id" value="<?= $ciudad['id'] ?>">
+
+                        <button type="button" class="btn-danger btn-eliminar-ciudad" data-id="<?= $ciudad['id'] ?>">
+                            Eliminar
+                        </button>
+                    </form>
+
+                </form>
+
+            <?php endif; ?>
+
+        </div>
+
+    <?php endforeach; ?>
+
+    </div>
+</dialog>
     <!-- MODAL OPERACIÓN REALIZADA -->
 <dialog class="modal" id="modalOperacion">
 
@@ -1404,6 +1644,27 @@ $anio = $_GET['anio'] ?? date('Y');
 
     </form>
 </dialog>
+<!-- MODAL CONFIRMAR ELIMINAR CIUDAD -->
+<dialog class="modal modal-small" id="modalEliminarCiudad">
+    <form class="modal-content" action="<?= BASE_URL ?>Backend/eliminar-ciudad.php" method="POST">
+        <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+        <input type="hidden" name="id" id="delete_ciudad_id" value="">
+
+        <div class="modal-header">
+            <h2>Eliminar Ciudad</h2>
+            <button type="button" class="modal-close" data-close-modal>&times;</button>
+        </div>
+
+        <div class="modal-body">
+            <p>¿Estás seguro de que deseas eliminar esta ciudad?</p>
+        </div>
+
+        <div class="modal-actions">
+            <button type="button" class="btn-secondary" data-close-modal>Cancelar</button>
+            <button type="submit" class="btn-danger">Eliminar</button>
+        </div>
+    </form>
+</dialog>
 
 <!-- MODAL DE ÉXITO -->
 <?php if ($modalExitoTitulo !== ''): ?>
@@ -1680,14 +1941,24 @@ document.addEventListener('click', (event) => {
     ponerValorSeguro('edit_agente_id', propiedad.agente_id);
     ponerValorSeguro('edit_titulo', propiedad.titulo);
     ponerValorSeguro('edit_tipo_operacion', propiedad.tipo_operacion || 'venta');
-    ponerValorSeguro('edit_ciudad', propiedad.ciudad || 'ciudad_obregon');
+    
+    // Asignación correcta al select de ciudad_id
+    ponerValorSeguro('edit_ciudad_id', propiedad.ciudad_id);
+
     ponerValorSeguro('edit_direccion_completa', propiedad.direccion_completa);
-    ponerValorSeguro('edit_precio', propiedad.precio);
+    
+    // Formatear el precio con comas para el input
+    const precioInput = document.querySelector('#modalEditar .input-precio');
+    if (precioInput && propiedad.precio !== undefined) {
+        const precioLimpio = String(propiedad.precio).replace(/\D/g, "");
+        precioInput.value = precioLimpio ? Number(precioLimpio).toLocaleString("en-US") : '';
+    }
+
     ponerValorSeguro('edit_moneda', propiedad.moneda || 'MXN');
     ponerValorSeguro('edit_estado_publicacion', propiedad.estado_publicacion || 'activo');
-    ponerValorSeguro('edit_recamaras', propiedad.recamaras || 0);
-    ponerValorSeguro('edit_banos', propiedad.banos || 0);
-    ponerValorSeguro('edit_estacionamientos', propiedad.estacionamientos || 0);
+    ponerValorSeguro('edit_recamaras', propiedad.recamaras ?? 0);
+    ponerValorSeguro('edit_banos', propiedad.banos ?? 0);
+    ponerValorSeguro('edit_estacionamientos', propiedad.estacionamientos ?? 0);
     ponerValorSeguro('edit_terreno_m2', propiedad.terreno_m2);
     ponerValorSeguro('edit_construccion_m2', propiedad.construccion_m2);
     ponerValorSeguro('edit_google_maps_url', propiedad.google_maps_url);
@@ -1696,8 +1967,6 @@ document.addEventListener('click', (event) => {
     ponerCheckSeguro('edit_destacada', propiedad.destacada);
 
     renderizarImagenesActuales(propiedad.imagenes ?? []);
-
-    ponerValorSeguro('edit_direccion_completa',propiedad.direccion_completa);
 
     actualizarMapa(
         direccionEditar,
@@ -1720,6 +1989,7 @@ document.addEventListener('click', (event) => {
         input.remove();
     });
 
+    // CORREGIDO: abrirModal en vez de abrilModal
     abrirModal(modalEditar);
 });
 
@@ -2064,6 +2334,20 @@ document.querySelectorAll("form").forEach(form => {
 
     });
 
+});
+/* Modal de confirmación para eliminar ciudad */
+const modalEliminarCiudad = document.getElementById('modalEliminarCiudad');
+const deleteCiudadId = document.getElementById('delete_ciudad_id');
+
+document.querySelectorAll('.btn-eliminar-ciudad').forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+        e.preventDefault(); // Evita cualquier comportamiento o alerta por defecto
+
+        if (deleteCiudadId && modalEliminarCiudad) {
+            deleteCiudadId.value = btn.dataset.id;
+            abrirModal(modalEliminarCiudad);
+        }
+    });
 });
 </script>
 </body>

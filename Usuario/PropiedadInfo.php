@@ -11,17 +11,6 @@ if (!in_array($monedaMostrar, ['MXN', 'USD'], true)) {
     $monedaMostrar = 'MXN';
 }
 
-function ciudadDetalleTexto(?string $ciudad): string
-{
-    return match ($ciudad) {
-        'navojoa' => 'Navojoa',
-        'san_carlos' => 'San Carlos',
-        'ciudad_obregon' => 'Ciudad Obregón',
-        'guaymas' => 'Guaymas',
-        default => 'Ciudad no disponible'
-    };
-}
-
 function operacionDetalleTexto(?string $operacion): string
 {
     return match ($operacion) {
@@ -41,6 +30,7 @@ $stmt = $pdo->prepare("
     SELECT
         p.*,
         c.nombre AS categoria_nombre,
+        ci.nombre AS ciudad_nombre,
         a.nombre AS agente_nombre,
         a.telefono AS agente_telefono,
         a.email AS agente_email,
@@ -48,6 +38,8 @@ $stmt = $pdo->prepare("
     FROM propiedades p
     LEFT JOIN categorias_propiedad c
         ON c.id = p.categoria_id
+    LEFT JOIN ciudades ci
+        ON ci.id = p.ciudad_id
     LEFT JOIN agentes a
         ON p.agente_id = a.id
     WHERE p.slug = ?
@@ -97,7 +89,7 @@ if ($propiedad['tipo_operacion'] === 'renta') {
 
 $telefonoLimpio = preg_replace('/\D+/', '', (string)($propiedad['agente_telefono'] ?? ''));
 
-$ciudadTexto = ciudadDetalleTexto($propiedad['ciudad']);
+$ciudadTexto = $propiedad['ciudad_nombre'] ?? 'Ciudad no disponible';
 $tipoTexto = $propiedad['categoria_nombre'] ?? 'Propiedad';
 $operacionTexto = operacionDetalleTexto($propiedad['tipo_operacion']);
 
