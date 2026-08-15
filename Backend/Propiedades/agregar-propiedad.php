@@ -8,49 +8,40 @@ require_once ROOT_PATH . '/Admin/auth.php';
 require_once ROOT_PATH . '/Backend/Propiedades/funciones-propiedad.php';
 validar_csrf();
 requiere_editor();
+
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
 $pdo = db();
 
-/*
-================================
-CONTROL DE AGENTE POR ROL
-================================
-
-Administrador:
-- Puede elegir cualquier agente
-
-Editor:
-- Solo puede crear propiedades para su propio agente
-*/
-
+/* ================================
+   CONTROL DE AGENTE POR ROL
+================================ */
 if ($_SESSION['rol'] === 'editor') {
-
     if (empty($_SESSION['id_agente'])) {
         die('El usuario editor no tiene un agente asignado.');
     }
-
     $agente_id = (int)$_SESSION['id_agente'];
-
 } else {
-
     $agente_id = (int)($_POST['agente_id'] ?? 0);
-
 }
+
 $stmtAgente = $pdo->prepare("
     SELECT COUNT(*)
     FROM agentes
     WHERE id = ?
     AND activo = 1
 ");
-
 $stmtAgente->execute([$agente_id]);
 
 if ((int)$stmtAgente->fetchColumn() === 0) {
     die('El agente seleccionado no existe o está inactivo.');
 }
+
+/* ================================
+   RECOLECCIÓN Y VALIDACIÓN DE DATOS
+================================ */
 $titulo = trim($_POST['titulo'] ?? '');
 $descripcion = trim($_POST['descripcion'] ?? '');
 $precio = (float)($_POST['precio'] ?? 0);
@@ -60,11 +51,10 @@ if ($precio <= 0) {
 }
 
 $moneda = trim($_POST['moneda'] ?? 'MXN');
-
 $tipo_operacion = $_POST['tipo_operacion'] ?? 'venta';
 $categoria_id = (int)($_POST['categoria_id'] ?? 0);
 $estado_publicacion = $_POST['estado_publicacion'] ?? 'activo';
-$ciudad = $_POST['ciudad'] ?? 'ciudad_obregon';
+$ciudad_id = (int)($_POST['ciudad_id'] ?? 0); // Corregido: ciudad_id estandarizado
 
 $direccion_completa = trim($_POST['direccion_completa'] ?? '');
 $direccion_completa = $direccion_completa === '' ? null : $direccion_completa;
@@ -90,11 +80,14 @@ $stmtCategoria = $pdo->prepare("
     WHERE id = ?
     AND activo = 1
 ");
-
 $stmtCategoria->execute([$categoria_id]);
 
 if ((int)$stmtCategoria->fetchColumn() === 0) {
     die('La categoría seleccionada no existe.');
+}
+
+if ($ciudad_id <= 0) {
+    die('Debes seleccionar una ciudad válida.');
 }
 
 if ($titulo === '') {
@@ -105,18 +98,11 @@ if (!in_array($tipo_operacion, ['venta', 'renta', 'traspaso'], true)) {
     die('Tipo de operación inválido.');
 }
 
-if (!in_array($estado_publicacion, [
-    'activo',
-    'inactivo',
-    'vendido',
-    'rentado',
-    'traspasado'
-], true)) {
+if (!in_array($estado_publicacion, ['activo', 'inactivo', 'vendido', 'rentado', 'traspasado'], true)) {
     die('Estado de publicación inválido.');
 }
 
 try {
-
     $pdo->beginTransaction();
 
     $slug = crearSlugPanel($titulo);
@@ -133,7 +119,7 @@ try {
             categoria_id,
             estado_publicacion,
             destacada,
-            ciudad,
+            ciudad_id,
             direccion_completa,
             google_maps_url,
             recamaras,
@@ -160,7 +146,7 @@ try {
         $categoria_id,
         $estado_publicacion,
         $destacada,
-        $ciudad,
+        $ciudad_id,
         $direccion_completa,
         $google_maps_url,
         $recamaras,
@@ -189,9 +175,7 @@ try {
     exit;
 
 } catch (Exception $e) {
-
     $pdo->rollBack();
-
     error_log($e->getMessage());
 
     $_SESSION['modal_exito'] = [

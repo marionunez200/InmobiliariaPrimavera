@@ -856,7 +856,7 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
 
 <!-- MODAL EDITAR PROPIEDAD -->
 <dialog class="modal" id="modalEditar">
-    <form class="modal-content" action="<?= BASE_URL ?>Backend/Propiedades/editar-propiedad.php" method="POST" enctype="multipart/form-data">
+    <form action="<?= BASE_URL ?>Backend/Propiedades/editar-propiedad.php" method="POST" enctype="multipart/form-data">
         <input 
             type="hidden"
             name="csrf_token"
@@ -977,7 +977,7 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
 
             <label>
                 Precio
-                <input class="input-precio" type="text" name="precio" placeholder="2,500,000" inputmode="numeric" autocomplete="off" required>
+                <input class="input-precio" type="text" name="precio" id="edit_precio" placeholder="2,500,000" inputmode="numeric" autocomplete="off" required>
             </label>
 
             <label>
@@ -1323,32 +1323,25 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
 
             <?php if (empty($ciudad['protegida'])): ?>
 
-                <form       
-                    action="<?= BASE_URL ?>Backend/eliminar-ciudad.php"
-                    method="POST"
-                    onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta ciudad?');">
-
+                <form action="<?= BASE_URL ?>Backend/eliminar-ciudad.php" method="POST">
                     <input 
-                        type="hidden"
-                        name="csrf_token"
+                        type="hidden" 
+                        name="csrf_token" 
                         value="<?= $_SESSION['csrf_token'] ?>"
                     >
+                    <input 
+                        type="hidden" 
+                        name="id" 
+                        value="<?= $ciudad['id'] ?>"
+                    >
 
-                    <input
-                        type="hidden"
-                        name="id"
-                        value="<?= $ciudad['id'] ?>">
-
-                    <!-- DENTRO DEL FOREACH DE ADMINISTRAR CIUDADES -->
-                    <form action="<?= BASE_URL ?>Backend/eliminar-ciudad.php" method="POST">
-                        <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
-                        <input type="hidden" name="id" value="<?= $ciudad['id'] ?>">
-
-                        <button type="button" class="btn-danger btn-eliminar-ciudad" data-id="<?= $ciudad['id'] ?>">
-                            Eliminar
-                        </button>
-                    </form>
-
+                    <button 
+                        type="button" 
+                        class="btn-danger btn-eliminar-ciudad" 
+                        data-id="<?= $ciudad['id'] ?>"
+                    >
+                        Eliminar
+                    </button>
                 </form>
 
             <?php endif; ?>
@@ -1359,6 +1352,7 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
 
     </div>
 </dialog>
+
     <!-- MODAL OPERACIÓN REALIZADA -->
 <dialog class="modal" id="modalOperacion">
 
@@ -1950,8 +1944,7 @@ document.addEventListener('click', (event) => {
     // Formatear el precio con comas para el input
     const precioInput = document.querySelector('#modalEditar .input-precio');
     if (precioInput && propiedad.precio !== undefined) {
-        const precioLimpio = String(propiedad.precio).replace(/\D/g, "");
-        precioInput.value = precioLimpio ? Number(precioLimpio).toLocaleString("en-US") : '';
+        precioInput.value = Math.round(Number(propiedad.precio));
     }
 
     ponerValorSeguro('edit_moneda', propiedad.moneda || 'MXN');

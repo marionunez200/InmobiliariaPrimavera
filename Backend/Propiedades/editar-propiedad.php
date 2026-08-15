@@ -71,7 +71,7 @@ $moneda = trim($_POST['moneda'] ?? 'MXN');
 $tipo_operacion = $_POST['tipo_operacion'] ?? 'venta';
 $categoria_id = (int)($_POST['categoria_id'] ?? 0);
 $estado_publicacion = $_POST['estado_publicacion'] ?? 'activo';
-$ciudad = $_POST['ciudad'] ?? 'ciudad_obregon';
+$ciudad_id = (int)($_POST['ciudad_id'] ?? 0);
 
 $direccion_completa = trim($_POST['direccion_completa'] ?? '');
 $direccion_completa = $direccion_completa === '' ? null : $direccion_completa;
@@ -104,6 +104,10 @@ $stmtCategoria->execute([$categoria_id]);
 
 if ((int)$stmtCategoria->fetchColumn() === 0) {
     die('La categoría seleccionada no existe.');
+}
+
+if ($ciudad_id <= 0) {
+    die('Debes seleccionar una ciudad válida.');
 }
 
 if ($titulo === '') {
@@ -140,7 +144,7 @@ try {
                 categoria_id = ?,
                 estado_publicacion = ?,
                 destacada = ?,
-                ciudad = ?,
+                ciudad_id = ?,
                 direccion_completa = ?,
                 google_maps_url = ?,
                 recamaras = ?,
@@ -165,7 +169,7 @@ try {
                 categoria_id = ?,
                 estado_publicacion = ?,
                 destacada = ?,
-                ciudad = ?,
+                ciudad_id = ?,
                 direccion_completa = ?,
                 google_maps_url = ?,
                 recamaras = ?,
@@ -191,7 +195,7 @@ try {
                 $categoria_id,
                 $estado_publicacion,
                 $destacada,
-                $ciudad,
+                $ciudad_id,
                 $direccion_completa,
                 $google_maps_url,
                 $recamaras,
@@ -215,7 +219,7 @@ try {
                 $categoria_id,
                 $estado_publicacion,
                 $destacada,
-                $ciudad,
+                $ciudad_id,
                 $direccion_completa,
                 $google_maps_url,
                 $recamaras,
@@ -272,6 +276,6 @@ try {
         'mensaje' => 'No fue posible guardar la propiedad.'
     ];
 
-    header('Location: Panel-propiedades.php');
+    header('Location: ' . BASE_URL . 'Admin/Panel-propiedades.php');
     exit;
 }

@@ -4,51 +4,54 @@ require_once ROOT_PATH . '/Config/database.php';
 
 class Reportes
 {
-public static function operacionesMes(int $mes, int $anio): array
-{
-    $pdo = db();
+    public static function operacionesMes(int $mes, int $anio): array
+    {
+        $pdo = db();
 
-    $sql = "
-        SELECT
-            o.id,
-            o.fecha_operacion,
-            o.tipo_operacion,
-            o.precio,
-            o.moneda,
+        $sql = "
+            SELECT
+                o.id,
+                o.fecha_operacion,
+                o.tipo_operacion,
+                o.precio,
+                o.moneda,
 
-            o.cliente_nombre,
-            o.cliente_telefono,
-            o.cliente_email,
+                o.cliente_nombre,
+                o.cliente_telefono,
+                o.cliente_email,
 
-            o.meses_renta,
-            o.observaciones,
+                o.meses_renta,
+                o.observaciones,
 
-            a.nombre AS agente,
+                a.nombre AS agente,
 
-            p.titulo,
-            p.ciudad,
-            p.direccion_completa
+                p.titulo,
+                c.nombre AS ciudad,
+                p.direccion_completa
 
-        FROM operaciones_realizadas o
+            FROM operaciones_realizadas o
 
-        INNER JOIN propiedades p
-            ON p.id = o.propiedad_id
+            INNER JOIN propiedades p
+                ON p.id = o.propiedad_id
 
-        INNER JOIN agentes a
-            ON a.id = o.agente_id
+            LEFT JOIN ciudades c
+                ON c.id = p.ciudad_id
 
-        WHERE
-            MONTH(o.fecha_operacion) = ?
-            AND YEAR(o.fecha_operacion) = ?
+            INNER JOIN agentes a
+                ON a.id = o.agente_id
 
-        ORDER BY o.fecha_operacion DESC
-    ";
+            WHERE
+                MONTH(o.fecha_operacion) = ?
+                AND YEAR(o.fecha_operacion) = ?
 
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute([$mes, $anio]);
+            ORDER BY o.fecha_operacion DESC
+        ";
 
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-}
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$mes, $anio]);
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 
     public static function totalMes(int $mes, int $anio): float
     {
@@ -73,24 +76,16 @@ public static function operacionesMes(int $mes, int $anio): array
 
         $stmt = $pdo->prepare("
             SELECT
-
                 a.nombre,
-
                 COUNT(*) AS operaciones,
-
                 SUM(o.precio) AS total
-
             FROM operaciones_realizadas o
-
             INNER JOIN agentes a
                 ON a.id = o.agente_id
-
             WHERE
                 MONTH(o.fecha_operacion) = ?
                 AND YEAR(o.fecha_operacion) = ?
-
             GROUP BY a.id, a.nombre
-
             ORDER BY total DESC
         ");
 

@@ -3,6 +3,7 @@
 require_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
 require_once ROOT_PATH . '/vendor/autoload.php';
 require_once ROOT_PATH . '/Backend/Reportes/Reportes.php';
+
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
@@ -30,10 +31,9 @@ $sheet->setCellValue('H1', 'Moneda');
 $fila = 2;
 
 foreach ($operaciones as $op) {
-
     $sheet->setCellValue('A'.$fila, $op['fecha_operacion']);
     $sheet->setCellValue('B'.$fila, $op['titulo']);
-    $sheet->setCellValue('C'.$fila, $op['ciudad']);
+    $sheet->setCellValue('C'.$fila, $op['ciudad'] ?? 'N/A');
     $sheet->setCellValue('D'.$fila, $op['agente']);
     $sheet->setCellValue('E'.$fila, $op['cliente_nombre']);
     $sheet->setCellValue('F'.$fila, ucfirst($op['tipo_operacion']));
@@ -54,6 +54,11 @@ $sheet->getStyle('F'.($fila+1).':G'.($fila+1))->getFont()->setBold(true);
 /* Ajustar columnas */
 foreach (range('A','H') as $columna) {
     $sheet->getColumnDimension($columna)->setAutoSize(true);
+}
+
+// Limpia cualquier texto o espacio previo producido por archivos incluidos
+if (ob_get_length()) {
+    ob_end_clean();
 }
 
 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
