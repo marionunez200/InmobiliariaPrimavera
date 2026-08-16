@@ -8,9 +8,8 @@ $esAdmin = es_admin();
 $pdo = db();
 
 /* ================================
-    MODAL DE ÉXITO
+   MODAL DE ÉXITO
 ================================ */
-
 $modalExitoTitulo = '';
 $modalExitoMensaje = '';
 
@@ -22,80 +21,64 @@ if (!empty($_SESSION['modal_exito'])) {
 }
 
 /* ================================
-    FUNCIONES
+   FUNCIONES HELPER
 ================================ */
-
 function estadoPublicacionTexto($estado)
 {
     switch ($estado) {
-
-        case 'activo':
-            return 'Activo';
-
-        case 'vendido':
-            return 'Vendido';
-
-        case 'rentado':
-            return 'Rentado';
-
-        case 'traspasado':
-            return 'Traspasado';
-
-        default:
-            return 'Inactivo';
+        case 'activo':     return 'Activo';
+        case 'vendido':    return 'Vendido';
+        case 'rentado':    return 'Rentado';
+        case 'traspasado': return 'Traspasado';
+        default:           return 'Inactivo';
     }
 }
 
 function ciudadPanelTexto(?string $ciudad): string
 {
     return match ($ciudad) {
-        'navojoa' => 'Navojoa',
-        'san_carlos' => 'San Carlos',
+        'navojoa'        => 'Navojoa',
+        'san_carlos'     => 'San Carlos',
         'ciudad_obregon' => 'Cd. Obregón',
-        'guaymas' => 'Guaymas',
-        default => 'Sin ciudad'
+        'guaymas'        => 'Guaymas',
+        default          => 'Sin ciudad'
     };
 }
 
 function tipoPanelTexto(?string $tipo): string
 {
     return match ($tipo) {
-        'casa' => 'Casa',
-        'departamento' => 'Departamento',
+        'casa'            => 'Casa',
+        'departamento'    => 'Departamento',
         'local_comercial' => 'Local comercial',
-        'terreno' => 'Terreno',
-        default => 'Propiedad'
+        'terreno'         => 'Terreno',
+        default           => 'Propiedad'
     };
 }
 
 /* ================================
-    DATOS GENERALES
+   DATOS GENERALES Y FILTROS
 ================================ */
-
 $buscar = trim($_GET['buscar'] ?? '');
+$mes    = $_GET['mes']  ?? date('m');
+$anio   = $_GET['anio'] ?? date('Y');
 
 if ($esAdmin) {
-
     $agentes = $pdo->query("
         SELECT id, nombre
         FROM agentes
         WHERE activo = 1
         ORDER BY nombre ASC
     ")->fetchAll();
-
 } else {
-
     $stmt = $pdo->prepare("
         SELECT id, nombre
         FROM agentes
         WHERE id = ?
         AND activo = 1
     ");
-
     $stmt->execute([$_SESSION['id_agente']]);
-
     $agentes = $stmt->fetchAll();
-
 }
 
 $totalPropiedadesActivas = (int)$pdo->query("
@@ -111,7 +94,7 @@ $totalAgentesActivos = (int)$pdo->query("
 ")->fetchColumn();
 
 /* ================================
-    CONSULTA CIUDADES
+   CONSULTA PRINCIPAL DE PROPIEDADES
 ================================ */
 $sql = "
     SELECT
@@ -127,85 +110,28 @@ $sql = "
             LIMIT 1
         ) AS imagen_principal
     FROM propiedades p
-    LEFT JOIN agentes a
-        ON p.agente_id = a.id
-    LEFT JOIN categorias_propiedad c
-        ON p.categoria_id = c.id
-    LEFT JOIN ciudades ci
-        ON p.ciudad_id = ci.id
-";
-
-/* ================================
-    CONSULTA PROPIEDADES
-================================ */
-
-$sql = "
-    SELECT
-        p.*,
-        a.nombre AS agente_nombre,
-        c.nombre AS categoria_nombre,
-        ci.nombre AS ciudad_nombre,
-        (
-            SELECT ip.imagen_url
-            FROM imagenes_propiedades ip
-            WHERE ip.propiedad_id = p.id
-            ORDER BY ip.es_principal DESC, ip.orden ASC, ip.id ASC
-            LIMIT 1
-        ) AS imagen_principal
-    FROM propiedades p
-    LEFT JOIN agentes a
-        ON p.agente_id = a.id
-    LEFT JOIN categorias_propiedad c
-        ON p.categoria_id = c.id
-    LEFT JOIN ciudades ci
-        ON p.ciudad_id = ci.id
+    LEFT JOIN agentes a ON p.agente_id = a.id
+    LEFT JOIN categorias_propiedad c ON p.categoria_id = c.id
+    LEFT JOIN ciudades ci ON p.ciudad_id = ci.id
 ";
 
 $params = [];
 $where = [];
-/*
-================================
- FILTRO POR ROL
-================================
 
-Admin:
-- Ve todas las propiedades
-
-Editor:
-- Solo ve propiedades de su agente
-*/
-
+// Filtro por rol
 if (!$esAdmin) {
-
     $where[] = "p.agente_id = ?";
     $params[] = $_SESSION['id_agente'];
-
 }
 
-
-/*
-================================
- BUSCADOR
-================================
-*/
-
+// Buscador
 if ($buscar !== '') {
-
     $estadoBuscado = strtolower($buscar);
 
-    if (in_array($estadoBuscado, [
-        'activo',
-        'inactivo',
-        'vendido',
-        'rentado',
-        'traspasado'
-    ])) {
-
+    if (in_array($estadoBuscado, ['activo', 'inactivo', 'vendido', 'rentado', 'traspasado'], true)) {
         $where[] = "p.estado_publicacion = ?";
         $params[] = $estadoBuscado;
-
     } else {
-
         $where[] = "
         (
             p.titulo LIKE ?
@@ -218,51 +144,24 @@ if ($buscar !== '') {
         )";
 
         $like = "%{$buscar}%";
-
-        $params = array_merge($params, [
-            $like,
-            $like,
-            $like,
-            $like,
-            $like,
-            $like,
-            $like
-        ]);
+        $params = array_merge($params, [$like, $like, $like, $like, $like, $like, $like]);
     }
-
 }
-
-
-/*
-================================
-ARMAR WHERE FINAL
-================================
-*/
 
 if (!empty($where)) {
-
     $sql .= " WHERE " . implode(" AND ", $where);
-
 }
 
-
-$sql .= "
-    ORDER BY p.creado_en DESC, p.id DESC
-";
-
+$sql .= " ORDER BY p.creado_en DESC, p.id DESC";
 
 $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
-
-
 $propiedades = $stmt->fetchAll();
 
 /* ================================
-    IMÁGENES POR PROPIEDAD
+   IMÁGENES POR PROPIEDAD
 ================================ */
-
 $imagenesPorPropiedad = [];
-
 $idsPropiedades = array_column($propiedades, 'id');
 
 if (!empty($idsPropiedades)) {
@@ -288,51 +187,41 @@ if (!empty($idsPropiedades)) {
     }
 }
 
-$stmtCategorias = $pdo->query("
-    SELECT *
-    FROM categorias_propiedad
-    WHERE activo = 1
-    ORDER BY nombre ASC
-");
+/* ================================
+   CATEGORÍAS Y CIUDADES (PARA SELECTS)
+================================ */
+$categorias = $pdo->query("
+    SELECT * FROM categorias_propiedad WHERE activo = 1 ORDER BY nombre ASC
+")->fetchAll(PDO::FETCH_ASSOC);
 
-$categorias = $stmtCategorias->fetchAll(PDO::FETCH_ASSOC);
+$ciudades = $pdo->query("
+    SELECT * FROM ciudades WHERE activo = 1 ORDER BY nombre ASC
+")->fetchAll(PDO::FETCH_ASSOC);
 
 /* ================================
-    CONSULTA DE CIUDADES
+   ÚLTIMAS PROPIEDADES (RESPETANDO ROL)
 ================================ */
-$stmtCiudades = $pdo->query("
-    SELECT *
-    FROM ciudades
-    WHERE activo = 1
-    ORDER BY nombre ASC
-");
-
-$ciudades = $stmtCiudades->fetchAll(PDO::FETCH_ASSOC);
-
-
-$mes = $_GET['mes'] ?? date('m');
-$anio = $_GET['anio'] ?? date('Y');
-
-$stmtUltimas = $pdo->query("
-    SELECT
-        p.*,
-        c.nombre AS categoria_nombre,
-        (
-            SELECT ip.imagen_url
-            FROM imagenes_propiedades ip
-            WHERE ip.propiedad_id = p.id
-            ORDER BY ip.es_principal DESC, ip.orden ASC, ip.id ASC
-            LIMIT 1
-        ) AS imagen_principal
-
-    FROM propiedades p
-
-    LEFT JOIN categorias_propiedad c
-    ON c.id = p.categoria_id
-
-    ORDER BY p.creado_en DESC, p.id DESC
-    LIMIT 4
-");
+if ($esAdmin) {
+    $stmtUltimas = $pdo->query("
+        SELECT p.*, c.nombre AS categoria_nombre,
+            (SELECT ip.imagen_url FROM imagenes_propiedades ip WHERE ip.propiedad_id = p.id ORDER BY ip.es_principal DESC, ip.orden ASC, ip.id ASC LIMIT 1) AS imagen_principal
+        FROM propiedades p
+        LEFT JOIN categorias_propiedad c ON c.id = p.categoria_id
+        ORDER BY p.creado_en DESC, p.id DESC
+        LIMIT 4
+    ");
+} else {
+    $stmtUltimas = $pdo->prepare("
+        SELECT p.*, c.nombre AS categoria_nombre,
+            (SELECT ip.imagen_url FROM imagenes_propiedades ip WHERE ip.propiedad_id = p.id ORDER BY ip.es_principal DESC, ip.orden ASC, ip.id ASC LIMIT 1) AS imagen_principal
+        FROM propiedades p
+        LEFT JOIN categorias_propiedad c ON c.id = p.categoria_id
+        WHERE p.agente_id = ?
+        ORDER BY p.creado_en DESC, p.id DESC
+        LIMIT 4
+    ");
+    $stmtUltimas->execute([$_SESSION['id_agente']]);
+}
 
 $ultimasPropiedades = $stmtUltimas->fetchAll();
 ?>
@@ -356,6 +245,9 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
     <link rel="stylesheet" href="<?= BASE_URL ?>CSS/Admin.header.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="icon" href="<?= BASE_URL ?>favicon.ico" type="image/x-icon">
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 </head>
 
 <body>
@@ -509,7 +401,7 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
                         'terreno_m2' => $propiedad['terreno_m2'],
                         'construccion_m2' => $propiedad['construccion_m2'],
                         'imagenes' => $imagenesJson,
-                    ], JSON_UNESCAPED_UNICODE | JSON_HEX_APOS | JSON_HEX_QUOT);
+                    ], JSON_UNESCAPED_UNICODE | JSON_HEX_APOS);
                 ?>
 
                 <article class="detalles_fila" data-property-row>
@@ -551,8 +443,7 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
                             class="editar"
                             type="button"
                             data-edit
-                            data-propiedad='<?= e((string)($propiedadJson ?: "{}")) ?>'
-                        >
+                            data-propiedad="<?= e($propiedadJson ?: '{}', ENT_QUOTES, 'UTF-8') ?>"                        >
                             <i class="fa-regular fa-pen-to-square"></i>
                         </button>
                         <?php if ($esAdmin): ?>
@@ -624,6 +515,7 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
 
     </main>
 </div>
+
 <!-- MODAL AGREGAR PROPIEDAD -->
 <dialog class="modal" id="modalAgregar">
     <form class="modal-content" action="<?= BASE_URL ?>Backend/Propiedades/agregar-propiedad.php" method="POST" enctype="multipart/form-data">
@@ -632,6 +524,9 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
             name="csrf_token"
             value="<?= $_SESSION['csrf_token'] ?>"
         >
+        <!-- INPUT OCULTO PARA ALMACENAR EL ORDEN EN FORMATO JSON -->
+        <input type="hidden" name="orden_imagenes" id="orden_imagenes_agregar">
+
         <div class="modal-header">
             <h2>Agregar propiedad</h2>
 
@@ -784,8 +679,9 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
                 <input type="number" id="add_construccion_m2" name="construccion_m2" min="0" step="any" class="incremento-personalizado">
             </label>
 
+            <!-- CAJA UNIFICADA DE IMÁGENES -->
             <div>
-                <p class="imagenes-actuales-title">Imágenes de la propiedad</p>
+                <p class="imagenes-actuales-title">Imágenes de la propiedad (Arrastra para reordenar, la 1ª es la principal)</p>
 
                 <div class="upload-box" id="dropAgregar">
                     <input 
@@ -853,7 +749,6 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
 
     </form>
 </dialog>
-
 <!-- MODAL EDITAR PROPIEDAD -->
 <dialog class="modal" id="modalEditar">
     <form action="<?= BASE_URL ?>Backend/Propiedades/editar-propiedad.php" method="POST" enctype="multipart/form-data">
@@ -864,6 +759,9 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
         >
         <input type="hidden" name="id" id="edit_id">
         <input type="hidden" name="imagen_principal_id" id="imagen_principal_id">
+        
+        <!-- INPUT OCULTO PARA ALMACENAR EL ORDEN EN FORMATO JSON -->
+        <input type="hidden" name="orden_imagenes" id="orden_imagenes_editar">
 
         <div class="modal-header">
             <h2>Editar propiedad</h2>
@@ -1018,17 +916,9 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
                 <input type="number" id="edit_construccion_m2" name="construccion_m2" min="0" step="any" class="incremento-personalizado">
             </label>
 
-            <div class="imagenes-actuales-box">
-                <p class="imagenes-actuales-title">Imágenes ya subidas</p>
-
-                <div 
-                    class="lista-archivos" 
-                    id="imagenesActualesEditar"
-                ></div>
-            </div>
-
+            <!-- CAJA UNIFICADA DE IMÁGENES (EXISTENTES Y NUEVAS EN EL MISMO CONTENEDOR) -->
             <div>
-                <p class="imagenes-actuales-title">Agregar más imágenes</p>
+                <p class="imagenes-actuales-title">Imágenes de la propiedad (Arrastra para reordenar, la 1ª es la principal)</p>
 
                 <div class="upload-box" id="dropEditar">
                     <input 
@@ -1043,11 +933,12 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
                     <label for="inputImagenesEditar" class="upload-label">
                         <i class="fa-solid fa-cloud-arrow-up"></i>
                         <strong>Arrastra imágenes aquí</strong>
-                        <span>o haz clic para seleccionarlas</span>
+                        <span>o haz clic para agregar más fotos</span>
                     </label>
                 </div>
 
-                <div class="lista-archivos" id="previewEditar"></div>
+                <!-- AQUÍ VAN TODAS LAS FOTOS JUNTAS -->
+                <div class="lista-archivos" id="imagenesActualesEditar"></div>
             </div>
 
             <label class="checkbox-reemplazar">
@@ -1679,254 +1570,461 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
 
         </div>
     </dialog>
+ 
 <?php endif; ?>
-
+    <dialog id="modalCropper" class="modal">
+        <div class="modal-content" style="max-width: 700px;">
+            <h3>Ajustar Encuadre</h3>
+            <div class="cropper-container-wrapper" style="max-height: 450px; overflow: hidden; background: #000;">
+                <img id="imagenACropper" src="" style="max-width: 100%; display: block;">
+            </div>
+            <div class="modal-actions" style="margin-top: 15px; display: flex; gap: 10px; justify-content: flex-end;">
+                <button type="button" class="btn-cancelar" id="btnCancelarCrop">Cancelar</button>
+                <button type="button" class="btn-guardar" id="btnGuardarCrop">Aplicar corte</button>
+            </div>
+        </div>
+    </dialog>
 <script>
 const BASE_URL = '<?= e(BASE_URL) ?>';
 
-const modalAgregar = document.getElementById('modalAgregar');
-const modalEditar = document.getElementById('modalEditar');
+// Referencias a modales principales
+const modalAgregar  = document.getElementById('modalAgregar');
+const modalEditar   = document.getElementById('modalEditar');
 const modalEliminar = document.getElementById('modalEliminar');
+const modalCropper  = document.getElementById('modalCropper'); // Agregado para el recortador
 
+// Variables de estado global para Cropper
+let cropperInstancia = null;
+let itemActualCrop   = null;
+
+// Referencias DOM para Mapas (declaradas globalmente)
+const direccionAgregar = document.getElementById("direccionAgregar");
+const iframeAgregar    = document.getElementById("iframeAgregar");
+const googleAgregar    = document.getElementById("googleMapsAgregar");
+
+const direccionEditar = document.getElementById("edit_direccion_completa");
+const iframeEditar    = document.getElementById("iframeEditar");
+const googleEditar    = document.getElementById("edit_google_maps_url");
+
+// Íconos SVG reutilizables
+const SVG_CROP  = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2v14a2 2 0 0 0 2 2h14"/><path d="M18 22V8a2 2 0 0 0-2-2H2"/></svg>`;
+const SVG_TRASH = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>`;
+
+// Funciones auxiliares DOM
 function ponerValorSeguro(id, valor) {
     const input = document.getElementById(id);
-
-    if (!input) {
-        return;
-    }
-
-    input.value = valor ?? '';
+    if (input) input.value = valor ?? '';
 }
 
 function ponerCheckSeguro(id, valor) {
     const input = document.getElementById(id);
-
-    if (!input) {
-        return;
-    }
-
-    input.checked = Number(valor) === 1;
+    if (input) input.checked = Number(valor) === 1;
 }
 
 function abrirModal(modal) {
-    if (modal) {
-        modal.showModal();
-    }
+    if (!modal) return;
+    typeof modal.showModal === 'function' ? modal.showModal() : (modal.style.display = 'flex');
 }
 
 function cerrarModal(modal) {
-    if (modal) {
-        modal.close();
+    if (!modal) return;
+    typeof modal.close === 'function' ? modal.close() : (modal.style.display = 'none');
+}
+
+function cerrarModalCropper() {
+    if (cropperInstancia) {
+        cropperInstancia.destroy();
+        cropperInstancia = null;
+    }
+    itemActualCrop = null;
+    cerrarModal(modalCropper);
+}
+
+function formatearPeso(bytes) {
+    if (!bytes) return '';
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+}
+
+function registrarEliminacionExistente(id) {
+    const formEditar = document.querySelector('#modalEditar form');
+    if (formEditar && id) {
+        const hiddenDel = document.createElement('input');
+        hiddenDel.type = 'hidden';
+        hiddenDel.name = 'eliminar_imagenes[]';
+        hiddenDel.value = id;
+        formEditar.appendChild(hiddenDel);
     }
 }
 
-/* Abrir modal agregar */
+function procesarNuevoArchivo(file) {
+    return {
+        tipo: 'nuevo',
+        fileOriginal: file,
+        fileRecortado: file,
+        urlPreview: URL.createObjectURL(file)
+    };
+}
+
+/* ==========================================================================
+   EVENTOS GLOBALES DE MODALES Y BOTONES
+   ========================================================================== */
 document.addEventListener('click', (event) => {
     const openButton = event.target.closest('[data-open-modal]');
-
-    if (!openButton) {
+    if (openButton) {
+        const modal = document.getElementById(openButton.dataset.openModal);
+        abrirModal(modal);
         return;
     }
 
-    const modal = document.getElementById(openButton.dataset.openModal);
-
-    abrirModal(modal);
-});
-
-/* Cerrar modales */
-document.addEventListener('click', (event) => {
     const closeButton = event.target.closest('[data-close-modal]');
-
-    if (!closeButton) {
+    if (closeButton) {
+        const modal = closeButton.closest('dialog') || closeButton.closest('.modal');
+        cerrarModal(modal);
         return;
     }
 
-    const modal = closeButton.closest('dialog');
-
-    cerrarModal(modal);
+    const deleteButton = event.target.closest('[data-delete]');
+    if (deleteButton) {
+        const inputEliminar = document.getElementById('delete_id');
+        if (inputEliminar && modalEliminar) {
+            inputEliminar.value = deleteButton.dataset.id;
+            abrirModal(modalEliminar);
+        }
+    }
 });
 
-/* Borrar categoría */
-const modalCategorias = document.getElementById("modalCategorias");
-
-document.querySelectorAll(".btnAdministrarCategorias").forEach(btn => {
-    btn.addEventListener("click", () => {
-        modalCategorias.showModal();
-    });
-});
-
-/* Confirmar eliminar categoría */
-const modalEliminarCategoria = document.getElementById("modalEliminarCategoria");
-const deleteCategoriaId = document.getElementById("delete_categoria_id");
-
-document.querySelectorAll(".btn-eliminar-categoria").forEach(btn => {
-
-    btn.addEventListener("click", () => {
-
-        deleteCategoriaId.value = btn.dataset.id;
-
-        modalEliminarCategoria.showModal();
-
-    });
-
-});
-
-/* Imágenes actuales en editar */
-function renderizarImagenesActuales(imagenes) {
-    const contenedor = document.getElementById('imagenesActualesEditar');
+/* ==========================================================================
+   ORDENAMIENTO Y REORGANIZACIÓN
+   ========================================================================== */
+function actualizarAtributosImagenes(contenedor, esEdicion = false) {
+    const cards = contenedor.querySelectorAll('.card-imagen-item');
     const inputPrincipal = document.getElementById('imagen_principal_id');
+    const inputOrden = document.getElementById(esEdicion ? 'orden_imagenes_editar' : 'orden_imagenes_agregar');
+    const ordenData = [];
 
-    if (!contenedor) {
-        return;
-    }
+    cards.forEach((card, index) => {
+        const badge = card.querySelector('.archivo-principal');
+        const esPrimerElemento = (index === 0);
 
-    contenedor.innerHTML = '';
-
-    if (inputPrincipal) {
-        inputPrincipal.value = '';
-    }
-
-    if (!imagenes || imagenes.length === 0) {
-        contenedor.innerHTML = '<p class="sin-imagenes">Esta propiedad no tiene imágenes guardadas.</p>';
-        return;
-    }
-
-    imagenes.forEach((imagen) => {
-        const card = document.createElement('div');
-        card.className = 'archivo-preview archivo-existente';
-
-        if (Number(imagen.es_principal) === 1) {
+        if (esPrimerElemento) {
             card.classList.add('imagen-principal-activa');
-
-            if (inputPrincipal) {
-                inputPrincipal.value = imagen.id;
+            if (badge) badge.classList.remove('oculto');
+            if (esEdicion && inputPrincipal) {
+                inputPrincipal.value = card.dataset.id || '';
             }
+        } else {
+            card.classList.remove('imagen-principal-activa');
+            if (badge) badge.classList.add('oculto');
         }
 
-        const badgePrincipal = Number(imagen.es_principal) === 1
-            ? '<span class="archivo-principal">Principal</span>'
-            : '<span class="archivo-principal oculto">Principal</span>';
+        if (esEdicion) {
+            ordenData.push({
+                tipo: card.dataset.tipo,
+                id: card.dataset.id || null,
+                nombre: card.dataset.nombre || null
+            });
+        }
+    });
 
-        card.innerHTML = `
-            <img src="${BASE_URL}${imagen.url}" alt="${imagen.nombre}">
+    if (inputOrden && esEdicion) {
+        inputOrden.value = JSON.stringify(ordenData);
+    }
+}
 
-            <div class="archivo-info">
-                <span class="archivo-nombre" title="${imagen.nombre}">
-                    ${imagen.nombre}
-                </span>
+function inicializarSortable(contenedorId, esEdicion = false) {
+    const contenedor = document.getElementById(contenedorId);
+    if (!contenedor || typeof Sortable === 'undefined') return;
 
-                <span class="archivo-peso">
-                    Imagen guardada
-                </span>
+    if (contenedor._sortableInstance) {
+        contenedor._sortableInstance.destroy();
+    }
 
-                ${badgePrincipal}
-
-                <button 
-                    type="button" 
-                    class="archivo-principal-btn" 
-                    data-id="${imagen.id}"
-                >
-                    Hacer principal
-                </button>
-
-                <button 
-                    type="button" 
-                    class="archivo-quitar quitar-imagen-existente" 
-                    data-id="${imagen.id}"
-                >
-                    Quitar
-                </button>
-            </div>
-        `;
-
-        contenedor.appendChild(card);
+    contenedor._sortableInstance = new Sortable(contenedor, {
+        animation: 150,
+        ghostClass: 'sortable-ghost',
+        onEnd: () => actualizarAtributosImagenes(contenedor, esEdicion)
     });
 }
 
-/* Elegir imagen principal */
-document.addEventListener('click', (event) => {
-    const botonPrincipal = event.target.closest('.archivo-principal-btn');
+/* ==========================================================================
+   GESTIÓN Y RENDERIZADO DE IMÁGENES
+   ========================================================================== */
+let listaArchivosAgregar = [];
+let listaArchivosEditar = [];
 
-    if (!botonPrincipal) {
-        return;
-    }
+function renderizarAgregar() {
+    const preview = document.getElementById('previewAgregar');
+    const inputFiles = document.getElementById('inputImagenesAgregar');
+    if (!preview || !inputFiles) return;
 
-    const idImagen = botonPrincipal.dataset.id;
-    const inputPrincipal = document.getElementById('imagen_principal_id');
-    const contenedor = document.getElementById('imagenesActualesEditar');
+    preview.innerHTML = '';
+    const dt = new DataTransfer();
 
-    if (!inputPrincipal || !contenedor) {
-        return;
-    }
+    listaArchivosAgregar.forEach((item, index) => {
+        const archivoAEnviar = item.fileRecortado || item.fileOriginal || item;
+        dt.items.add(archivoAEnviar);
 
-    inputPrincipal.value = idImagen;
+        const src = item.urlPreview || URL.createObjectURL(archivoAEnviar);
+        const nombre = (item.fileOriginal || item).name;
+        const tamano = archivoAEnviar.size;
 
-    contenedor.querySelectorAll('.archivo-preview').forEach((card) => {
-        card.classList.remove('imagen-principal-activa');
-
-        const badge = card.querySelector('.archivo-principal');
-
-        if (badge) {
-            badge.classList.add('oculto');
-        }
+        const card = document.createElement('div');
+        card.className = 'card-imagen-item';
+        card.innerHTML = `
+            <span class="badge-principal archivo-principal oculto">Principal</span>
+            <div class="card-imagen-thumb">
+                <img src="${src}" alt="${nombre}" class="img-preview-src">
+                <div class="thumb-overlay">
+                    <button type="button" class="btn-icono btn-crop" data-tipo="agregar" data-index="${index}" title="Encuadrar">${SVG_CROP}</button>
+                    <button type="button" class="btn-icono btn-eliminar archivo-quitar" data-index="${index}" title="Quitar">${SVG_TRASH}</button>
+                </div>
+            </div>
+            <div class="card-imagen-info">
+                <p class="nombre-foto" title="${nombre}">${nombre}</p>
+                <div class="meta-detalles">
+                    <span>${formatearPeso(tamano)}</span>
+                    <span class="estado-tag estado-nueva">Nueva</span>
+                </div>
+            </div>
+        `;
+        preview.appendChild(card);
     });
 
-    const cardSeleccionada = botonPrincipal.closest('.archivo-preview');
+    inputFiles.files = dt.files;
+    actualizarAtributosImagenes(preview, false);
+    inicializarSortable('previewAgregar', false);
+}
 
-    if (cardSeleccionada) {
-        cardSeleccionada.classList.add('imagen-principal-activa');
+function renderizarEditar() {
+    const contenedor = document.getElementById('imagenesActualesEditar');
+    const inputFiles = document.getElementById('inputImagenesEditar');
+    if (!contenedor) return;
 
-        const badge = cardSeleccionada.querySelector('.archivo-principal');
+    contenedor.innerHTML = '';
+    const dt = new DataTransfer();
 
-        if (badge) {
-            badge.classList.remove('oculto');
+    if (listaArchivosEditar.length === 0) {
+        contenedor.innerHTML = '<p class="sin-imagenes">No hay imágenes en la propiedad.</p>';
+        if (inputFiles) inputFiles.files = dt.files;
+        return;
+    }
+
+    listaArchivosEditar.forEach((item, index) => {
+        const card = document.createElement('div');
+        card.className = 'card-imagen-item';
+
+        if (item.tipo === 'existente') {
+            const src = `${BASE_URL}${item.url}`;
+            card.dataset.tipo = 'existente';
+            card.dataset.id = item.id;
+            card.dataset.nombre = item.nombre;
+            card.innerHTML = `
+                <span class="badge-principal archivo-principal oculto">Principal</span>
+                <div class="card-imagen-thumb">
+                    <img src="${src}" alt="${item.nombre}" class="img-preview-src">
+                    <div class="thumb-overlay">
+                        <button type="button" class="btn-icono btn-crop" data-tipo="editar" data-index="${index}" title="Encuadrar">${SVG_CROP}</button>
+                        <button type="button" class="btn-icono btn-eliminar quitar-item-editar" data-index="${index}" title="Quitar">${SVG_TRASH}</button>
+                    </div>
+                </div>
+                <div class="card-imagen-info">
+                    <p class="nombre-foto" title="${item.nombre}">${item.nombre}</p>
+                    <div class="meta-detalles">
+                        <span class="estado-tag estado-guardada">Guardada</span>
+                    </div>
+                </div>
+            `;
+        } else {
+            const archivoAEnviar = item.fileRecortado || item.fileOriginal || item.file;
+            dt.items.add(archivoAEnviar);
+
+            const src = item.urlPreview || URL.createObjectURL(archivoAEnviar);
+            const nombre = (item.fileOriginal || item.file || archivoAEnviar).name;
+            const tamano = archivoAEnviar.size;
+
+            card.dataset.tipo = 'nuevo';
+            card.dataset.nombre = nombre;
+            card.innerHTML = `
+                <span class="badge-principal archivo-principal oculto">Principal</span>
+                <div class="card-imagen-thumb">
+                    <img src="${src}" alt="${nombre}" class="img-preview-src">
+                    <div class="thumb-overlay">
+                        <button type="button" class="btn-icono btn-crop" data-tipo="editar" data-index="${index}" title="Encuadrar">${SVG_CROP}</button>
+                        <button type="button" class="btn-icono btn-eliminar quitar-item-editar" data-index="${index}" title="Quitar">${SVG_TRASH}</button>
+                    </div>
+                </div>
+                <div class="card-imagen-info">
+                    <p class="nombre-foto" title="${nombre}">${nombre}</p>
+                    <div class="meta-detalles">
+                        <span>${formatearPeso(tamano)}</span>
+                        <span class="estado-tag estado-nueva">Nueva</span>
+                    </div>
+                </div>
+            `;
         }
-    }
-});
+        contenedor.appendChild(card);
+    });
 
-/* Quitar imágenes existentes */
-document.addEventListener('click', (event) => {
-    const botonQuitar = event.target.closest('.quitar-imagen-existente');
+    if (inputFiles) inputFiles.files = dt.files;
+    actualizarAtributosImagenes(contenedor, true);
+    inicializarSortable('imagenesActualesEditar', true);
+}
 
-    if (!botonQuitar) {
+/* ==========================================================================
+   CROPPER / SISTEMA DE ENCUADRE
+   ========================================================================== */
+document.addEventListener('click', (e) => {
+    // Abrir Modal de Encuadre
+    const btnCrop = e.target.closest('.btn-crop');
+    if (btnCrop) {
+        const tipoModal = btnCrop.dataset.tipo;
+        const index = Number(btnCrop.dataset.index);
+        itemActualCrop = { tipoModal, index };
+
+        let srcImagen = '';
+        if (tipoModal === 'agregar') {
+            const item = listaArchivosAgregar[index];
+            srcImagen = item.urlPreview || URL.createObjectURL(item.fileOriginal || item);
+        } else {
+            const item = listaArchivosEditar[index];
+            srcImagen = item.tipo === 'existente' ? `${BASE_URL}${item.url}` : (item.urlPreview || URL.createObjectURL(item.fileOriginal || item.file));
+        }
+
+        const imgCropper = document.getElementById('imagenACropper');
+        if (imgCropper && typeof Cropper !== 'undefined') {
+            imgCropper.src = srcImagen;
+            abrirModal(modalCropper);
+
+            if (cropperInstancia) cropperInstancia.destroy();
+            cropperInstancia = new Cropper(imgCropper, {
+                aspectRatio: 16 / 9,
+                viewMode: 1
+            });
+        }
         return;
     }
 
-    const idImagen = botonQuitar.dataset.id;
-    const formEditar = document.querySelector('#modalEditar form');
-
-    if (!formEditar) {
+    // Cancelar Encuadre
+    if (e.target.closest('#btnCancelarCrop')) {
+        cerrarModalCropper();
         return;
     }
 
-    const inputHidden = document.createElement('input');
-    inputHidden.type = 'hidden';
-    inputHidden.name = 'eliminar_imagenes[]';
-    inputHidden.value = idImagen;
+    // Confirmar Encuadre
+    if (e.target.closest('#btnGuardarCrop')) {
+        if (!cropperInstancia || !itemActualCrop) return;
 
-    formEditar.appendChild(inputHidden);
+        cropperInstancia.getCroppedCanvas({ width: 1200, height: 675 }).toBlob((blob) => {
+            if (!blob) return;
 
-    const card = botonQuitar.closest('.archivo-preview');
+            const { tipoModal, index } = itemActualCrop;
 
-    if (card) {
-        card.remove();
+            if (tipoModal === 'agregar') {
+                const item = listaArchivosAgregar[index];
+                const original = item.fileOriginal || item;
+                const nuevoRecortado = new File([blob], original.name, { type: 'image/jpeg' });
+
+                listaArchivosAgregar[index] = {
+                    tipo: 'nuevo',
+                    fileOriginal: original,
+                    fileRecortado: nuevoRecortado,
+                    urlPreview: URL.createObjectURL(nuevoRecortado)
+                };
+                renderizarAgregar();
+            } else {
+                const item = listaArchivosEditar[index];
+                if (item.tipo === 'existente') {
+                    registrarEliminacionExistente(item.id);
+                }
+                const nombre = item.tipo === 'existente' ? item.nombre : (item.fileOriginal?.name || item.file?.name);
+                const original = item.fileOriginal || item.file || null;
+                const nuevoRecortado = new File([blob], nombre, { type: 'image/jpeg' });
+
+                listaArchivosEditar[index] = {
+                    tipo: 'nuevo',
+                    fileOriginal: original || nuevoRecortado,
+                    fileRecortado: nuevoRecortado,
+                    urlPreview: URL.createObjectURL(nuevoRecortado)
+                };
+                renderizarEditar();
+            }
+
+            cerrarModalCropper();
+        }, 'image/jpeg', 0.90);
     }
 });
 
-/* Botón editar */
+/* ==========================================================================
+   CARGA Y ELIMINACIÓN
+   ========================================================================== */
+function configurarDropzone(dropEl, inputEl, alCargar) {
+    if (!dropEl || !inputEl) return;
+
+    inputEl.addEventListener('change', () => {
+        Array.from(inputEl.files).forEach(f => f.type.startsWith('image/') && alCargar(f));
+    });
+
+    dropEl.addEventListener('dragover', (e) => { e.preventDefault(); dropEl.classList.add('dragover'); });
+    dropEl.addEventListener('dragleave', () => dropEl.classList.remove('dragover'));
+    dropEl.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropEl.classList.remove('dragover');
+        Array.from(e.dataTransfer.files).forEach(f => f.type.startsWith('image/') && alCargar(f));
+    });
+}
+
+configurarDropzone(
+    document.getElementById('dropAgregar'),
+    document.getElementById('inputImagenesAgregar'),
+    (file) => { 
+        listaArchivosAgregar.push(procesarNuevoArchivo(file)); 
+        renderizarAgregar(); 
+    }
+);
+
+configurarDropzone(
+    document.getElementById('dropEditar'),
+    document.getElementById('inputImagenesEditar'),
+    (file) => { 
+        listaArchivosEditar.push(procesarNuevoArchivo(file)); 
+        renderizarEditar(); 
+    }
+);
+
+document.addEventListener('click', (e) => {
+    const btnQuitarAgregar = e.target.closest('#previewAgregar .archivo-quitar');
+    if (btnQuitarAgregar) {
+        listaArchivosAgregar.splice(Number(btnQuitarAgregar.dataset.index), 1);
+        renderizarAgregar();
+        return;
+    }
+
+    const btnQuitarEditar = e.target.closest('.quitar-item-editar');
+    if (btnQuitarEditar) {
+        const index = Number(btnQuitarEditar.dataset.index);
+        const item = listaArchivosEditar[index];
+        if (item && item.tipo === 'existente') {
+            registrarEliminacionExistente(item.id);
+        }
+        listaArchivosEditar.splice(index, 1);
+        renderizarEditar();
+    }
+});
+
+/* ==========================================================================
+   PREPARACIÓN Y EDICIÓN DE PROPIEDADES
+   ========================================================================== */
 document.addEventListener('click', (event) => {
     const editButton = event.target.closest('[data-edit]');
-
-    if (!editButton) {
-        return;
-    }
+    if (!editButton) return;
 
     let propiedad = {};
-
     try {
         propiedad = JSON.parse(editButton.dataset.propiedad);
     } catch (error) {
-        console.error('Error leyendo data-propiedad:', error);
+        console.error('Error parseando data-propiedad:', error);
         return;
     }
 
@@ -1935,18 +2033,8 @@ document.addEventListener('click', (event) => {
     ponerValorSeguro('edit_agente_id', propiedad.agente_id);
     ponerValorSeguro('edit_titulo', propiedad.titulo);
     ponerValorSeguro('edit_tipo_operacion', propiedad.tipo_operacion || 'venta');
-    
-    // Asignación correcta al select de ciudad_id
     ponerValorSeguro('edit_ciudad_id', propiedad.ciudad_id);
-
     ponerValorSeguro('edit_direccion_completa', propiedad.direccion_completa);
-    
-    // Formatear el precio con comas para el input
-    const precioInput = document.querySelector('#modalEditar .input-precio');
-    if (precioInput && propiedad.precio !== undefined) {
-        precioInput.value = Math.round(Number(propiedad.precio));
-    }
-
     ponerValorSeguro('edit_moneda', propiedad.moneda || 'MXN');
     ponerValorSeguro('edit_estado_publicacion', propiedad.estado_publicacion || 'activo');
     ponerValorSeguro('edit_recamaras', propiedad.recamaras ?? 0);
@@ -1956,391 +2044,86 @@ document.addEventListener('click', (event) => {
     ponerValorSeguro('edit_construccion_m2', propiedad.construccion_m2);
     ponerValorSeguro('edit_google_maps_url', propiedad.google_maps_url);
     ponerValorSeguro('edit_descripcion', propiedad.descripcion);
-
     ponerCheckSeguro('edit_destacada', propiedad.destacada);
 
-    renderizarImagenesActuales(propiedad.imagenes ?? []);
-
-    actualizarMapa(
-        direccionEditar,
-        googleEditar,
-        iframeEditar
-    );
-
-    const previewEditar = document.getElementById('previewEditar');
-    const inputImagenesEditar = document.getElementById('inputImagenesEditar');
-
-    if (previewEditar) {
-        previewEditar.innerHTML = '';
+    const precioInput = document.querySelector('#modalEditar .input-precio');
+    if (precioInput && propiedad.precio !== undefined) {
+        precioInput.value = Math.round(Number(propiedad.precio)).toLocaleString("en-US");
     }
 
-    if (inputImagenesEditar) {
-        inputImagenesEditar.value = '';
+    document.querySelectorAll('input[name="eliminar_imagenes[]"]').forEach(i => i.remove());
+
+    // Validar si imagenes es Array o String codificado
+    let imagenesArray = propiedad.imagenes || [];
+    if (typeof imagenesArray === 'string') {
+        try { imagenesArray = JSON.parse(imagenesArray); } catch (e) { imagenesArray = []; }
     }
 
-    document.querySelectorAll('input[name="eliminar_imagenes[]"]').forEach((input) => {
-        input.remove();
-    });
+    listaArchivosEditar = imagenesArray.map(img => ({
+        tipo: 'existente',
+        id: img.id,
+        url: img.url,
+        nombre: img.nombre
+    }));
 
-    // CORREGIDO: abrirModal en vez de abrilModal
+    renderizarEditar();
+    actualizarMapa(direccionEditar, googleEditar, iframeEditar);
     abrirModal(modalEditar);
 });
 
-/* Botón eliminar */
-function abrirModalEliminar(idPropiedad) {
-    const inputEliminar = document.getElementById('delete_id');
-    const modalEliminarPropiedad = document.getElementById('modalEliminar');
-
-    if (!inputEliminar || !modalEliminarPropiedad) {
-        console.error('No se encontró el modal de eliminar o el input delete_id');
-        return;
-    }
-
-    inputEliminar.value = idPropiedad;
-    modalEliminarPropiedad.showModal();
-}
-
-document.addEventListener('click', (event) => {
-    const deleteButton = event.target.closest('[data-delete]');
-
-    if (!deleteButton) {
-        return;
-    }
-
-    abrirModalEliminar(deleteButton.dataset.id);
-});
-
-/* Upload mini archivos */
-function configurarUploadMini(dropId, inputId, previewId) {
-    const dropzone = document.getElementById(dropId);
-    const input = document.getElementById(inputId);
-    const preview = document.getElementById(previewId);
-
-    if (!dropzone || !input || !preview) {
-        return;
-    }
-
-    let archivosSeleccionados = [];
-
-    function formatearPeso(bytes) {
-        if (bytes < 1024) {
-            return bytes + ' B';
-        }
-
-        if (bytes < 1024 * 1024) {
-            return (bytes / 1024).toFixed(1) + ' KB';
-        }
-
-        return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
-    }
-
-    function actualizarInputFiles() {
-        const dataTransfer = new DataTransfer();
-
-        archivosSeleccionados.forEach((file) => {
-            dataTransfer.items.add(file);
-        });
-
-        input.files = dataTransfer.files;
-    }
-
-    function renderizarArchivos() {
-        preview.innerHTML = '';
-
-        archivosSeleccionados.forEach((file, index) => {
-            if (!file.type.startsWith('image/')) {
-                return;
-            }
-
-            const reader = new FileReader();
-
-            reader.onload = (event) => {
-                const card = document.createElement('div');
-                card.className = 'archivo-preview';
-
-                card.innerHTML = `
-                    <img src="${event.target.result}" alt="${file.name}">
-
-                    <div class="archivo-info">
-                        <span class="archivo-nombre" title="${file.name}">
-                            ${file.name}
-                        </span>
-
-                        <span class="archivo-peso">
-                            ${formatearPeso(file.size)}
-                        </span>
-
-                        <button type="button" class="archivo-quitar" data-index="${index}">
-                            Quitar
-                        </button>
-                    </div>
-                `;
-
-                preview.appendChild(card);
-            };
-
-            reader.readAsDataURL(file);
-        });
-
-        actualizarInputFiles();
-    }
-
-    function agregarArchivos(files) {
-        const nuevosArchivos = Array.from(files).filter((file) => {
-            return file.type.startsWith('image/');
-        });
-
-        archivosSeleccionados = archivosSeleccionados.concat(nuevosArchivos);
-
-        renderizarArchivos();
-    }
-
-    input.addEventListener('change', () => {
-        agregarArchivos(input.files);
-    });
-
-    preview.addEventListener('click', (event) => {
-        const botonQuitar = event.target.closest('.archivo-quitar');
-
-        if (!botonQuitar) {
-            return;
-        }
-
-        const index = Number(botonQuitar.dataset.index);
-
-        archivosSeleccionados.splice(index, 1);
-
-        renderizarArchivos();
-    });
-
-    dropzone.addEventListener('dragover', (event) => {
-        event.preventDefault();
-        dropzone.classList.add('dragover');
-    });
-
-    dropzone.addEventListener('dragleave', () => {
-        dropzone.classList.remove('dragover');
-    });
-
-    dropzone.addEventListener('drop', (event) => {
-        event.preventDefault();
-        dropzone.classList.remove('dragover');
-
-        agregarArchivos(event.dataTransfer.files);
-    });
-}
-
-configurarUploadMini('dropAgregar', 'inputImagenesAgregar', 'previewAgregar');
-configurarUploadMini('dropEditar', 'inputImagenesEditar', 'previewEditar');
-
-/* Modal de éxito */
-document.addEventListener('DOMContentLoaded', () => {
-    const modalExito = document.getElementById('modalExito');
-    const cerrarModalExito = document.getElementById('cerrarModalExito');
-
-    if (!modalExito) {
-        return;
-    }
-
-    modalExito.showModal();
-
-    function cerrarExito() {
-        modalExito.close();
-    }
-
-    if (cerrarModalExito) {
-        cerrarModalExito.addEventListener('click', cerrarExito);
-    }
-
-    modalExito.addEventListener('click', (event) => {
-        if (event.target === modalExito) {
-            cerrarExito();
-        }
-    });
-});
-
-function actualizarMapa(inputDireccion, inputHidden, iframe){
-
+/* ==========================================================================
+   MAPA Y FORMATEOS DE FORMULARIO
+   ========================================================================== */
+function actualizarMapa(inputDireccion, inputHidden, iframe) {
+    if (!inputDireccion || !iframe || !inputHidden) return;
     const direccion = inputDireccion.value.trim();
 
-    if(direccion === ""){
+    if (direccion === "") {
         iframe.removeAttribute("src");
         inputHidden.value = "";
         return;
     }
 
-    const url = "https://www.google.com/maps?q=" +
-                encodeURIComponent(direccion) +
-                "&output=embed";
-
+    const url = "https://www.google.com/maps?q=" + encodeURIComponent(direccion) + "&output=embed";
     iframe.src = url;
     inputHidden.value = url;
 }
 
-/* MAPA - AGREGAR PROPIEDAD */
+direccionAgregar?.addEventListener("input", () => actualizarMapa(direccionAgregar, googleAgregar, iframeAgregar));
+direccionEditar?.addEventListener("input", () => actualizarMapa(direccionEditar, googleEditar, iframeEditar));
 
-const direccionAgregar = document.getElementById("direccionAgregar");
-const iframeAgregar = document.getElementById("iframeAgregar");
-const googleAgregar = document.getElementById("googleMapsAgregar");
-
-direccionAgregar.addEventListener("input", () => {
-
-    actualizarMapa(
-        direccionAgregar,
-        googleAgregar,
-        iframeAgregar
-    );
-
-});
-
-/* MAPA - EDITAR PROPIEDAD */
-
-const direccionEditar = document.getElementById("edit_direccion_completa");
-const iframeEditar = document.getElementById("iframeEditar");
-const googleEditar = document.getElementById("edit_google_maps_url");
-
-direccionEditar.addEventListener("input", () => {
-
-    actualizarMapa(
-        direccionEditar,
-        googleEditar,
-        iframeEditar
-    );
-
-});
-
-const modalCategoria = document.getElementById("modalCategoria");
-
-document.querySelectorAll(".btnNuevaCategoria").forEach((boton)=>{
-
-    boton.addEventListener("click", ()=>{
-
-        modalCategoria.showModal();
-
-    });
-
-});
-
-/* REGISTRAR OPERACIÓN */
-
-const modalOperacion = document.getElementById("modalOperacion");
-
-const operacionPropiedadId = document.getElementById("operacion_propiedad_id");
-const operacionAgenteId = document.getElementById("operacion_agente_id");
-
-const operacionTipo = document.getElementById("operacion_tipo");
-const operacionPrecio = document.getElementById("operacion_precio");
-const operacionMoneda = document.getElementById("operacion_moneda");
-
-const grupoRenta = document.getElementById("grupo_renta");
-
-document.querySelectorAll("[data-operacion]").forEach(btn => {
-
-    btn.addEventListener("click", () => {
-
-        operacionPropiedadId.value = btn.dataset.id;
-        operacionAgenteId.value = btn.dataset.agente;
-
-        operacionTipo.value = btn.dataset.tipo;
-        operacionPrecio.value = btn.dataset.precio;
-        operacionMoneda.value = btn.dataset.moneda;
-
-        mostrarCamposRenta();
-
-        modalOperacion.showModal();
-
-    });
-
-});
-
-/* MOSTRAR CAMPOS DE RENTA */
-
-function mostrarCamposRenta(){
-
-    if(operacionTipo.value === "renta"){
-
-        grupoRenta.style.display = "block";
-
-    }else{
-
-        grupoRenta.style.display = "none";
-
-    }
-
-}
-
-/* Cuando cambie el tipo */
-
-operacionTipo.addEventListener("change", mostrarCamposRenta);
-
+// Formato numérico e incrementos
 document.querySelectorAll('.incremento-personalizado').forEach(input => {
-
     input.addEventListener('keydown', function (e) {
-
-        if (e.key === 'ArrowUp') {
-            e.preventDefault();
-
-            let valor = parseFloat(this.value);
-
-            if (isNaN(valor)) valor = 0;
-
-            this.value = valor + 1;
-        }
-
-        if (e.key === 'ArrowDown') {
-            e.preventDefault();
-
-            let valor = parseFloat(this.value);
-
-            if (isNaN(valor)) valor = 0;
-
-            this.value = Math.max(0, valor - 1);
-        }
-
+        let valor = parseFloat(this.value) || 0;
+        if (e.key === 'ArrowUp') { e.preventDefault(); this.value = valor + 1; }
+        if (e.key === 'ArrowDown') { e.preventDefault(); this.value = Math.max(0, valor - 1); }
     });
-
 });
 
 document.querySelectorAll(".input-precio").forEach(input => {
-
     input.addEventListener("input", function () {
-
         let valor = this.value.replace(/\D/g, "");
-
-        if (valor === "") {
-            this.value = "";
-            return;
-        }
-
-        this.value = Number(valor).toLocaleString("en-US");
+        this.value = valor ? Number(valor).toLocaleString("en-US") : "";
     });
-
 });
 
 document.querySelectorAll("form").forEach(form => {
-
     form.addEventListener("submit", function () {
-
         form.querySelectorAll(".input-precio").forEach(input => {
             input.value = input.value.replace(/,/g, "");
         });
-
     });
-
 });
-/* Modal de confirmación para eliminar ciudad */
-const modalEliminarCiudad = document.getElementById('modalEliminarCiudad');
-const deleteCiudadId = document.getElementById('delete_ciudad_id');
 
-document.querySelectorAll('.btn-eliminar-ciudad').forEach((btn) => {
-    btn.addEventListener('click', (e) => {
-        e.preventDefault(); // Evita cualquier comportamiento o alerta por defecto
+document.addEventListener('DOMContentLoaded', () => {
+    const modalExito = document.getElementById('modalExito');
+    if (!modalExito) return;
+    abrirModal(modalExito);
 
-        if (deleteCiudadId && modalEliminarCiudad) {
-            deleteCiudadId.value = btn.dataset.id;
-            abrirModal(modalEliminarCiudad);
-        }
-    });
+    const cerrarExito = () => cerrarModal(modalExito);
+    document.getElementById('cerrarModalExito')?.addEventListener('click', cerrarExito);
+    modalExito.addEventListener('click', (e) => { if (e.target === modalExito) cerrarExito(); });
 });
 </script>
 </body>

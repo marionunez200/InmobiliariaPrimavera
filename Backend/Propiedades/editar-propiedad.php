@@ -7,6 +7,7 @@ require_once ROOT_PATH . '/Admin/auth.php';
 require_once ROOT_PATH . '/Backend/Propiedades/funciones-propiedad.php';
 validar_csrf();
 requiere_editor();
+
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -14,8 +15,12 @@ if (session_status() === PHP_SESSION_NONE) {
 $pdo = db();
 
 $id = trim($_POST['id'] ?? '');
-if ($_SESSION['rol'] === 'editor') {
 
+if ($id === '') {
+    die('No se recibió el ID de la propiedad.');
+}
+
+if ($_SESSION['rol'] === 'editor') {
     $stmtPropiedad = $pdo->prepare("
         SELECT id
         FROM propiedades
@@ -32,32 +37,11 @@ if ($_SESSION['rol'] === 'editor') {
         die('No tienes permiso para editar esta propiedad.');
     }
 
-}
-if ($id === '') {
-    die('No se recibió el ID de la propiedad.');
-}
-
-/*
-================================
- CONTROL DE AGENTE POR ROL
-================================
-*/
-
-if ($_SESSION['rol'] === 'editor') {
-
-    if (empty($_SESSION['id_agente'])) {
-        die('El usuario editor no tiene un agente asignado.');
-    }
-
-    // El editor siempre usa su propio agente
     $agente_id = (int)$_SESSION['id_agente'];
-
 } else {
-
-    // El administrador puede cambiar agente
     $agente_id = (int)($_POST['agente_id'] ?? 0);
-
 }
+
 $titulo = trim($_POST['titulo'] ?? '');
 $descripcion = trim($_POST['descripcion'] ?? '');
 $precio = (float)($_POST['precio'] ?? 0);
@@ -67,7 +51,6 @@ if ($precio <= 0) {
 }
 
 $moneda = trim($_POST['moneda'] ?? 'MXN');
-
 $tipo_operacion = $_POST['tipo_operacion'] ?? 'venta';
 $categoria_id = (int)($_POST['categoria_id'] ?? 0);
 $estado_publicacion = $_POST['estado_publicacion'] ?? 'activo';
@@ -78,16 +61,14 @@ $direccion_completa = $direccion_completa === '' ? null : $direccion_completa;
 $google_maps_url = trim($_POST['google_maps_url'] ?? '');
 $google_maps_url = $google_maps_url === '' ? null : $google_maps_url;
 
-$recamaras = (int)($_POST['recamaras'] ?? 0);
-$banos = $_POST['banos'] ?? 0;
-$estacionamientos = (int)($_POST['estacionamientos'] ?? 0);
+$recamaras = max(0, (int)($_POST['recamaras'] ?? 0));
+$banos = max(0, (float)($_POST['banos'] ?? 0));
+$estacionamientos = max(0, (int)($_POST['estacionamientos'] ?? 0));
 
 $terreno_m2 = ($_POST['terreno_m2'] ?? '') !== '' ? $_POST['terreno_m2'] : null;
 $construccion_m2 = ($_POST['construccion_m2'] ?? '') !== '' ? $_POST['construccion_m2'] : null;
 
 $destacada = isset($_POST['destacada']) ? 1 : 0;
-$reemplazarImagenes = isset($_POST['reemplazar_imagenes']);
-$imagenPrincipalId = (int)($_POST['imagen_principal_id'] ?? 0);
 
 if ($agente_id <= 0) {
     die('Debes seleccionar un agente.');
@@ -99,7 +80,6 @@ $stmtCategoria = $pdo->prepare("
     WHERE id = ?
     AND activo = 1
 ");
-
 $stmtCategoria->execute([$categoria_id]);
 
 if ((int)$stmtCategoria->fetchColumn() === 0) {
@@ -118,21 +98,14 @@ if (!in_array($tipo_operacion, ['venta', 'renta', 'traspaso'], true)) {
     die('Tipo de operación inválido.');
 }
 
-if (!in_array($estado_publicacion, ['activo', 'inactivo'], true)) {
+if (!in_array($estado_publicacion, ['activo', 'inactivo', 'vendido', 'rentado', 'traspasado'], true)) {
     die('Estado de publicación inválido.');
 }
 
-$banos = max(0, (int)($_POST['banos'] ?? 0));
-$recamaras = max(0, (int)($_POST['recamaras'] ?? 0));
-$estacionamientos = max(0, (int)($_POST['estacionamientos'] ?? 0));
-
-$precio = (float)$precio;
-$banos = (float)$banos;
-
 try {
     $pdo->beginTransaction();
+
     if ($_SESSION['rol'] === 'editor') {
-    
         $sql = "
             UPDATE propiedades SET
                 agente_id = ?,
@@ -155,9 +128,15 @@ try {
             WHERE id = ?
             AND agente_id = ?
         ";
-    
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([
+            $agente_id, $titulo, $descripcion, $precio, $moneda,
+            $tipo_operacion, $categoria_id, $estado_publicacion, $destacada,
+            $ciudad_id, $direccion_completa, $google_maps_url,
+            $recamaras, $banos, $estacionamientos, $terreno_m2, $construccion_m2,
+            $id, $_SESSION['id_agente']
+        ]);
     } else {
-    
         $sql = "
             UPDATE propiedades SET
                 agente_id = ?,
@@ -179,81 +158,92 @@ try {
                 construccion_m2 = ?
             WHERE id = ?
         ";
-    
-    }
-
         $stmt = $pdo->prepare($sql);
-        if ($_SESSION['rol'] === 'editor') {
-        
-            $stmt->execute([
-                $agente_id,
-                $titulo,
-                $descripcion,
-                $precio,
-                $moneda,
-                $tipo_operacion,
-                $categoria_id,
-                $estado_publicacion,
-                $destacada,
-                $ciudad_id,
-                $direccion_completa,
-                $google_maps_url,
-                $recamaras,
-                $banos,
-                $estacionamientos,
-                $terreno_m2,
-                $construccion_m2,
-                $id,
-                $_SESSION['id_agente']
-            ]);
-        
-        } else {
-        
-            $stmt->execute([
-                $agente_id,
-                $titulo,
-                $descripcion,
-                $precio,
-                $moneda,
-                $tipo_operacion,
-                $categoria_id,
-                $estado_publicacion,
-                $destacada,
-                $ciudad_id,
-                $direccion_completa,
-                $google_maps_url,
-                $recamaras,
-                $banos,
-                $estacionamientos,
-                $terreno_m2,
-                $construccion_m2,
-                $id
-            ]);
-        }
-        $propiedad_id = (int)$id;
-
-
-    if (!empty($_POST['eliminar_imagenes']) && is_array($_POST['eliminar_imagenes'])) {
-        eliminarImagenesSeleccionadas(
-            $pdo,
-            $propiedad_id,
-            $_POST['eliminar_imagenes']
-        );
+        $stmt->execute([
+            $agente_id, $titulo, $descripcion, $precio, $moneda,
+            $tipo_operacion, $categoria_id, $estado_publicacion, $destacada,
+            $ciudad_id, $direccion_completa, $google_maps_url,
+            $recamaras, $banos, $estacionamientos, $terreno_m2, $construccion_m2,
+            $id
+        ]);
     }
 
-    guardarImagenesPropiedad(
-        $pdo,
-        $propiedad_id,
-        $titulo,
-        $reemplazarImagenes
-    );
+    $propiedad_id = (int)$id;
 
-    if ($imagenPrincipalId > 0) {
-        cambiarImagenPrincipal(
-            $pdo,
-            $propiedad_id,
-            $imagenPrincipalId
-        );
+    /* =========================================================
+       1. ELIMINAR IMÁGENES SELECCIONADAS
+       ========================================================= */
+    if (!empty($_POST['eliminar_imagenes']) && is_array($_POST['eliminar_imagenes'])) {
+        $stmtRuta = $pdo->prepare("SELECT imagen_url FROM imagenes_propiedades WHERE id = ? AND propiedad_id = ?");
+        $stmtDel  = $pdo->prepare("DELETE FROM imagenes_propiedades WHERE id = ? AND propiedad_id = ?");
+
+        foreach ($_POST['eliminar_imagenes'] as $imgId) {
+            $imgId = (int)$imgId;
+            $stmtRuta->execute([$imgId, $propiedad_id]);
+            $img = $stmtRuta->fetch();
+
+            if ($img) {
+                $archivoFisico = ROOT_PATH . '/' . $img['imagen_url'];
+                if (file_exists($archivoFisico)) {
+                    @unlink($archivoFisico);
+                }
+                $stmtDel->execute([$imgId, $propiedad_id]);
+            }
+        }
+    }
+
+    /* =========================================================
+       2. REORDENAR Y GUARDAR NUEVAS IMÁGENES (VÍA JSON)
+       ========================================================= */
+    $ordenJson = $_POST['orden_imagenes'] ?? '[]';
+    $estructuraOrden = json_decode($ordenJson, true) ?: [];
+
+    $stmtUpdateExistente = $pdo->prepare("
+        UPDATE imagenes_propiedades 
+        SET orden = ?, es_principal = ? 
+        WHERE id = ? AND propiedad_id = ?
+    ");
+
+    $stmtInsertNueva = $pdo->prepare("
+        INSERT INTO imagenes_propiedades 
+        (propiedad_id, imagen_url, texto_alternativo, es_principal, orden) 
+        VALUES (?, ?, ?, ?, ?)
+    ");
+
+    $archivosNuevos = $_FILES['imagenes'] ?? null;
+    $indiceNuevos = 0;
+
+    foreach ($estructuraOrden as $posicion => $item) {
+        $ordenCalculado = $posicion + 1;
+        $esPrincipal = ($posicion === 0) ? 1 : 0;
+
+        if ($item['tipo'] === 'existente' && !empty($item['id'])) {
+            $stmtUpdateExistente->execute([
+                $ordenCalculado,
+                $esPrincipal,
+                (int)$item['id'],
+                $propiedad_id
+            ]);
+        } 
+        elseif ($item['tipo'] === 'nuevo' && $archivosNuevos) {
+            if (isset($archivosNuevos['name'][$indiceNuevos]) && $archivosNuevos['error'][$indiceNuevos] === UPLOAD_ERR_OK) {
+                $ext = strtolower(pathinfo($archivosNuevos['name'][$indiceNuevos], PATHINFO_EXTENSION));
+                $nombreArchivo = 'propiedad-' . $propiedad_id . '-' . uniqid() . '.' . $ext;
+                $rutaRelativa = 'Uploads/propiedades/' . $nombreArchivo;
+                $rutaDestino = ROOT_PATH . '/' . $rutaRelativa;
+
+                if (move_uploaded_file($archivosNuevos['tmp_name'][$indiceNuevos], $rutaDestino)) {
+                    $stmtInsertNueva->execute([
+                        $propiedad_id,
+                        $rutaRelativa,
+                        $titulo,
+                        $esPrincipal,
+                        $ordenCalculado
+                    ]);
+                }
+            }
+            $indiceNuevos++;
+        }
     }
 
     $pdo->commit();
@@ -268,7 +258,6 @@ try {
 
 } catch (Exception $e) {
     $pdo->rollBack();
-
     error_log($e->getMessage());
 
     $_SESSION['modal_exito'] = [

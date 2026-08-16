@@ -174,6 +174,8 @@ $anio = $_GET['anio'] ?? date('Y');
     <link rel="stylesheet" href="<?= BASE_URL ?>CSS/Admin.header.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="icon" href="<?= BASE_URL ?>favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
 </head>
 
 <body>
@@ -680,6 +682,19 @@ $anio = $_GET['anio'] ?? date('Y');
         </div>
     </dialog>
 <?php endif; ?>
+<!-- MODAL CROPPER -->
+<dialog id="modalCropper" class="modal-cropper">
+    <div class="modal-cropper-content">
+        <h3>Ajustar encuadre de la foto</h3>
+        <div class="cropper-container-box">
+            <img id="imagenParaRecortar" style="max-width: 100%;">
+        </div>
+        <div class="cropper-actions">
+            <button type="button" id="btnCancelarCrop" class="btn-cancelar">Cancelar</button>
+            <button type="button" id="btnGuardarCrop" class="btn-guardar">Aplicar recorte</button>
+        </div>
+    </div>
+</dialog>
 
 <script>
 const BASE_URL = '<?= BASE_URL ?>';
@@ -690,90 +705,68 @@ const modalEliminar = document.getElementById('modalEliminar');
 
 function ponerValorSeguro(id, valor) {
     const input = document.getElementById(id);
-
-    if (!input) {
-        return;
-    }
-
+    if (!input) return;
     input.value = valor ?? '';
 }
 
 function abrirModal(modal) {
-    if (modal) {
-        modal.showModal();
-    }
+    if (modal) modal.showModal();
 }
 
 function cerrarModal(modal) {
-    if (modal) {
-        modal.close();
-    }
+    if (modal) modal.close();
 }
 
 /* ================================
-   ABRIR MODAL AGREGAR
+   ABRIR Y CERRAR MODALES
 ================================ */
-
 document.addEventListener('click', (event) => {
     const openButton = event.target.closest('[data-open-modal]');
-
-    if (!openButton) {
+    if (openButton) {
+        const modal = document.getElementById(openButton.dataset.openModal);
+        abrirModal(modal);
         return;
     }
 
-    const modal = document.getElementById(openButton.dataset.openModal);
-
-    abrirModal(modal);
-});
-
-/* ================================
-   CERRAR MODALES
-================================ */
-
-document.addEventListener('click', (event) => {
     const closeButton = event.target.closest('[data-close-modal]');
-
-    if (!closeButton) {
-        return;
+    if (closeButton) {
+        const modal = closeButton.closest('dialog');
+        cerrarModal(modal);
     }
-
-    const modal = closeButton.closest('dialog');
-
-    cerrarModal(modal);
 });
 
 /* ================================
-   FOTO ACTUAL DEL AGENTE
+   RENDERIZAR FOTO ACTUAL DEL AGENTE
 ================================ */
-
 function renderizarFotoActualAgente(fotoUrl, nombreAgente) {
     const contenedor = document.getElementById('fotoActualAgenteEditar');
-
-    if (!contenedor) {
-        return;
-    }
+    if (!contenedor) return;
 
     contenedor.innerHTML = '';
 
     const foto = fotoUrl || 'Imagenes/agente1.webp';
     const nombreArchivo = foto.split('/').pop();
-
     const rutaCompleta = foto.startsWith('http') ? foto : `${BASE_URL}${foto}`;
 
     const card = document.createElement('div');
-    card.className = 'archivo-preview archivo-existente';
+    card.className = 'card-imagen-item';
 
     card.innerHTML = `
-        <img src="${rutaCompleta}" alt="${nombreAgente || 'Agente'}">
-
-        <div class="archivo-info">
-            <span class="archivo-nombre" title="${nombreArchivo}">
-                ${nombreArchivo}
-            </span>
-
-            <span class="archivo-peso">
-                Foto actual
-            </span>
+        <span class="badge-principal">FOTO ACTUAL</span>
+        <div class="card-imagen-thumb">
+            <img src="${rutaCompleta}" alt="${nombreAgente || 'Agente'}">
+            <div class="thumb-overlay">
+                <button type="button" class="btn-icono btn-crop btn-recortar-existente" data-url="${rutaCompleta}" title="Reencuadrar Foto">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M6 2v14a2 2 0 0 0 2 2h14"/>
+                        <path d="M18 22V8a2 2 0 0 0-2-2H2"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <div class="card-imagen-info">
+            <p class="nombre-foto" title="${nombreArchivo}">${nombreArchivo}</p>
+            <span class="estado-tag estado-guardada">GUARDADA</span>
         </div>
     `;
 
@@ -784,7 +777,6 @@ function renderizarFotoActualAgente(fotoUrl, nombreAgente) {
    EDITAR AGENTE
 ================================ */
 document.addEventListener('click', (event) => {
-
     const editButton = event.target.closest('[data-edit]');
     if (!editButton) return;
 
@@ -796,10 +788,6 @@ document.addEventListener('click', (event) => {
         return;
     }
 
-    // Muestra en la consola de F12 lo que se recibe para diagnóstico
-    console.log("Datos del agente recibidos:", agente);
-
-    // Datos del agente
     ponerValorSeguro('edit_id', agente.id);
     ponerValorSeguro('edit_nombre', agente.nombre);
     ponerValorSeguro('edit_telefono', agente.telefono);
@@ -807,12 +795,10 @@ document.addEventListener('click', (event) => {
     ponerValorSeguro('edit_activo', agente.activo ?? 1);
     ponerValorSeguro('edit_rol', agente.rol ?? 'editor');
 
-    // Configurar estado del selector de 2FA
-    ponerValorSeguro('edit_2fa', '0'); // Seleccionar por defecto "no desactivar"
+    ponerValorSeguro('edit_2fa', '0');
 
     const select2FA = document.getElementById('edit_2fa');
     if (select2FA) {
-        // Se valida tanto si viene como número (1) o como string ("1")
         if (parseInt(agente.two_factor_enabled, 10) === 1) {
             select2FA.disabled = false;
             select2FA.options[0].text = "2FA Activo";
@@ -827,13 +813,8 @@ document.addEventListener('click', (event) => {
     const previewEditar = document.getElementById('previewAgenteEditar');
     const inputEditar = document.getElementById('inputAgenteEditar');
 
-    if (previewEditar) {
-        previewEditar.innerHTML = '';
-    }
-
-    if (inputEditar) {
-        inputEditar.value = '';
-    }
+    if (previewEditar) previewEditar.innerHTML = '';
+    if (inputEditar) inputEditar.value = '';
 
     abrirModal(modalEditar);
 });
@@ -841,154 +822,241 @@ document.addEventListener('click', (event) => {
 /* ================================
    ELIMINAR AGENTE
 ================================ */
-
 document.addEventListener('click', (event) => {
     const deleteButton = event.target.closest('[data-delete]');
-
-    if (!deleteButton) {
-        return;
-    }
+    if (!deleteButton) return;
 
     ponerValorSeguro('delete_id', deleteButton.dataset.id);
-
     abrirModal(modalEliminar);
 });
 
 /* ================================
-   PREVIEW MINI DE FOTO
+   CROPPER.JS / RECORTE DE FOTO
 ================================ */
-
 function formatearPesoAgente(bytes) {
-    if (bytes < 1024) {
-        return bytes + ' B';
-    }
-
-    if (bytes < 1024 * 1024) {
-        return (bytes / 1024).toFixed(1) + ' KB';
-    }
-
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
     return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
 }
+
+let cropper = null;
+let inputOrigenActual = null;
+let previewOrigenActual = null;
+let imagenOriginalDataUrl = null;
+
+const modalCropper = document.getElementById('modalCropper');
+const imagenParaRecortar = document.getElementById('imagenParaRecortar');
+const btnGuardarCrop = document.getElementById('btnGuardarCrop');
+const btnCancelarCrop = document.getElementById('btnCancelarCrop');
 
 function configurarFotoAgente(dropId, inputId, previewId) {
     const dropzone = document.getElementById(dropId);
     const input = document.getElementById(inputId);
     const preview = document.getElementById(previewId);
 
-    if (!dropzone || !input || !preview) {
-        return;
-    }
+    if (!dropzone || !input || !preview) return;
 
-    function mostrarPreview(file) {
-        preview.innerHTML = '';
+    function procesarYRecortar(file) {
+        if (!file || !file.type.startsWith('image/')) return;
 
-        if (!file || !file.type.startsWith('image/')) {
-            return;
-        }
+        inputOrigenActual = input;
+        previewOrigenActual = preview;
 
         const reader = new FileReader();
+        reader.onload = (e) => {
+            if (!imagenParaRecortar || !modalCropper) return;
 
-        reader.onload = (event) => {
-            const card = document.createElement('div');
-            card.className = 'archivo-preview';
+            imagenOriginalDataUrl = e.target.result;
+            imagenParaRecortar.src = imagenOriginalDataUrl;
 
-            card.innerHTML = `
-                <img src="${event.target.result}" alt="${file.name}">
+            abrirModal(modalCropper);
 
-                <div class="archivo-info">
-                    <span class="archivo-nombre" title="${file.name}">
-                        ${file.name}
-                    </span>
+            if (cropper) cropper.destroy();
 
-                    <span class="archivo-peso">
-                        ${formatearPesoAgente(file.size)}
-                    </span>
-
-                    <button type="button" class="archivo-quitar">
-                        Quitar
-                    </button>
-                </div>
-            `;
-
-            preview.appendChild(card);
+            cropper = new Cropper(imagenParaRecortar, {
+                aspectRatio: 1,
+                viewMode: 1,
+                autoCropArea: 0.9,
+                responsive: true
+            });
         };
-
         reader.readAsDataURL(file);
     }
 
-    input.addEventListener('change', () => {
-        mostrarPreview(input.files[0]);
-    });
-
-    preview.addEventListener('click', (event) => {
-        const botonQuitar = event.target.closest('.archivo-quitar');
-
-        if (!botonQuitar) {
-            return;
+    // Detectar selección de archivo
+    input.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files.length > 0) {
+            procesarYRecortar(e.target.files[0]);
         }
-
-        input.value = '';
-        preview.innerHTML = '';
     });
 
-    dropzone.addEventListener('dragover', (event) => {
-        event.preventDefault();
+    // Eliminar foto seleccionada
+    preview.addEventListener('click', (event) => {
+        const btnQuitar = event.target.closest('.btn-eliminar');
+        if (btnQuitar) {
+            event.stopPropagation();
+            input.value = '';
+            preview.innerHTML = '';
+            imagenOriginalDataUrl = null;
+        }
+    });
+
+    // Soporte para Arrastrar y Soltar (Drag & Drop)
+    dropzone.addEventListener('dragover', (e) => {
+        e.preventDefault();
         dropzone.classList.add('dragover');
     });
 
-    dropzone.addEventListener('dragleave', () => {
+    dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+
+    dropzone.addEventListener('drop', (e) => {
+        e.preventDefault();
         dropzone.classList.remove('dragover');
-    });
-
-    dropzone.addEventListener('drop', (event) => {
-        event.preventDefault();
-        dropzone.classList.remove('dragover');
-
-        const file = event.dataTransfer.files[0];
-
-        if (!file || !file.type.startsWith('image/')) {
-            return;
+        if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+            input.files = e.dataTransfer.files;
+            procesarYRecortar(e.dataTransfer.files[0]);
         }
-
-        const dataTransfer = new DataTransfer();
-        dataTransfer.items.add(file);
-
-        input.files = dataTransfer.files;
-
-        mostrarPreview(file);
     });
 }
 
-configurarFotoAgente('dropAgenteAgregar', 'inputAgenteAgregar', 'previewAgenteAgregar');
-configurarFotoAgente('dropAgenteEditar', 'inputAgenteEditar', 'previewAgenteEditar');
+/* ================================
+   ENCUADRAR FOTO EXISTENTE
+================================ */
+document.addEventListener('click', (event) => {
+    const btnRecortar = event.target.closest('.btn-recortar-existente');
+    if (!btnRecortar) return;
+
+    const url = btnRecortar.dataset.url;
+    const inputEditar = document.getElementById('inputAgenteEditar');
+    const previewEditar = document.getElementById('previewAgenteEditar');
+
+    if (!url || !inputEditar || !previewEditar) return;
+
+    inputOrigenActual = inputEditar;
+    previewOrigenActual = previewEditar;
+
+    imagenParaRecortar.crossOrigin = "anonymous";
+    imagenParaRecortar.src = url;
+
+    if (modalCropper) abrirModal(modalCropper);
+
+    if (cropper) cropper.destroy();
+
+    cropper = new Cropper(imagenParaRecortar, {
+        aspectRatio: 1,
+        viewMode: 1,
+        autoCropArea: 0.9,
+        responsive: true
+    });
+});
 
 /* ================================
-   MODAL DE ÉXITO
+   REENCUADRAR FOTO NUEVA (ANTES DE GUARDAR)
 ================================ */
+document.addEventListener('click', (event) => {
+    const btnRecortarPreview = event.target.closest('.btn-recortar-preview');
+    if (!btnRecortarPreview) return;
 
+    if (!imagenOriginalDataUrl || !modalCropper) return;
+
+    imagenParaRecortar.src = imagenOriginalDataUrl;
+    abrirModal(modalCropper);
+
+    if (cropper) cropper.destroy();
+
+    cropper = new Cropper(imagenParaRecortar, {
+        aspectRatio: 1,
+        viewMode: 1,
+        autoCropArea: 0.9,
+        responsive: true
+    });
+});
+
+/* Guardar recorte y generar vista previa interactiva */
+if (btnGuardarCrop) {
+    btnGuardarCrop.addEventListener('click', () => {
+        if (!cropper || !inputOrigenActual) return;
+
+        const canvas = cropper.getCroppedCanvas({ width: 500, height: 500 });
+
+        canvas.toBlob((blob) => {
+            const archivoRecortado = new File([blob], "agente_recortado.jpg", { type: "image/jpeg" });
+
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(archivoRecortado);
+            inputOrigenActual.files = dataTransfer.files;
+
+            if (previewOrigenActual) {
+                previewOrigenActual.innerHTML = `
+                    <div class="card-imagen-item">
+                        <div class="card-imagen-thumb">
+                            <img src="${canvas.toDataURL()}" alt="Vista previa">
+                            <div class="thumb-overlay">
+                                <button type="button" class="btn-icono btn-crop btn-recortar-preview" title="Reencuadrar foto">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M6 2v14a2 2 0 0 0 2 2h14"/>
+                                        <path d="M18 22V8a2 2 0 0 0-2-2H2"/>
+                                    </svg>
+                                </button>
+                                <button type="button" class="btn-icono btn-eliminar" title="Quitar foto">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="3 6 5 6 21 6"></polyline>
+                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-imagen-info">
+                            <p class="nombre-foto" title="agente_recortado.jpg">agente_recortado.jpg</p>
+                            <span class="estado-tag estado-nueva">${formatearPesoAgente(blob.size)}</span>
+                        </div>
+                    </div>
+                `;
+            }
+
+            cerrarModalRecorte();
+        }, 'image/jpeg', 0.9);
+    });
+}
+
+function cerrarModalRecorte() {
+    if (cropper) {
+        cropper.destroy();
+        cropper = null;
+    }
+    cerrarModal(modalCropper);
+}
+
+if (btnCancelarCrop) btnCancelarCrop.addEventListener('click', cerrarModalRecorte);
+
+/* ================================
+   INICIALIZACIÓN AL CARGAR EL DOM
+================================ */
 document.addEventListener('DOMContentLoaded', () => {
+    // Inicialización alineada exactamente con los IDs de tu HTML
+    configurarFotoAgente('dropAgenteAgregar', 'inputAgenteAgregar', 'previewAgenteAgregar');
+    configurarFotoAgente('dropAgenteEditar', 'inputAgenteEditar', 'previewAgenteEditar');
+
     const modalExito = document.getElementById('modalExito');
     const cerrarModalExito = document.getElementById('cerrarModalExito');
 
-    if (!modalExito) {
-        return;
-    }
+    if (modalExito) {
+        abrirModal(modalExito);
 
-    modalExito.showModal();
-
-    function cerrarExito() {
-        modalExito.close();
-    }
-
-    if (cerrarModalExito) {
-        cerrarModalExito.addEventListener('click', cerrarExito);
-    }
-
-    modalExito.addEventListener('click', (event) => {
-        if (event.target === modalExito) {
-            cerrarExito();
+        function cerrarExito() {
+            cerrarModal(modalExito);
         }
-    });
+
+        if (cerrarModalExito) {
+            cerrarModalExito.addEventListener('click', cerrarExito);
+        }
+
+        modalExito.addEventListener('click', (event) => {
+            if (event.target === modalExito) {
+                cerrarExito();
+            }
+        });
+    }
 });
 </script>
 </body>

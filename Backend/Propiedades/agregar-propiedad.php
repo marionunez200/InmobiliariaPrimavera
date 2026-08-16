@@ -54,7 +54,7 @@ $moneda = trim($_POST['moneda'] ?? 'MXN');
 $tipo_operacion = $_POST['tipo_operacion'] ?? 'venta';
 $categoria_id = (int)($_POST['categoria_id'] ?? 0);
 $estado_publicacion = $_POST['estado_publicacion'] ?? 'activo';
-$ciudad_id = (int)($_POST['ciudad_id'] ?? 0); // Corregido: ciudad_id estandarizado
+$ciudad_id = (int)($_POST['ciudad_id'] ?? 0);
 
 $direccion_completa = trim($_POST['direccion_completa'] ?? '');
 $direccion_completa = $direccion_completa === '' ? null : $direccion_completa;
@@ -62,7 +62,7 @@ $google_maps_url = trim($_POST['google_maps_url'] ?? '');
 $google_maps_url = $google_maps_url === '' ? null : $google_maps_url;
 
 $recamaras = max(0, (int)($_POST['recamaras'] ?? 0));
-$banos = max(0, (int)($_POST['banos'] ?? 0));
+$banos = max(0, (float)($_POST['banos'] ?? 0));
 $estacionamientos = max(0, (int)($_POST['estacionamientos'] ?? 0));
 
 $terreno_m2 = ($_POST['terreno_m2'] ?? '') !== '' ? $_POST['terreno_m2'] : null;
@@ -158,11 +158,41 @@ try {
 
     $propiedad_id = (int)$pdo->lastInsertId();
 
-    guardarImagenesPropiedad(
-        $pdo,
-        $propiedad_id,
-        $titulo
-    );
+    /* =========================================================
+       GUARDAR IMÁGENES CON ORDEN Y PRINCIPAL
+       ========================================================= */
+    if (!empty($_FILES['imagenes']['name'][0])) {
+        $stmtImg = $pdo->prepare("
+            INSERT INTO imagenes_propiedades 
+            (propiedad_id, imagen_url, texto_alternativo, es_principal, orden) 
+            VALUES (?, ?, ?, ?, ?)
+        ");
+
+        $archivos = $_FILES['imagenes'];
+        $totalArchivos = count($archivos['name']);
+
+        for ($i = 0; $i < $totalArchivos; $i++) {
+            if ($archivos['error'][$i] === UPLOAD_ERR_OK) {
+                $ext = strtolower(pathinfo($archivos['name'][$i], PATHINFO_EXTENSION));
+                $nombreArchivo = 'propiedad-' . $propiedad_id . '-' . uniqid() . '.' . $ext;
+                $rutaRelativa = 'Uploads/propiedades/' . $nombreArchivo;
+                $rutaDestino = ROOT_PATH . '/' . $rutaRelativa;
+
+                if (move_uploaded_file($archivos['tmp_name'][$i], $rutaDestino)) {
+                    $esPrincipal = ($i === 0) ? 1 : 0;
+                    $orden = $i + 1;
+
+                    $stmtImg->execute([
+                        $propiedad_id,
+                        $rutaRelativa,
+                        $titulo,
+                        $esPrincipal,
+                        $orden
+                    ]);
+                }
+            }
+        }
+    }
 
     $pdo->commit();
 

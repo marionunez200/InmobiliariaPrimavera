@@ -1699,3 +1699,281 @@ MODAL DE ÉXITO
 .estado-traspasado{
     color:#f39c12;
 }
+
+/* GRID 3 COLUMNAS ULTRA FLUIDO */
+#previewAgregar,
+#imagenesActualesEditar {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 12px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  margin-top: 15px !important;
+}
+
+/* CARD CONTENEDOR */
+.card-imagen-item {
+  position: relative !important;
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 10px !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* BADGE PRINCIPAL */
+.badge-principal,
+.archivo-principal {
+  position: absolute !important;
+  top: 8px !important;
+  left: 8px !important;
+  background: #2563eb !important;
+  color: #ffffff !important;
+  font-size: 0.65rem !important;
+  font-weight: 700 !important;
+  padding: 3px 8px !important;
+  border-radius: 6px !important;
+  z-index: 10 !important;
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.4) !important;
+}
+
+.badge-principal.oculto,
+.archivo-principal.oculto {
+  display: none !important;
+}
+
+/* MINIATURA */
+.card-imagen-thumb {
+  position: relative !important;
+  width: 100% !important;
+  aspect-ratio: 16 / 10 !important;
+  background: #0f172a !important;
+  overflow: hidden !important;
+}
+
+.card-imagen-thumb img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  display: block !important;
+}
+
+/* OVERLAY TRANSLÚCIDO Y MODERNO */
+.thumb-overlay {
+  position: absolute !important;
+  inset: 0 !important;
+  background: rgba(15, 23, 42, 0.45) !important;
+  backdrop-filter: blur(3px) !important;
+  -webkit-backdrop-filter: blur(3px) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 12px !important;
+  opacity: 0 !important;
+  transition: opacity 0.2s ease-in-out !important;
+  z-index: 5 !important;
+}
+
+.card-imagen-thumb:hover .thumb-overlay {
+  opacity: 1 !important;
+}
+
+/* BOTONES ÍCONO CIRCULARES ESTILIZADOS */
+.btn-icon,
+.btn-icono {
+  all: unset !important;
+  box-sizing: border-box !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 38px !important;
+  height: 38px !important;
+  border-radius: 50% !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+  color: #334155 !important;
+  cursor: pointer !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+  transition: all 0.2s ease !important;
+  padding: 0 !important;
+}
+
+.btn-icon svg,
+.btn-icono svg {
+  width: 17px !important;
+  height: 17px !important;
+  stroke-width: 2.2 !important;
+  pointer-events: none !important;
+}
+
+.btn-icon:hover,
+.btn-icono:hover {
+  transform: translateY(-2px) scale(1.08) !important;
+  background: #ffffff !important;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Botón Reencuadrar */
+.btn-crop:hover {
+  color: #2563eb !important;
+}
+
+/* Botón Eliminar */
+.btn-eliminar:hover,
+.archivo-quitar:hover,
+.quitar-item-editar:hover {
+  color: #dc2626 !important;
+  background: #fef2f2 !important;
+}
+
+/* PIE DE LA CARD */
+.card-imagen-info {
+  padding: 8px 10px !important;
+  background: #ffffff !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  border-top: 1px solid #f1f5f9 !important;
+}
+
+.nombre-foto {
+  font-size: 0.72rem !important;
+  font-weight: 600 !important;
+  color: #334155 !important;
+  margin: 0 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  max-width: 65% !important;
+}
+
+.estado-tag {
+  font-size: 0.6rem !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  padding: 2px 6px !important;
+  border-radius: 4px !important;
+}
+
+.estado-guardada { background: #dcfce7 !important; color: #15803d !important; }
+.estado-nueva { background: #dbeafe !important; color: #1d4ed8 !important; }
+
+/* ==========================================================================
+   ESTILOS PARA EL MODAL DE CROPPER Y BOTONES DE ACCIÓN
+   ========================================================================== */
+dialog.modal-cropper,
+dialog#modalCropper {
+  border: none !important;
+  border-radius: 16px !important;
+  padding: 0 !important;
+  max-width: 90vw !important;
+  width: 620px !important;
+  background: #ffffff !important;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25) !important;
+  overflow: hidden !important;
+}
+
+dialog.modal-cropper::backdrop,
+dialog#modalCropper::backdrop {
+  background: rgba(15, 23, 42, 0.75) !important;
+  backdrop-filter: blur(4px) !important;
+  -webkit-backdrop-filter: blur(4px) !important;
+}
+
+.modal-cropper-content,
+#modalCropper .modal-content {
+  padding: 24px !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.modal-cropper-content h3,
+#modalCropper h3 {
+  margin: 0 0 16px 0 !important;
+  font-size: 1.15rem !important;
+  font-weight: 700 !important;
+  color: #0f172a !important;
+}
+
+/* Contenedor alineado para la imagen de recorte */
+.cropper-container-box,
+.cropper-container-wrapper {
+  width: 100% !important;
+  height: 380px !important;
+  max-height: 55vh !important;
+  background: #0f172a !important;
+  border-radius: 10px !important;
+  overflow: hidden !important;
+  margin: 0 0 20px 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* BOTONES AMIGABLES DEL MODAL */
+.modal-actions,
+.cropper-actions {
+  display: flex !important;
+  justify-content: flex-end !important;
+  gap: 12px !important;
+}
+
+#btnCancelarCrop,
+.btn-cancelar {
+  all: unset !important;
+  box-sizing: border-box !important;
+  border: 1px solid #cbd5e1 !important;
+  background: #f8fafc !important;
+  color: #475569 !important;
+  font-weight: 600 !important;
+  font-size: 0.875rem !important;
+  padding: 9px 18px !important;
+  border-radius: 8px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+
+#btnCancelarCrop:hover,
+.btn-cancelar:hover {
+  background: #f1f5f9 !important;
+  color: #0f172a !important;
+  border-color: #94a3b8 !important;
+}
+
+#btnGuardarCrop,
+.btn-guardar {
+  all: unset !important;
+  box-sizing: border-box !important;
+  background: #2563eb !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  font-size: 0.875rem !important;
+  padding: 9px 20px !important;
+  border-radius: 8px !important;
+  cursor: pointer !important;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25) !important;
+  transition: all 0.2s ease !important;
+}
+
+#btnGuardarCrop:hover,
+.btn-guardar:hover {
+  background: #1d4ed8 !important;
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35) !important;
+  transform: translateY(-1px) !important;
+}
+
+/* Soporte para tarjetas individuales en panel agente */
+#fotoActualAgenteEditar,
+#previewAgente,
+#previewAgenteEditar {
+  width: 180px !important;
+  margin-top: 10px !important;
+}
+
+/* Forzar relación de aspecto 1:1 (cuadrada) para las fotos de perfil de agentes */
+#fotoActualAgenteEditar .card-imagen-thumb,
+#previewAgente .card-imagen-thumb,
+#previewAgenteEditar .card-imagen-thumb {
+  aspect-ratio: 1 / 1 !important;
+}
