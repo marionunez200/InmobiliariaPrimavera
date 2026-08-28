@@ -186,7 +186,7 @@ if (!in_array(
     $estado_publicacion,
     [
         'activo',
-        'inactivo',
+        'inactivo', 'promesa',
         'vendido',
         'rentado',
         'traspasado'

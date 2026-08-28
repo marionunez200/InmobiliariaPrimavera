@@ -30,6 +30,7 @@ function estadoPublicacionTexto($estado)
             return "Activo";
         case "vendido":
             return "Vendido";
+        case 'promesa':    return 'Promesa';
         case "rentado":
             return "Rentado";
         case "traspasado":
@@ -123,9 +124,7 @@ if (!$esAdmin) {
 if ($buscar !== "") {
     $estadoBuscado = strtolower($buscar);
 
-    if (
-        in_array($estadoBuscado, ["activo", "inactivo", "vendido", "rentado", "traspasado"], true)
-    ) {
+    if (in_array($estadoBuscado, ['activo', 'inactivo', 'vendido', 'rentado', 'traspasado'], true)) {
         $where[] = "p.estado_publicacion = ?";
         $params[] = $estadoBuscado;
     } else {
@@ -286,7 +285,7 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
             <?php if ($esAdmin): ?>
             <a href="<?= BASE_URL ?>Admin/Panel-agente.php">Agentes</a>
             <a href="<?= BASE_URL ?>Admin/Panel-mensajes.php">Mensajes</a>
-            <a class="btn-exportar" href="<?= BASE_URL ?>Backend/Reportes/exportar-excel.php?mes=<?= $mes ?>&anio=<?= $anio ?>">Exportar Excel</a>
+            <a class="btn-exportar" href="<?= BASE_URL ?>Backend/Reportes/Reporte-operaciones.php?mes=<?= $mes ?>&anio=<?= $anio ?>" target="_blank"> Reporte </a>
             <?php endif; ?>        
         </nav>
     
@@ -664,11 +663,13 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
 
             <label>
                 Estado
-                <select name="estado_publicacion">
+                <select name="estado_publicacion" id="add_estado_publicacion">
                     <option value="activo">Activo</option>
                     <option value="inactivo">Inactivo</option>
+                    <option value="promesa">Promesa</option>
                 </select>
             </label>
+
 
             <label>
                 RecÃ¡maras
@@ -907,6 +908,7 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
                 <select name="estado_publicacion" id="edit_estado_publicacion">
                     <option value="activo">Activo</option>
                     <option value="inactivo">Inactivo</option>
+                    <option value="promesa">Promesa</option>
                 </select>
             </label>
 
@@ -1271,6 +1273,64 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
     </form>
 </dialog>
 
+<!-- MODAL: PROPIEDAD CON OPERACIONES -->
+<dialog
+    class="modal modal-small"
+    id="modalPropiedadConOperaciones"
+>
+
+    <div class="modal-content">
+
+        <div class="modal-header">
+
+            <h2>
+                No se puede eliminar
+            </h2>
+
+            <button
+                type="button"
+                class="modal-close"
+                data-close-modal
+            >
+                &times;
+            </button>
+
+        </div>
+
+        <div class="modal-body">
+
+            <div class="modal-aviso-icono">
+                <i class="fa-solid fa-circle-exclamation"></i>
+            </div>
+
+            <p>
+                Esta propiedad no puede eliminarse porque tiene
+                operaciones registradas.
+            </p>
+
+            <p class="warning">
+                El historial de ventas, rentas o traspasos debe
+                conservarse.
+            </p>
+
+        </div>
+
+        <div class="modal-actions">
+
+            <button
+                type="button"
+                class="btn-primary"
+                data-close-modal
+            >
+                Entendido
+            </button>
+
+        </div>
+
+    </div>
+
+</dialog>
+
 <!-- MODAL DE Ã‰XITO -->
 <?php if ($modalExitoTitulo !== ""): ?>
     <dialog class="modal-exito" id="modalExito">
@@ -1552,131 +1612,19 @@ document.addEventListener("click", function (event) {
     return;
   }
 
-  /* -----------------------------------------
-       ELIMINAR PROPIEDAD
-    ----------------------------------------- */
-
-  const deleteButton = event.target.closest("[data-delete]");
-
-  if (deleteButton) {
-    const inputEliminar = document.getElementById("delete_id");
-
-    if (inputEliminar && modalEliminar) {
-      inputEliminar.value = deleteButton.dataset.id;
-
-      abrirModal(modalEliminar);
+    const deleteButton = event.target.closest('[data-delete]');
+    if (deleteButton) {
+        const inputEliminar = document.getElementById('delete_id');
+        if (inputEliminar && modalEliminar) {
+            inputEliminar.value = deleteButton.dataset.id;
+            abrirModal(modalEliminar);
+        }
     }
-
-    return;
-  }
-
-  /* -----------------------------------------
-       OPERACIÃ“N
-    ----------------------------------------- */
-
-  const operacionButton = event.target.closest("[data-operacion]");
-
-  if (operacionButton) {
-    ponerValorSeguro("operacion_propiedad_id", operacionButton.dataset.id);
-
-    ponerValorSeguro("operacion_agente_id", operacionButton.dataset.agente);
-
-    ponerValorSeguro("operacion_tipo", operacionButton.dataset.tipo);
-
-    ponerValorSeguro("operacion_precio", operacionButton.dataset.precio);
-
-    ponerValorSeguro("operacion_moneda", operacionButton.dataset.moneda);
-
-    abrirModal(modalOperacion);
-
-    return;
-  }
-
-  /* -----------------------------------------
-       ELIMINAR CATEGORÃA
-    ----------------------------------------- */
-
-  const btnEliminarCat = event.target.closest(".btn-eliminar-cat-modal");
-
-  if (btnEliminarCat) {
-    ponerValorSeguro("delete_categoria_id", btnEliminarCat.dataset.id);
-
-    abrirModal(modalEliminarCategoria);
-
-    return;
-  }
-
-  /* -----------------------------------------
-       ELIMINAR CIUDAD
-    ----------------------------------------- */
-
-  const btnEliminarCiu = event.target.closest(".btn-eliminar-ciu-modal");
-
-  if (btnEliminarCiu) {
-    ponerValorSeguro("delete_ciudad_id", btnEliminarCiu.dataset.id);
-
-    abrirModal(modalEliminarCiudad);
-
-    return;
-  }
-
-  /* -----------------------------------------
-       QUITAR ARCHIVO - AGREGAR
-    ----------------------------------------- */
-
-  const btnQuitarAgregar = event.target.closest(".archivo-quitar");
-
-  if (btnQuitarAgregar) {
-    const index = Number(btnQuitarAgregar.dataset.index);
-
-    const item = listaArchivosAgregar[index];
-
-    if (item?.urlPreview) {
-      URL.revokeObjectURL(item.urlPreview);
-    }
-
-    listaArchivosAgregar.splice(index, 1);
-
-    renderizarAgregar();
-
-    return;
-  }
-
-  /* -----------------------------------------
-       QUITAR ARCHIVO - EDITAR
-    ----------------------------------------- */
-
-  const btnQuitarEditar = event.target.closest(".quitar-item-editar");
-
-  if (btnQuitarEditar) {
-    const index = Number(btnQuitarEditar.dataset.index);
-
-    const item = listaArchivosEditar[index];
-
-    if (!item) {
-      return;
-    }
-
-    if (item.tipo === "existente") {
-      registrarEliminacionExistente(item.id);
-    }
-
-    if (item.urlPreview) {
-      URL.revokeObjectURL(item.urlPreview);
-    }
-
-    listaArchivosEditar.splice(index, 1);
-
-    renderizarEditar();
-
-    return;
-  }
 });
 
-/* =========================================================
-   ORDENAR IMÃGENES
-========================================================= */
-
+/* ==========================================================================
+   ORDENAMIENTO Y REORGANIZACIÓN
+   ========================================================================== */
 function actualizarAtributosImagenes(contenedor, esEdicion = false) {
   if (!contenedor) {
     return;
@@ -2867,150 +2815,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
   abrirModal(modalExito);
 
-  const cerrarExito = function () {
-    cerrarModal(modalExito);
-  };
-
-  document.getElementById("cerrarModalExito")?.addEventListener("click", cerrarExito);
-
-  modalExito.addEventListener("click", function (e) {
-    if (e.target === modalExito) {
-      cerrarExito();
-    }
-  });
+    const cerrarExito = () => cerrarModal(modalExito);
+    document.getElementById('cerrarModalExito')?.addEventListener('click', cerrarExito);
+    modalExito.addEventListener('click', (e) => { if (e.target === modalExito) cerrarExito(); });
 });
-
-/* =========================================================
-   VALIDACIÃ“N FINAL DE PROPIEDAD
-========================================================= */
-
-/*
- IMPORTANTE:
-
- NO buscamos ".lista-archivos".
-
- Usamos directamente las listas
- que controlan los archivos reales.
-*/
-
-function validarFormularioPropiedad(e) {
-  const formulario = this;
-
-  const esAgregar = formulario === document.querySelector("#modalAgregar form");
-
-  const esEditar = formulario === document.querySelector("#modalEditar form");
-
-  let lista = esAgregar ? listaArchivosAgregar : listaArchivosEditar;
-
-  /*
-     ---------------------------------------------
-     OBTENER IMÃGENES
-     ---------------------------------------------
-    */
-
-  const imagenes = lista.filter(function (item) {
-    /*
-                 Archivo nuevo
-                */
-
-    if (item.tipo === "nuevo") {
-      const archivo = item.fileRecortado || item.fileOriginal || item.file;
-
-      return archivo && archivo.type && archivo.type.startsWith("image/");
-    }
-
-    /*
-                 Archivo existente
-                */
-
-    if (item.tipo === "existente") {
-      return !/\.(mp4|webm|mov|avi)$/i.test(item.url || "");
-    }
-
-    return false;
-  });
-
-  /*
-     ---------------------------------------------
-     DEBE EXISTIR AL MENOS UNA IMAGEN
-     ---------------------------------------------
-    */
-
-  if (imagenes.length === 0) {
-    e.preventDefault();
-
-    alert(
-      "Debes agregar al menos una imagen para la propiedad. " +
-        "El video no puede ser el archivo principal.",
-    );
-
-    return false;
-  }
-
-  /*
-     ---------------------------------------------
-     VERIFICAR QUE LA PRIMERA POSICIÃ“N
-     SEA UNA IMAGEN
-     ---------------------------------------------
-    */
-
-  if (lista.length > 0) {
-    const primerElemento = lista[0];
-
-    let esVideo = false;
-
-    if (primerElemento.tipo === "nuevo") {
-      const archivo =
-        primerElemento.fileRecortado || primerElemento.fileOriginal || primerElemento.file;
-
-      esVideo = archivo && archivo.type && archivo.type.startsWith("video/");
-    } else if (primerElemento.tipo === "existente") {
-      esVideo = /\.(mp4|webm|mov|avi)$/i.test(primerElemento.url || "");
-    }
-
-    if (esVideo) {
-      e.preventDefault();
-
-      alert(
-        "La primera posiciÃ³n debe ser una imagen. " + "Un video no puede ser la imagen principal.",
-      );
-
-      return false;
-    }
-  }
-
-  /*
-     ---------------------------------------------
-     ACTUALIZAR PRINCIPAL
-     ---------------------------------------------
-    */
-
-  if (esAgregar) {
-    actualizarAtributosImagenes(document.getElementById("previewAgregar"), false);
-  }
-
-  if (esEditar) {
-    actualizarAtributosImagenes(document.getElementById("imagenesActualesEditar"), true);
-  }
-
-  return true;
-}
-
-/* =========================================================
-   REGISTRAR VALIDACIÃ“N
-========================================================= */
-
-const formAgregar = document.querySelector("#modalAgregar form");
-
-if (formAgregar) {
-  formAgregar.addEventListener("submit", validarFormularioPropiedad);
-}
-
-const formEditar = document.querySelector("#modalEditar form");
-
-if (formEditar) {
-  formEditar.addEventListener("submit", validarFormularioPropiedad);
-}
 </script>
 
 </body>

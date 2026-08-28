@@ -72,13 +72,25 @@ try {
 
 
 
-} catch (Exception $e) {
+} catch (PDOException $e) {
 
+    if ($e->getCode() === '23000') {
 
-    if ($pdo->inTransaction()) {
-        $pdo->rollBack();
+        header(
+            'Location: ' .
+            BASE_URL .
+            'Admin/Panel-propiedades.php?error=propiedad_con_operaciones'
+        );
+
+        exit;
     }
 
-    die('Error al eliminar propiedad: ' . $e->getMessage());
+    // Otro error diferente
+    header(
+        'Location: ' .
+        BASE_URL .
+        'Admin/Panel-propiedades.php?error=eliminar_propiedad'
+    );
 
+    exit;
 }

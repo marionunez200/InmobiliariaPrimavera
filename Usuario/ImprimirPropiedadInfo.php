@@ -67,8 +67,8 @@ $stmtImagenes = $pdo->prepare("
     FROM multimedia_propiedades
     WHERE propiedad_id = ? AND tipo = 'imagen'
     ORDER BY es_principal DESC,
-             orden ASC,
-             id ASC
+            orden ASC,
+            id ASC
 ");
 $stmtImagenes->execute([$id]);
 
@@ -98,6 +98,8 @@ $precioTexto = MonedaService::formato(
 if ($propiedad['tipo_operacion'] === 'renta') {
     $precioTexto .= '/mes';
 }
+
+$titulo = e((string)$propiedad['titulo']);
 
 $ciudadTexto = $propiedad['ciudad_nombre'] ?? $propiedad['ciudad'] ?? 'Ciudad no disponible';
 $tipoTexto = $propiedad['categoria_nombre'] ?? 'Propiedad';
@@ -147,7 +149,7 @@ $fotoAgente = !empty($propiedad['agente_foto'])
     <section class="informacion">
         <div class="titulo">
             <h2>
-                <?= e($tipoTexto) ?> en <?= strtolower(e($operacionTexto)) ?>
+                <?= e($titulo) ?>
             </h2>
             <h3>
                 <?= e($ciudadTexto) ?>

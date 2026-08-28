@@ -1,0 +1,302 @@
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 30px;
+    background: #fff5e0;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #222222;
+}
+
+.acciones {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto 20px;
+
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.btn {
+    border: none;
+    padding: 12px 22px;
+    border-radius: 8px;
+
+    font-size: 15px;
+    font-weight: 600;
+
+    cursor: pointer;
+    text-decoration: none;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-pdf {
+    background: #122548;
+    color: white;
+}
+
+.btn-volver {
+    background: #dddddd;
+    color: #222222;
+}
+
+.reporte {
+    width: 297mm;
+    min-height: 210mm;
+
+    margin: 0 auto;
+    padding: 15mm;
+
+    background: white;
+
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.12);
+}
+
+.encabezado {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    border-bottom: 3px solid #122548;
+    padding-bottom: 18px;
+    margin-bottom: 25px;
+}
+
+.logo {
+    width: 90px;
+    height: auto;
+}
+
+.encabezado-texto {
+    flex: 1;
+    margin-left: 20px;
+}
+
+.encabezado h1 {
+    margin: 0;
+    font-size: 26px;
+    color: #122548;
+}
+
+.encabezado h2 {
+    margin: 5px 0 0;
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.periodo {
+    text-align: right;
+}
+
+.selector-periodo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.selector-periodo select {
+    padding: 11px 14px;
+
+    border: 1px solid #cccccc;
+    border-radius: 8px;
+
+    background: white;
+    color: #222222;
+
+    font-size: 14px;
+
+    cursor: pointer;
+}
+
+.btn-periodo {
+    background: #122548;
+    color: white;
+}
+
+.periodo strong {
+    display: block;
+    color: #122548;
+    font-size: 16px;
+}
+
+.periodo span {
+    font-size: 13px;
+    color: #666666;
+}
+
+.resumen {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+
+    margin-bottom: 28px;
+}
+
+.resumen-card {
+    border: 1px solid #dddddd;
+    border-radius: 8px;
+    padding: 15px;
+
+    text-align: center;
+}
+
+.resumen-card span {
+    display: block;
+
+    font-size: 12px;
+    color: #666666;
+
+    margin-bottom: 7px;
+}
+
+.resumen-card strong {
+    font-size: 22px;
+    color: #122548;
+}
+
+.seccion {
+    margin-top: 28px;
+}
+
+.seccion h2 {
+    color: #122548;
+    font-size: 18px;
+
+    margin: 0 0 12px;
+    padding-bottom: 7px;
+
+    border-bottom: 1px solid #dddddd;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+}
+
+th {
+    background: #122548;
+    color: white;
+
+    padding: 9px 7px;
+
+    text-align: left;
+    font-weight: 600;
+}
+
+td {
+    padding: 8px 7px;
+
+    border-bottom: 1px solid #dddddd;
+
+    vertical-align: top;
+}
+
+tbody tr:nth-child(even) {
+    background: #f7f7f7;
+}
+
+.precio {
+    white-space: nowrap;
+    font-weight: 600;
+}
+
+.tipo {
+    text-transform: capitalize;
+}
+
+.sin-registros {
+    padding: 30px;
+
+    text-align: center;
+
+    background: #f6f6f6;
+
+    border-radius: 8px;
+
+    color: #666666;
+}
+
+.total-reporte {
+    display: flex;
+    justify-content: flex-end;
+
+    margin-top: 15px;
+}
+
+.total-box {
+    min-width: 280px;
+
+    border-top: 3px solid #122548;
+
+    padding-top: 10px;
+
+    display: flex;
+    justify-content: space-between;
+    gap: 30px;
+
+    font-size: 15px;
+}
+
+.total-box strong {
+    color: #122548;
+}
+
+.tabla-agentes {
+    max-width: 700px;
+}
+
+.pie {
+    margin-top: 35px;
+    padding-top: 12px;
+
+    border-top: 1px solid #cccccc;
+
+    font-size: 10px;
+    color: #777777;
+
+    display: flex;
+    justify-content: space-between;
+}
+
+@media print {
+
+    body {
+        background: white;
+        padding: 0;
+    }
+
+    .acciones {
+        display: none !important;
+    }
+
+    .reporte {
+        width: auto;
+        min-height: auto;
+
+        margin: 0;
+        padding: 0;
+
+        box-shadow: none;
+    }
+
+    .resumen-card,
+    table,
+    tr,
+    td,
+    th {
+        break-inside: avoid;
+    }
+
+    @page {
+        size: A4 landscape;
+        margin: 12mm;
+    }
+}
