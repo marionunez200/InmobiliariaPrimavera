@@ -104,7 +104,7 @@ $anio = $_GET['anio'] ?? date('Y');
             <a href="<?= BASE_URL ?>Admin/Panel-propiedades.php">Propiedades</a>
             <a href="<?= BASE_URL ?>Admin/Panel-agente.php">Agentes</a>
             <a href="<?= BASE_URL ?>Admin/Panel-mensajes.php">Mensajes</a>
-            <a class="btn-exportar" href="<?= BASE_URL ?>Backend/Reportes/exportar-excel.php?mes=<?= $mes ?>&anio=<?= $anio ?>">Exportar Excel</a>        
+            <a class="btn-exportar" href="<?= BASE_URL ?>Backend/Reportes/Reporte-operaciones.php?mes=<?= $mes ?>&anio=<?= $anio ?>" target="_blank"> Reporte </a>
         </nav>
     
         <form class="cerrar-sesion" action="<?= BASE_URL ?>Backend/cerrar-sesion.php" method="POST">

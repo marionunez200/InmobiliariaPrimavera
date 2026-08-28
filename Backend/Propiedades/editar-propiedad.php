@@ -98,7 +98,7 @@ if (!in_array($tipo_operacion, ['venta', 'renta', 'traspaso'], true)) {
     die('Tipo de operación inválido.');
 }
 
-if (!in_array($estado_publicacion, ['activo', 'inactivo', 'vendido', 'rentado', 'traspasado'], true)) {
+if (!in_array($estado_publicacion, ['activo', 'inactivo', 'promesa', 'vendido', 'rentado', 'traspasado'], true)) {
     die('Estado de publicación inválido.');
 }
 
