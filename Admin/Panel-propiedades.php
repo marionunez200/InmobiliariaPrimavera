@@ -40,7 +40,7 @@ function ciudadPanelTexto(?string $ciudad): string
     return match ($ciudad) {
         'navojoa'        => 'Navojoa',
         'san_carlos'     => 'San Carlos',
-        'ciudad_obregon' => 'Cd. Obregón',
+        'ciudad_obregon' => 'Ciudad Obregón',
         'guaymas'        => 'Guaymas',
         default          => 'Sin ciudad'
     };
@@ -1654,6 +1654,48 @@ function registrarEliminacionExistente(id) {
   formEditar.appendChild(hiddenDel);
 }
 
+function quitarImagenDesdeLista(event) {
+  const botonQuitarAgregar = event.target.closest(".archivo-quitar");
+
+  if (botonQuitarAgregar) {
+    const index = Number(botonQuitarAgregar.dataset.index ?? -1);
+
+    if (index >= 0 && index < listaArchivosAgregar.length) {
+      const item = listaArchivosAgregar[index];
+
+      if (item && item.urlPreview) {
+        URL.revokeObjectURL(item.urlPreview);
+      }
+
+      listaArchivosAgregar.splice(index, 1);
+      renderizarAgregar();
+    }
+
+    return;
+  }
+
+  const botonQuitarEditar = event.target.closest(".quitar-item-editar");
+
+  if (botonQuitarEditar) {
+    const index = Number(botonQuitarEditar.dataset.index ?? -1);
+
+    if (index >= 0 && index < listaArchivosEditar.length) {
+      const item = listaArchivosEditar[index];
+
+      if (item && item.tipo === "existente" && item.id) {
+        registrarEliminacionExistente(item.id);
+      }
+
+      if (item && item.urlPreview) {
+        URL.revokeObjectURL(item.urlPreview);
+      }
+
+      listaArchivosEditar.splice(index, 1);
+      renderizarEditar();
+    }
+  }
+}
+
 /* =========================================================
    EVENTOS GLOBALES
 ========================================================= */
@@ -1672,6 +1714,8 @@ document.addEventListener("click", function (event) {
 
     return;
   }
+
+  quitarImagenDesdeLista(event);
 
   /* -----------------------------------------
        CERRAR MODAL

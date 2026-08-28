@@ -797,14 +797,32 @@ function convertirAWebp(
 
         case 'webp':
 
+            if (!is_file($origen) || @getimagesize($origen) === false) {
+                return false;
+            }
+
+            $header = @file_get_contents($origen, false, null, 0, 12);
+
+            if ($header === false || strlen($header) < 12) {
+                return false;
+            }
+
+            if (substr($header, 0, 4) !== 'RIFF' || substr($header, 8, 4) !== 'WEBP') {
+                return false;
+            }
+
             if (!function_exists('imagecreatefromwebp')) {
-                return move_uploaded_file(
+                return @copy(
                     $origen,
                     $destino
                 );
             }
 
             $imagen = @imagecreatefromwebp($origen);
+
+            if ($imagen === false) {
+                return false;
+            }
 
             break;
 
