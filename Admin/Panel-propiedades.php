@@ -8,7 +8,7 @@ $esAdmin = es_admin();
 $pdo = db();
 
 /* ================================
-   MODAL DE Ã‰XITO
+    MODAL DE ÉXITO
 ================================ */
 $modalExitoTitulo = "";
 $modalExitoMensaje = "";
@@ -155,7 +155,7 @@ $stmt->execute($params);
 $propiedades = $stmt->fetchAll();
 
 /* ================================
-   IMÃGENES POR PROPIEDAD
+    IMÁGENES POR PROPIEDAD
 ================================ */
 $imagenesPorPropiedad = [];
 $idsPropiedades = array_column($propiedades, "id");
@@ -184,7 +184,7 @@ if (!empty($idsPropiedades)) {
 }
 
 /* ================================
-   CATEGORÃAS Y CIUDADES (PARA SELECTS)
+    CATEGORÍAS Y CIUDADES (PARA SELECTS)
 ================================ */
 $categorias = $pdo
     ->query(
@@ -203,7 +203,7 @@ $ciudades = $pdo
     ->fetchAll(PDO::FETCH_ASSOC);
 
 /* ================================
-   ÃšLTIMAS PROPIEDADES (RESPETANDO ROL)
+    ÚLTIMAS PROPIEDADES (RESPETANDO ROL)
 ================================ */
 $sqlUltimas = "
     SELECT p.*, c.nombre AS categoria_nombre,
@@ -264,10 +264,10 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
         <div class="left-adminh">
             <div class="header-top-panel">
                 <h1>Panel Administrativo</h1>
-                <p>GestiÃ³n de propiedades</p>
+                <p>Gestión de propiedades</p>
 
                 <?php if (!empty($_SESSION["admin_nombre"])): ?>
-                    <p>SesiÃ³n: <?= e((string) $_SESSION["admin_nombre"]) ?></p>
+                    <p>Sesión: <?= e((string) $_SESSION["admin_nombre"]) ?></p>
                 <?php endif; ?>
             </div>
         </div>
@@ -299,7 +299,7 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
             <button
                 class="cerrar-sesion"
                 type="submit">
-                Cerrar sesiÃ³n
+                Cerrar sesión
             </button>
         </form>
         
@@ -354,11 +354,11 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
 
             <div class="subtitulos">
                 <span>Propiedad</span>
-                <span>UbicaciÃ³n</span>
+                <span>Ubicación</span>
                 <span>Tipo</span>
                 <span>Precio</span>
                 <span>Estado</span>
-                <span>Fecha/CreaciÃ³n</span>
+                <span>Fecha/Creación</span>
                 <span>Acciones</span>
             </div>
 
@@ -419,13 +419,13 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
                         </div>
                     </div>
                 
-                    <!-- UBICACIÃ“N -->
+                    <!-- UBICACIÓN -->
                     <span class="text_dentro">
                         <?= e($propiedad["ciudad_nombre"] ?? "Sin ciudad") ?>
                     </span>
                 
                     <span class="text_dentro">
-                        <?= e($propiedad["categoria_nombre"] ?? "Sin categorÃ­a") ?>
+                        <?= e($propiedad["categoria_nombre"] ?? "Sin categoría") ?>
                     </span>
                 
                     <span class="text_dentro">
@@ -493,7 +493,7 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
 
         <section class="cards_propiedades">
             <div class="text_top">
-                <h2>Ãšltimas propiedades aÃ±adidas</h2>
+                <h2>Últimas propiedades añadidas</h2>
             </div>
 
             <div class="contenedor_cards">
@@ -582,12 +582,12 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
             </label>
 
             <label>
-                TÃ­tulo
+                Título
                 <input type="text" name="titulo" placeholder="Casa en Puente Real" required>
             </label>
 
             <label>
-                Tipo de operaciÃ³n
+                Tipo de operación
                 <select name="tipo_operacion" required>
                     <option value="venta">Venta</option>
                     <option value="renta">Renta</option>
@@ -599,7 +599,7 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
                 Tipo de propiedad
                 <div class="tipo-propiedad-box">
                     <select name="categoria_id" required>
-                        <option value="">Selecciona una categorÃ­a</option>
+                        <option value="">Selecciona una categoría</option>
                         <?php foreach ($categorias as $categoria): ?>
                             <option value="<?= e((string) $categoria["id"]) ?>">
                                 <?= e((string) $categoria["nombre"]) ?>
@@ -672,12 +672,12 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
 
 
             <label>
-                RecÃ¡maras
+                Recámaras
                 <input type="number" name="recamaras" min="0" step="1">
             </label>
 
             <label>
-                BaÃ±os
+                Baños
                 <input type="number" name="banos" min="0" step="1">
             </label>
 
@@ -687,18 +687,18 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
             </label>
 
             <label>
-                Terreno mÂ²
+                Terreno m²
                 <input type="number" id="add_terreno_m2" name="terreno_m2" min="0" step="any" class="incremento-personalizado">
             </label>
 
             <label>
-                ConstrucciÃ³n mÂ²
+                Construcción m²
                 <input type="number" id="add_construccion_m2" name="construccion_m2" min="0" step="any" class="incremento-personalizado">
             </label>
 
-            <!-- CAJA UNIFICADA DE IMÃGENES -->
+            <!-- CAJA UNIFICADA DE IMÁGENES -->
             <div>
-                <p class="imagenes-actuales-title">ImÃ¡genes de la propiedad (Arrastra para reordenar, la 1Âª es la principal)</p>
+                <p class="imagenes-actuales-title">Imágenes de la propiedad (Arrastra para reordenar, la 1ª es la principal)</p>
 
                 <div class="upload-box" id="dropAgregar">
                     <input 
@@ -712,7 +712,7 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
                                         
                     <label for="inputImagenesAgregar" class="upload-label">
                         <i class="fa-solid fa-cloud-arrow-up"></i>
-                        <strong>Arrastra imÃ¡genes o videos aquÃ­</strong>
+                        <strong>Arrastra imágenes o videos aquí</strong>
                         <span>o haz clic para seleccionarlos</span>
                     </label>
                 </div>
@@ -721,12 +721,12 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
             </div>
 
             <label>
-                DirecciÃ³n completa
+                Dirección completa
                 <input
                     type="text"
                     name="direccion_completa"
                     id="direccionAgregar"
-                    placeholder="Calle, nÃºmero, colonia">
+                    placeholder="Calle, número, colonia">
             </label>
 
             <input
@@ -748,8 +748,8 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
             </label>
 
             <label>
-                DescripciÃ³n
-                <textarea name="descripcion" placeholder="DescripciÃ³n de la propiedad"></textarea>
+                Descripción
+                <textarea name="descripcion" placeholder="Descripción de la propiedad"></textarea>
             </label>
 
         </div>
@@ -823,12 +823,12 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
             </label>
 
             <label>
-                TÃ­tulo
+                Título
                 <input type="text" name="titulo" id="edit_titulo" required>
             </label>
 
             <label>
-                Tipo de operaciÃ³n
+                Tipo de operación
                 <select name="tipo_operacion" id="edit_tipo_operacion" required>
                     <option value="venta">Venta</option>
                     <option value="renta">Renta</option>
@@ -841,7 +841,7 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
 
                 <div class="tipo-propiedad-box">
                     <select name="categoria_id" id="edit_categoria_id" required>
-                        <option value="">Selecciona una categorÃ­a</option>
+                        <option value="">Selecciona una categoría</option>
                         <?php foreach ($categorias as $categoria): ?>
                             <option value="<?= e((string) $categoria["id"]) ?>">
                                 <?= e((string) $categoria["nombre"]) ?>
@@ -913,12 +913,12 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
             </label>
 
             <label>
-                RecÃ¡maras
+                Recámaras
                 <input type="number" name="recamaras" id="edit_recamaras" min="0" step="1">
             </label>
 
             <label>
-                BaÃ±os
+                Baños
                 <input type="number" name="banos" id="edit_banos" min="0" step="1">
             </label>
 
@@ -928,18 +928,18 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
             </label>
 
             <label>
-                Terreno mÂ²
+                Terreno m²
                 <input type="number" id="edit_terreno_m2" name="terreno_m2" min="0" step="any" class="incremento-personalizado">
             </label>
 
             <label>
-                ConstrucciÃ³n mÂ²
+                Construcción m²
                 <input type="number" id="edit_construccion_m2" name="construccion_m2" min="0" step="any" class="incremento-personalizado">
             </label>
 
-            <!-- CAJA UNIFICADA DE IMÃGENES -->
+            <!-- CAJA UNIFICADA DE IMÁGENES -->
             <div>
-                <p class="imagenes-actuales-title">ImÃ¡genes de la propiedad (Arrastra para reordenar, la 1Âª es la principal)</p>
+                <p class="imagenes-actuales-title">Imágenes de la propiedad (Arrastra para reordenar, la 1ª es la principal)</p>
 
                 <div class="upload-box" id="dropEditar">
                     <input 
@@ -953,8 +953,8 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
                     
                     <label for="inputImagenesEditar" class="upload-label">
                         <i class="fa-solid fa-cloud-arrow-up"></i>
-                        <strong>Arrastra imÃ¡genes o videos aquÃ­</strong>
-                        <span>o haz clic para agregar mÃ¡s archivos</span>
+                        <strong>Arrastra imágenes o videos aquí</strong>
+                        <span>o haz clic para agregar más archivos</span>
                     </label>
                 </div>
 
@@ -963,11 +963,11 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
 
             <label class="checkbox-reemplazar">
                 <input type="checkbox" name="reemplazar_imagenes" value="1">
-                Reemplazar imÃ¡genes anteriores
+                Reemplazar imágenes anteriores
             </label>
 
             <label>
-                DirecciÃ³n completa
+                Dirección completa
                 <input
                     type="text"
                     name="direccion_completa"
@@ -993,7 +993,7 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
             </label>
 
             <label>
-                DescripciÃ³n
+                Descripción
                 <textarea name="descripcion" id="edit_descripcion"></textarea>
             </label>
 
@@ -1012,7 +1012,7 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
     </form>
 </dialog>
 
-<!-- MODAL NUEVA CATEGORÃA -->
+<!-- MODAL NUEVA CATEGORÍA -->
 <dialog class="modal modal-small" id="modalCategoria">
     <form class="modal-content" action="<?= BASE_URL ?>Backend/guardar-categoria.php" method="POST">
         <input 
@@ -1021,13 +1021,13 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
             value="<?= $_SESSION["csrf_token"] ?? "" ?>"
         >
         <div class="modal-header">
-            <h2>Nueva categorÃ­a</h2>
+            <h2>Nueva categoría</h2>
             <button type="button" class="modal-close" data-close-modal>&times;</button>
         </div>
 
         <div class="modal-body">
             <label>
-                Nombre de la categorÃ­a
+                Nombre de la categoría
                 <input type="text" name="nombre" placeholder="Ej. Casa Campestre" required>
             </label>
         </div>
@@ -1042,7 +1042,7 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
 <!-- MODAL ADMINISTRAR CATEGORIAS -->
 <dialog class="modal" id="modalCategorias">
     <div class="modal-header">
-        <h2>Administrar categorÃ­as</h2>
+        <h2>Administrar categorías</h2>
         <button type="button" class="modal-close" data-close-modal>&times;</button>
     </div>
 
@@ -1127,7 +1127,7 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
     </div>
 </dialog>
 
-<!-- MODAL OPERACIÃ“N REALIZADA -->
+<!-- MODAL OPERACIÓN REALIZADA -->
 <dialog class="modal" id="modalOperacion">
     <form class="modal-content" action="<?= BASE_URL ?>Backend/registrar-operacion.php" method="POST">
         <input type="hidden" name="csrf_token" value="<?= $_SESSION["csrf_token"] ?? "" ?>">
@@ -1135,13 +1135,13 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
         <input type="hidden" name="agente_id" id="operacion_agente_id">
 
         <div class="modal-header">
-            <h2>Registrar operaciÃ³n</h2>
+            <h2>Registrar operación</h2>
             <button type="button" class="modal-close" data-close-modal>&times;</button>
         </div>
 
         <div class="modal-body">
             <label>
-                Tipo de operaciÃ³n
+                Tipo de operación
                 <select name="tipo_operacion" id="operacion_tipo" required>
                     <option value="venta">Venta</option>
                     <option value="renta">Renta</option>
@@ -1155,12 +1155,12 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
             </label>
 
             <label>
-                TelÃ©fono
+                Teléfono
                 <input type="text" name="cliente_telefono">
             </label>
 
             <label>
-                Correo electrÃ³nico
+                Correo electrónico
                 <input type="email" name="cliente_email">
             </label>
 
@@ -1199,7 +1199,7 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
 
         <div class="modal-actions">
             <button type="button" class="btn-secondary" data-close-modal>Cancelar</button>
-            <button type="submit" class="btn-primary">Guardar operaciÃ³n</button>
+            <button type="submit" class="btn-primary">Guardar operación</button>
         </div>
     </form>
 </dialog>
@@ -1216,13 +1216,13 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
         </div>
 
         <div class="modal-body">
-            <p>Â¿Seguro que quieres eliminar esta propiedad?</p>
-            <p class="warning">Esta acciÃ³n no se podrÃ¡ deshacer.</p>
+            <p>¿Seguro que quieres eliminar esta propiedad?</p>
+            <p class="warning">Esta acción no se podrá deshacer.</p>
         </div>
 
         <div class="modal-actions">
             <button type="button" class="btn-secondary" data-close-modal>Cancelar</button>
-            <button type="submit" class="btn-danger">SÃ­, eliminar</button>
+            <button type="submit" class="btn-danger">Sí, eliminar</button>
         </div>
     </form>
 </dialog>
@@ -1234,18 +1234,18 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
         <input type="hidden" name="id" id="delete_categoria_id">
 
         <div class="modal-header">
-            <h2>Eliminar categorÃ­a</h2>
+            <h2>Eliminar categoría</h2>
             <button type="button" class="modal-close" data-close-modal>&times;</button>
         </div>
 
         <div class="modal-body">
-            <p>Â¿Seguro que quieres eliminar esta categorÃ­a?</p>
-            <p class="warning">Esta acciÃ³n no se podrÃ¡ deshacer.</p>
+            <p>¿Seguro que quieres eliminar esta categoría?</p>
+            <p class="warning">Esta acción no se podrá deshacer.</p>
         </div>
 
         <div class="modal-actions">
             <button type="button" class="btn-secondary" data-close-modal>Cancelar</button>
-            <button type="submit" class="btn-danger">SÃ­, eliminar</button>
+            <button type="submit" class="btn-danger">Sí, eliminar</button>
         </div>
     </form>
 </dialog>
@@ -1262,8 +1262,8 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
         </div>
 
         <div class="modal-body">
-            <p>Â¿EstÃ¡s seguro de que deseas eliminar esta ciudad?</p>
-            <p class="warning">Esta acciÃ³n no se podrÃ¡ deshacer.</p>
+            <p>¿Estás seguro de que deseas eliminar esta ciudad?</p>
+            <p class="warning">Esta acción no se podrá deshacer.</p>
         </div>
 
         <div class="modal-actions">
@@ -1331,7 +1331,7 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
 
 </dialog>
 
-<!-- MODAL DE Ã‰XITO -->
+<!-- MODAL DE ÉXITO -->
 <?php if ($modalExitoTitulo !== ""): ?>
     <dialog class="modal-exito" id="modalExito">
         <div class="modal-exito-content">
@@ -1365,7 +1365,7 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
             <i class="fa-solid fa-triangle-exclamation"></i>
         </div>
         <h2>Archivo demasiado pesado</h2>
-        <p id="textoErrorPeso">El archivo supera el lÃ­mite permitido.</p>
+        <p id="textoErrorPeso">El archivo supera el límite permitido.</p>
         <button type="button" id="cerrarModalErrorPeso">Entendido</button>
     </div>
 </dialog>
@@ -1450,7 +1450,7 @@ const SVG_TRASH = `
 `;
 
 /* =========================================================
-   LÃMITES
+    LÍMITES
 ========================================================= */
 
 const MAX_IMAGE_SIZE = 10 * 1024 * 1024;
@@ -1648,7 +1648,7 @@ function actualizarAtributosImagenes(contenedor, esEdicion = false) {
     const esVideo = card.dataset.esVideo === "1";
 
     /*
-         La primera IMAGEN serÃ¡ la principal.
+         La primera IMAGEN será la principal.
 
          No importa si antes hay videos:
          buscamos la primera imagen.
@@ -1677,7 +1677,7 @@ function actualizarAtributosImagenes(contenedor, esEdicion = false) {
     }
 
     /*
-         Guardar orden para ediciÃ³n
+         Guardar orden para edición
         */
 
     if (esEdicion) {
@@ -1760,7 +1760,7 @@ function inicializarSortable(contenedorId, esEdicion = false) {
       }
 
       /*
-                 Actualizar Ã­ndices
+                 Actualizar índices
                 */
 
       const cards = contenedor.querySelectorAll(".card-imagen-item");
@@ -1924,8 +1924,8 @@ function renderizarAgregar() {
 
   /*
      IMPORTANTE:
-     aquÃ­ se sincronizan los archivos
-     reales que serÃ¡n enviados por PHP.
+    aquí se sincronizan los archivos
+    reales que serán enviados por PHP.
     */
 
   inputFiles.files = dt.files;
@@ -2387,7 +2387,7 @@ document.addEventListener("click", function (e) {
 });
 
 /* =========================================================
-   VALIDACIÃ“N DE ARCHIVOS
+    VALIDACIÓN DE ARCHIVOS
 ========================================================= */
 
 function obtenerLimiteArchivo(file) {
@@ -2469,7 +2469,7 @@ function mostrarModalArchivosPesados(archivosPesados) {
 
             Pesa ${formatearPeso(archivo.tamano)}
 
-            y supera el lÃ­mite permitido
+            y supera el límite permitido
             de ${archivo.limite}.
 
         `;
@@ -2478,7 +2478,7 @@ function mostrarModalArchivosPesados(archivosPesados) {
 
             <strong>
                 Los siguientes archivos
-                superan el lÃ­mite permitido:
+                superan el límite permitido:
             </strong>
 
             <ul
@@ -2506,8 +2506,8 @@ function mostrarModalArchivosPesados(archivosPesados) {
 
                                     ${formatearPeso(archivo.tamano)}
 
-                                    â€”
-                                    lÃ­mite:
+                                    -
+                                    límite:
                                     ${archivo.limite}
 
                                 </li>
@@ -2686,7 +2686,7 @@ document.addEventListener("click", function (event) {
   document.querySelectorAll('input[name="eliminar_imagenes[]"]').forEach((input) => input.remove());
 
   /* -----------------------------------------
-           IMÃGENES EXISTENTES
+           IMÁGENES EXISTENTES
         ----------------------------------------- */
 
   let imagenesArray = propiedad.imagenes || [];
@@ -2791,7 +2791,7 @@ document.querySelectorAll(".input-precio").forEach(function (input) {
 });
 
 /* =========================================================
-   VALIDACIÃ“N DEL PRECIO
+    VALIDACIÓN DEL PRECIO
 ========================================================= */
 
 document.querySelectorAll("form").forEach(function (form) {
@@ -2803,7 +2803,7 @@ document.querySelectorAll("form").forEach(function (form) {
 });
 
 /* =========================================================
-   MODAL Ã‰XITO
+    MODAL ÉXITO
 ========================================================= */
 
 document.addEventListener("DOMContentLoaded", function () {
