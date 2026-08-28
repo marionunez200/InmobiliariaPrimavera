@@ -69,8 +69,6 @@ $stmtImagenes = $pdo->prepare("
     ORDER BY es_principal DESC,
             orden ASC,
             id ASC
-            orden ASC,
-            id ASC
 ");
 $stmtImagenes->execute([$id]);
 
@@ -150,7 +148,7 @@ $fotoAgente = !empty($propiedad['agente_foto'])
     <section class="informacion">
         <div class="titulo">
             <h2>
-                <?= e($titulo) ?>
+                <?= e($propiedad['titulo']) ?>
             </h2>
             <h3>
                 <?= e($ciudadTexto) ?>
