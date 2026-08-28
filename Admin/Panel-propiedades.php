@@ -26,18 +26,35 @@ if (!empty($_SESSION["modal_exito"])) {
 function estadoPublicacionTexto($estado)
 {
     switch ($estado) {
-        case "activo":
-            return "Activo";
-        case "vendido":
-            return "Vendido";
+        case 'activo':     return 'Activo';
+        case 'vendido':    return 'Vendido';
         case 'promesa':    return 'Promesa';
-        case "rentado":
-            return "Rentado";
-        case "traspasado":
-            return "Traspasado";
-        default:
-            return "Inactivo";
+        case 'rentado':    return 'Rentado';
+        case 'traspasado': return 'Traspasado';
+        default:           return 'Inactivo';
     }
+}
+
+function ciudadPanelTexto(?string $ciudad): string
+{
+    return match ($ciudad) {
+        'navojoa'        => 'Navojoa',
+        'san_carlos'     => 'San Carlos',
+        'ciudad_obregon' => 'Cd. Obregón',
+        'guaymas'        => 'Guaymas',
+        default          => 'Sin ciudad'
+    };
+}
+
+function tipoPanelTexto(?string $tipo): string
+{
+    return match ($tipo) {
+        'casa'            => 'Casa',
+        'departamento'    => 'Departamento',
+        'local_comercial' => 'Local comercial',
+        'terreno'         => 'Terreno',
+        default           => 'Propiedad'
+    };
 }
 
 /* ================================
@@ -124,7 +141,7 @@ if (!$esAdmin) {
 if ($buscar !== "") {
     $estadoBuscado = strtolower($buscar);
 
-    if (in_array($estadoBuscado, ['activo', 'inactivo', 'vendido', 'rentado', 'traspasado'], true)) {
+    if (in_array($estadoBuscado, ['activo', 'inactivo', 'promesa', 'vendido', 'rentado', 'traspasado'], true)) {
         $where[] = "p.estado_publicacion = ?";
         $params[] = $estadoBuscado;
     } else {
@@ -1331,6 +1348,64 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
 
 </dialog>
 
+<!-- MODAL: PROPIEDAD CON OPERACIONES -->
+<dialog
+    class="modal modal-small"
+    id="modalPropiedadConOperaciones"
+>
+
+    <div class="modal-content">
+
+        <div class="modal-header">
+
+            <h2>
+                No se puede eliminar
+            </h2>
+
+            <button
+                type="button"
+                class="modal-close"
+                data-close-modal
+            >
+                &times;
+            </button>
+
+        </div>
+
+        <div class="modal-body">
+
+            <div class="modal-aviso-icono">
+                <i class="fa-solid fa-circle-exclamation"></i>
+            </div>
+
+            <p>
+                Esta propiedad no puede eliminarse porque tiene
+                operaciones registradas.
+            </p>
+
+            <p class="warning">
+                El historial de ventas, rentas o traspasos debe
+                conservarse.
+            </p>
+
+        </div>
+
+        <div class="modal-actions">
+
+            <button
+                type="button"
+                class="btn-primary"
+                data-close-modal
+            >
+                Entendido
+            </button>
+
+        </div>
+
+    </div>
+
+</dialog>
+
 <!-- MODAL DE ÉXITO -->
 <?php if ($modalExitoTitulo !== ""): ?>
     <dialog class="modal-exito" id="modalExito">
@@ -1621,6 +1696,72 @@ document.addEventListener("click", function (event) {
         }
     }
 });
+
+function actualizarCampoRenta() {
+
+    const tipoOperacion = document.getElementById('operacion_tipo');
+    const grupoRenta = document.getElementById('grupo_renta');
+
+    if (!tipoOperacion || !grupoRenta) return;
+
+    if (tipoOperacion.value === 'renta') {
+        grupoRenta.style.display = 'block';
+    } else {
+        grupoRenta.style.display = 'none';
+
+        const inputMeses = grupoRenta.querySelector(
+            'input[name="meses_renta"]'
+        );
+
+        if (inputMeses) {
+            inputMeses.value = '';
+        }
+    }
+}
+
+document.addEventListener('click', (event) => {
+
+    const botonOperacion = event.target.closest('[data-operacion]');
+
+    if (!botonOperacion) return;
+
+    const modalOperacion = document.getElementById('modalOperacion');
+
+    const inputPropiedad = document.getElementById('operacion_propiedad_id');
+    const inputAgente = document.getElementById('operacion_agente_id');
+    const inputTipo = document.getElementById('operacion_tipo');
+    const inputPrecio = document.getElementById('operacion_precio');
+    const inputMoneda = document.getElementById('operacion_moneda');
+
+    if (inputPropiedad) {
+        inputPropiedad.value = botonOperacion.dataset.id;
+    }
+
+    if (inputAgente) {
+        inputAgente.value = botonOperacion.dataset.agente;
+    }
+
+    if (inputTipo) {
+        inputTipo.value = botonOperacion.dataset.tipo;
+    }
+
+    if (inputPrecio) {
+        inputPrecio.value = botonOperacion.dataset.precio;
+    }
+
+    if (inputMoneda) {
+    inputMoneda.value = botonOperacion.dataset.moneda;
+}
+    actualizarCampoRenta();
+
+    abrirModal(modalOperacion);
+
+    abrirModal(modalOperacion);
+});
+
+document
+    .getElementById('operacion_tipo')
+    ?.addEventListener('change', actualizarCampoRenta);
 
 /* ==========================================================================
    ORDENAMIENTO Y REORGANIZACIÓN
@@ -2819,6 +2960,26 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById('cerrarModalExito')?.addEventListener('click', cerrarExito);
     modalExito.addEventListener('click', (e) => { if (e.target === modalExito) cerrarExito(); });
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+
+    const parametros =
+        new URLSearchParams(window.location.search);
+
+    const error = parametros.get('error');
+
+    if (error === 'propiedad_con_operaciones') {
+
+        const modal =
+            document.getElementById(
+                'modalPropiedadConOperaciones'
+            );
+
+        abrirModal(modal);
+    }
+
+});
+
 </script>
 
 </body>

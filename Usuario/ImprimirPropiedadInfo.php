@@ -69,6 +69,8 @@ $stmtImagenes = $pdo->prepare("
     ORDER BY es_principal DESC,
             orden ASC,
             id ASC
+            orden ASC,
+            id ASC
 ");
 $stmtImagenes->execute([$id]);
 
@@ -99,8 +101,7 @@ if ($propiedad['tipo_operacion'] === 'renta') {
     $precioTexto .= '/mes';
 }
 
-$titulo = e((string)$propiedad['titulo']);
-
+// Se obtiene el nombre de la ciudad traído por la consulta SQL
 $ciudadTexto = $propiedad['ciudad_nombre'] ?? $propiedad['ciudad'] ?? 'Ciudad no disponible';
 $tipoTexto = $propiedad['categoria_nombre'] ?? 'Propiedad';
 $operacionTexto = operacionDetalleTexto($propiedad['tipo_operacion']);
