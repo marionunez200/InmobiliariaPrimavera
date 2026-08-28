@@ -7,8 +7,6 @@ if (!defined('BASE_URL')) {
 require_once ROOT_PATH . '/Config/database.php';
 require_once ROOT_PATH . '/Admin/auth.php';
 
-validar_csrf();
-
 
 /*
 ================================
@@ -37,18 +35,10 @@ function crearSlugPanel(string $texto): string
 }
 
 
-
 /*
 ================================
-VERIFICAR PERMISOS PROPIEDAD
+VERIFICAR PERMISOS
 ================================
-
-Admin:
-- Puede modificar cualquiera
-
-Editor:
-- Solo sus propiedades
-
 */
 
 function usuarioPuedeModificarPropiedad(
@@ -60,14 +50,11 @@ function usuarioPuedeModificarPropiedad(
         return true;
     }
 
-
     if (($_SESSION['rol'] ?? '') === 'editor') {
-
 
         if (empty($_SESSION['id_agente'])) {
             return false;
         }
-
 
         $stmt = $pdo->prepare("
             SELECT COUNT(*)
@@ -76,20 +63,16 @@ function usuarioPuedeModificarPropiedad(
             AND agente_id = ?
         ");
 
-
         $stmt->execute([
             $propiedad_id,
             $_SESSION['id_agente']
         ]);
 
-
         return (int)$stmt->fetchColumn() > 0;
     }
 
-
     return false;
 }
-
 
 
 /*
@@ -103,143 +86,106 @@ function propiedadTieneImagenPrincipal(
     int $propiedad_id
 ): bool {
 
-
     $stmt = $pdo->prepare("
         SELECT COUNT(*)
-        FROM imagenes_propiedades
+        FROM multimedia_propiedades
         WHERE propiedad_id = ?
         AND es_principal = 1
+        AND tipo = 'imagen'
     ");
 
-
     $stmt->execute([$propiedad_id]);
-
 
     return (int)$stmt->fetchColumn() > 0;
 }
 
 
-
-
 /*
 ================================
-GUARDAR IMÁGENES
+GUARDAR IMÁGENES Y VIDEOS
 ================================
 */
 
 function guardarImagenesPropiedad(
     PDO $pdo,
     int $propiedad_id,
-    string $titulo,
-    bool $reemplazar = false
+    string $titulo
 ): void {
 
-
     if (!usuarioPuedeModificarPropiedad($pdo, $propiedad_id)) {
-
         throw new Exception(
             'No tienes permisos para modificar esta propiedad.'
         );
-
     }
-
-
 
     if (
         empty($_FILES['imagenes']) ||
-        empty($_FILES['imagenes']['name']) ||
+        !isset($_FILES['imagenes']['name']) ||
         !is_array($_FILES['imagenes']['name'])
     ) {
         return;
     }
 
-
-
     $carpetaUploads = ROOT_PATH . '/Uploads/propiedades/';
-
-
 
     if (!is_dir($carpetaUploads)) {
 
-        mkdir(
-            $carpetaUploads,
-            0755,
-            true
-        );
-
+        if (!mkdir($carpetaUploads, 0755, true) && !is_dir($carpetaUploads)) {
+            throw new Exception(
+                'No se pudo crear la carpeta Uploads/propiedades/.'
+            );
+        }
     }
 
+    if (!is_writable($carpetaUploads)) {
+        throw new Exception(
+            'La carpeta Uploads/propiedades/ no tiene permisos de escritura.'
+        );
+    }
 
 
     /*
-    ================================
-    REEMPLAZAR IMÁGENES
-    ================================
+    ==========================================
+    CONFIGURACIÓN DE ARCHIVOS
+    ==========================================
     */
 
+    $extensionesImagen = [
+        'jpg',
+        'jpeg',
+        'png',
+        'webp'
+    ];
 
-    if ($reemplazar) {
+    $extensionesVideo = [
+        'mp4',
+        'webm',
+        'mov',
+        'avi'
+    ];
 
+    $mimesImagen = [
+        'image/jpeg',
+        'image/png',
+        'image/webp'
+    ];
 
-        $stmtImagenes = $pdo->prepare("
-            SELECT imagen_url
-            FROM imagenes_propiedades
-            WHERE propiedad_id = ?
-        ");
+    $mimesVideo = [
+        'video/mp4',
+        'video/webm',
+        'video/quicktime',
+        'video/x-msvideo'
+    ];
 
-
-        $stmtImagenes->execute([
-            $propiedad_id
-        ]);
-
-
-        $imagenesViejas = $stmtImagenes->fetchAll();
-
-
-
-        foreach ($imagenesViejas as $imagen) {
-
-
-            $ruta = (string)$imagen['imagen_url'];
-
-
-            if (
-                str_starts_with(
-                    $ruta,
-                    'Uploads/propiedades/'
-                )
-            ) {
+    $maxSizeImagen = 10 * 1024 * 1024; // 10 MB
+    $maxSizeVideo  = 15 * 1024 * 1024; // 15 MB
 
 
-                $rutaServidor = ROOT_PATH . '/' . $ruta;
-
-
-                if (is_file($rutaServidor)) {
-
-                    unlink($rutaServidor);
-
-                }
-
-            }
-
-        }
-
-
-
-        $stmtDelete = $pdo->prepare("
-            DELETE FROM imagenes_propiedades
-            WHERE propiedad_id = ?
-        ");
-
-
-        $stmtDelete->execute([
-            $propiedad_id
-        ]);
-
-    }
-
-
-
+    /*
+    ==========================================
+    ¿YA EXISTE UNA IMAGEN PRINCIPAL?
+    ==========================================
+    */
 
     $hayPrincipal = propiedadTieneImagenPrincipal(
         $pdo,
@@ -247,34 +193,20 @@ function guardarImagenesPropiedad(
     );
 
 
-
-    $extensionesPermitidas = [
-        'jpg',
-        'jpeg',
-        'png',
-        'webp'
-    ];
-
-
-    $maxSize = 5 * 1024 * 1024;
-
-
+    /*
+    ==========================================
+    RECORRER ARCHIVOS
+    ==========================================
+    */
 
     $total = count($_FILES['imagenes']['name']);
 
-
-
     for ($i = 0; $i < $total; $i++) {
 
-
-        $nombreOriginal = $_FILES['imagenes']['name'][$i];
-
-        $tmpName = $_FILES['imagenes']['tmp_name'][$i];
-
-        $error = $_FILES['imagenes']['error'][$i];
-
-        $size = $_FILES['imagenes']['size'][$i];
-
+        $nombreOriginal = $_FILES['imagenes']['name'][$i] ?? '';
+        $tmpName        = $_FILES['imagenes']['tmp_name'][$i] ?? '';
+        $error          = $_FILES['imagenes']['error'][$i] ?? UPLOAD_ERR_NO_FILE;
+        $size           = (int)($_FILES['imagenes']['size'][$i] ?? 0);
 
 
         if ($error === UPLOAD_ERR_NO_FILE) {
@@ -282,70 +214,33 @@ function guardarImagenesPropiedad(
         }
 
 
+        /*
+        ==========================================
+        ERROR DE SUBIDA
+        ==========================================
+        */
 
         if ($error !== UPLOAD_ERR_OK) {
 
             throw new Exception(
-                'Error al subir una imagen.'
+                "Error al subir el archivo '$nombreOriginal'. Código: $error"
             );
-
         }
-
-
-
-        if ($size > $maxSize) {
-
-            throw new Exception(
-                'Una imagen supera los 5 MB.'
-            );
-
-        }
-
 
 
         if (!is_uploaded_file($tmpName)) {
 
             throw new Exception(
-                'Archivo inválido.'
+                "El archivo '$nombreOriginal' no es válido."
             );
-
         }
 
 
-
-        $finfo = new finfo(FILEINFO_MIME_TYPE);
-
-        $mime = $finfo->file($tmpName);
-
-
-
-        $mimesPermitidos = [
-            'image/jpeg',
-            'image/png',
-            'image/webp'
-        ];
-
-
-
-        if (!in_array($mime, $mimesPermitidos, true)) {
-
-            throw new Exception(
-                'El archivo seleccionado no es una imagen válida.'
-            );
-
-        }
-
-
-
-        if (getimagesize($tmpName) === false) {
-
-            throw new Exception(
-                'La imagen está dañada o es inválida.'
-            );
-
-        }
-
-
+        /*
+        ==========================================
+        EXTENSIÓN
+        ==========================================
+        */
 
         $extension = strtolower(
             pathinfo(
@@ -355,129 +250,284 @@ function guardarImagenesPropiedad(
         );
 
 
+        /*
+        ==========================================
+        MIME
+        ==========================================
+        */
 
-        if (!in_array($extension, $extensionesPermitidas, true)) {
+        $finfo = new finfo(FILEINFO_MIME_TYPE);
+
+        $mime = $finfo->file($tmpName);
+
+
+        /*
+        ==========================================
+        DETERMINAR TIPO
+        ==========================================
+        */
+
+        if (in_array($extension, $extensionesImagen, true)) {
+
+            $tipo = 'imagen';
+
+        } elseif (in_array($extension, $extensionesVideo, true)) {
+
+            $tipo = 'video';
+
+        } else {
 
             throw new Exception(
-                'Solo se permiten imágenes JPG, JPEG, PNG o WEBP.'
+                "El archivo '$nombreOriginal' tiene un formato no permitido."
             );
-
         }
 
 
+        /*
+        ==========================================
+        VALIDAR IMAGEN
+        ==========================================
+        */
 
-        $nombreNuevo =
-            'propiedad-' .
-            $propiedad_id .
-            '-' .
-            uniqid() .
-            '.webp';
+        if ($tipo === 'imagen') {
 
+            if ($size > $maxSizeImagen) {
 
+                throw new Exception(
+                    "La imagen '$nombreOriginal' supera el límite de 10 MB."
+                );
+            }
 
-        $rutaDestinoServidor =
-            $carpetaUploads .
-            $nombreNuevo;
+            if (!in_array($mime, $mimesImagen, true)) {
 
+                throw new Exception(
+                    "La imagen '$nombreOriginal' no es válida."
+                );
+            }
 
+            if (@getimagesize($tmpName) === false) {
 
-        $rutaParaBaseDatos =
-            'Uploads/propiedades/' .
-            $nombreNuevo;
-
-
-
-
-        if (!convertirAWebp(
-            $tmpName,
-            $rutaDestinoServidor,
-            $extension
-        )) {
-
-            throw new Exception(
-                'No se pudo convertir la imagen a WEBP.'
-            );
-
+                throw new Exception(
+                    "La imagen '$nombreOriginal' está dañada o es inválida."
+                );
+            }
         }
 
 
+        /*
+        ==========================================
+        VALIDAR VIDEO
+        ==========================================
+        */
 
-        $esPrincipal = $hayPrincipal ? 0 : 1;
+        if ($tipo === 'video') {
+
+            if ($size > $maxSizeVideo) {
+
+                throw new Exception(
+                    "El video '$nombreOriginal' supera el límite de 15 MB."
+                );
+            }
+
+            if (!in_array($mime, $mimesVideo, true)) {
+
+                throw new Exception(
+                    "El video '$nombreOriginal' no es válido."
+                );
+            }
+        }
 
 
+        /*
+        ==========================================
+        CALCULAR ORDEN
+        ==========================================
+        */
 
         $stmtOrden = $pdo->prepare("
-            SELECT COALESCE(MAX(orden),0)+1
-            FROM imagenes_propiedades
+            SELECT COALESCE(MAX(orden), 0) + 1
+            FROM multimedia_propiedades
             WHERE propiedad_id = ?
         ");
-
-
 
         $stmtOrden->execute([
             $propiedad_id
         ]);
 
-
-
         $orden = (int)$stmtOrden->fetchColumn();
 
 
+        /*
+        ==========================================
+        DETERMINAR PRINCIPAL
+        ==========================================
+        */
 
+        /*
+        La primera imagen que se guarda será
+        principal únicamente si todavía no
+        existe una imagen principal.
+        */
 
-        $stmtImg = $pdo->prepare("
-            INSERT INTO imagenes_propiedades
-            (
-                propiedad_id,
-                imagen_url,
-                texto_alternativo,
-                es_principal,
-                orden
-            )
-            VALUES (?,?,?,?,?)
-        ");
+        $esPrincipal = 0;
 
-
-
-
-        try {
-
-
-            $stmtImg->execute([
-                $propiedad_id,
-                $rutaParaBaseDatos,
-                $titulo,
-                $esPrincipal,
-                $orden
-            ]);
-
-
-
-        } catch(Exception $e) {
-
-
-
-            if (is_file($rutaDestinoServidor)) {
-
-                unlink($rutaDestinoServidor);
-
-            }
-
-
-            throw $e;
-
+        if (!$hayPrincipal && $tipo === 'imagen') {
+            $esPrincipal = 1;
         }
 
 
+        /*
+        ==========================================
+        GUARDAR IMAGEN
+        ==========================================
+        */
 
-        $hayPrincipal = true;
+        if ($tipo === 'imagen') {
 
+            $nombreNuevo =
+                'propiedad-' .
+                $propiedad_id .
+                '-' .
+                uniqid() .
+                '.webp';
+
+            $rutaDestinoServidor =
+                $carpetaUploads .
+                $nombreNuevo;
+
+            $rutaParaBaseDatos =
+                'Uploads/propiedades/' .
+                $nombreNuevo;
+
+
+            if (!convertirAWebp(
+                $tmpName,
+                $rutaDestinoServidor,
+                $extension
+            )) {
+
+                throw new Exception(
+                    "No se pudo convertir la imagen '$nombreOriginal' a WEBP."
+                );
+            }
+
+
+            try {
+
+                $stmtImg = $pdo->prepare("
+                    INSERT INTO multimedia_propiedades
+                    (
+                        propiedad_id,
+                        tipo,
+                        archivo_url,
+                        texto_alternativo,
+                        es_principal,
+                        orden
+                    )
+                    VALUES (?, ?, ?, ?, ?, ?)
+                ");
+
+                $stmtImg->execute([
+                    $propiedad_id,
+                    'imagen',
+                    $rutaParaBaseDatos,
+                    $titulo,
+                    $esPrincipal,
+                    $orden
+                ]);
+
+            } catch (Exception $e) {
+
+                if (is_file($rutaDestinoServidor)) {
+                    unlink($rutaDestinoServidor);
+                }
+
+                throw $e;
+            }
+
+
+            if ($esPrincipal) {
+                $hayPrincipal = true;
+            }
+        }
+
+
+        /*
+        ==========================================
+        GUARDAR VIDEO
+        ==========================================
+        */
+
+        elseif ($tipo === 'video') {
+
+            $nombreNuevo =
+                'propiedad-' .
+                $propiedad_id .
+                '-' .
+                uniqid() .
+                '.' .
+                $extension;
+
+            $rutaDestinoServidor =
+                $carpetaUploads .
+                $nombreNuevo;
+
+            $rutaParaBaseDatos =
+                'Uploads/propiedades/' .
+                $nombreNuevo;
+
+
+            if (!move_uploaded_file(
+                $tmpName,
+                $rutaDestinoServidor
+            )) {
+
+                throw new Exception(
+                    "No se pudo guardar el video '$nombreOriginal'."
+                );
+            }
+
+
+            try {
+
+                $stmtVideo = $pdo->prepare("
+                    INSERT INTO multimedia_propiedades
+                    (
+                        propiedad_id,
+                        tipo,
+                        archivo_url,
+                        texto_alternativo,
+                        es_principal,
+                        orden
+                    )
+                    VALUES (?, ?, ?, ?, ?, ?)
+                ");
+
+                $stmtVideo->execute([
+                    $propiedad_id,
+                    'video',
+                    $rutaParaBaseDatos,
+                    $titulo,
+                    0,
+                    $orden
+                ]);
+
+            } catch (Exception $e) {
+
+                if (is_file($rutaDestinoServidor)) {
+                    unlink($rutaDestinoServidor);
+                }
+
+                throw $e;
+            }
+        }
     }
-
 }
+
+
 /*
 ================================
- ELIMINAR IMÁGENES SELECCIONADAS
+ELIMINAR IMÁGENES
 ================================
 */
 
@@ -487,16 +537,12 @@ function eliminarImagenesSeleccionadas(
     array $idsImagenes
 ): void {
 
-
     if (!usuarioPuedeModificarPropiedad($pdo, $propiedad_id)) {
 
         throw new Exception(
             'No tienes permisos para modificar esta propiedad.'
         );
-
     }
-
-
 
     $idsImagenes = array_values(
         array_filter(
@@ -504,13 +550,9 @@ function eliminarImagenesSeleccionadas(
         )
     );
 
-
-
     if (empty($idsImagenes)) {
         return;
     }
-
-
 
     $placeholders = implode(
         ',',
@@ -521,38 +563,27 @@ function eliminarImagenesSeleccionadas(
         )
     );
 
-
-
     $params = array_merge(
         [$propiedad_id],
         $idsImagenes
     );
 
 
-
     $stmtImagenes = $pdo->prepare("
-        SELECT id, imagen_url
-        FROM imagenes_propiedades
+        SELECT id, archivo_url
+        FROM multimedia_propiedades
         WHERE propiedad_id = ?
         AND id IN ($placeholders)
     ");
 
-
-
     $stmtImagenes->execute($params);
-
-
 
     $imagenes = $stmtImagenes->fetchAll();
 
 
-
     foreach ($imagenes as $imagen) {
 
-
-        $ruta = (string)$imagen['imagen_url'];
-
-
+        $ruta = (string)$imagen['archivo_url'];
 
         if (
             str_starts_with(
@@ -561,91 +592,86 @@ function eliminarImagenesSeleccionadas(
             )
         ) {
 
-
             $rutaServidor =
                 ROOT_PATH . '/' . $ruta;
 
-
-
             if (is_file($rutaServidor)) {
-
                 unlink($rutaServidor);
-
             }
-
         }
-
     }
 
 
-
-
     $stmtDelete = $pdo->prepare("
-        DELETE FROM imagenes_propiedades
+        DELETE FROM multimedia_propiedades
         WHERE propiedad_id = ?
         AND id IN ($placeholders)
     ");
 
-
-
     $stmtDelete->execute($params);
 
 
-
-
     /*
-    Si eliminó la imagen principal,
-    asignar otra como principal
+    Si eliminó la principal,
+    asignar otra imagen como principal.
     */
-
 
     $stmtPrincipal = $pdo->prepare("
         SELECT COUNT(*)
-        FROM imagenes_propiedades
+        FROM multimedia_propiedades
         WHERE propiedad_id = ?
         AND es_principal = 1
+        AND tipo = 'imagen'
     ");
-
-
 
     $stmtPrincipal->execute([
         $propiedad_id
     ]);
 
-
-
     $tienePrincipal =
         (int)$stmtPrincipal->fetchColumn() > 0;
 
 
-
     if (!$tienePrincipal) {
 
-
         $stmtNuevaPrincipal = $pdo->prepare("
-            UPDATE imagenes_propiedades
-            SET es_principal = 1
+            SELECT id
+            FROM multimedia_propiedades
             WHERE propiedad_id = ?
+            AND tipo = 'imagen'
             ORDER BY orden ASC, id ASC
             LIMIT 1
         ");
-
-
 
         $stmtNuevaPrincipal->execute([
             $propiedad_id
         ]);
 
+        $nuevaPrincipal =
+            $stmtNuevaPrincipal->fetchColumn();
+
+
+        if ($nuevaPrincipal) {
+
+            $stmtPonerPrincipal = $pdo->prepare("
+                UPDATE multimedia_propiedades
+                SET es_principal = 1
+                WHERE id = ?
+                AND propiedad_id = ?
+            ");
+
+            $stmtPonerPrincipal->execute([
+                $nuevaPrincipal,
+                $propiedad_id
+            ]);
+        }
     }
-
 }
-
-
 
 
 /*
 ================================
- CAMBIAR IMAGEN PRINCIPAL
+CAMBIAR IMAGEN PRINCIPAL
 ================================
 */
 
@@ -655,82 +681,60 @@ function cambiarImagenPrincipal(
     int $imagen_id
 ): void {
 
-
     if (!usuarioPuedeModificarPropiedad($pdo, $propiedad_id)) {
 
         throw new Exception(
             'No tienes permisos para modificar esta propiedad.'
         );
-
     }
-
-
 
     if ($imagen_id <= 0) {
         return;
     }
 
 
-
     $stmtVerificar = $pdo->prepare("
         SELECT COUNT(*)
-        FROM imagenes_propiedades
+        FROM multimedia_propiedades
         WHERE id = ?
         AND propiedad_id = ?
+        AND tipo = 'imagen'
     ");
-
-
 
     $stmtVerificar->execute([
         $imagen_id,
         $propiedad_id
     ]);
 
-
-
-    $existe =
-        (int)$stmtVerificar->fetchColumn() > 0;
-
-
-
-    if (!$existe) {
+    if ((int)$stmtVerificar->fetchColumn() === 0) {
         return;
     }
 
 
-
     $stmtQuitarPrincipal = $pdo->prepare("
-        UPDATE imagenes_propiedades
+        UPDATE multimedia_propiedades
         SET es_principal = 0
         WHERE propiedad_id = ?
     ");
-
-
 
     $stmtQuitarPrincipal->execute([
         $propiedad_id
     ]);
 
 
-
-
     $stmtPonerPrincipal = $pdo->prepare("
-        UPDATE imagenes_propiedades
+        UPDATE multimedia_propiedades
         SET es_principal = 1
         WHERE id = ?
         AND propiedad_id = ?
+        AND tipo = 'imagen'
     ");
-
-
 
     $stmtPonerPrincipal->execute([
         $imagen_id,
         $propiedad_id
     ]);
-
 }
-
-
 
 
 /*
@@ -745,56 +749,70 @@ function convertirAWebp(
     string $extension
 ): bool {
 
+    if (!function_exists('imagewebp')) {
+        return false;
+    }
 
     switch ($extension) {
-
 
         case 'jpg':
         case 'jpeg':
 
-            $imagen = imagecreatefromjpeg($origen);
+            if (!function_exists('imagecreatefromjpeg')) {
+                return false;
+            }
+
+            $imagen = @imagecreatefromjpeg($origen);
 
             break;
-
 
 
         case 'png':
 
-            $imagen = imagecreatefrompng($origen);
+            if (!function_exists('imagecreatefrompng')) {
+                return false;
+            }
 
+            $imagen = @imagecreatefrompng($origen);
 
-            imagepalettetotruecolor($imagen);
+            if ($imagen) {
 
-            imagealphablending(
-                $imagen,
-                true
-            );
+                if (function_exists('imagepalettetotruecolor')) {
+                    @imagepalettetotruecolor($imagen);
+                }
 
-            imagesavealpha(
-                $imagen,
-                true
-            );
+                imagealphablending(
+                    $imagen,
+                    false
+                );
 
+                imagesavealpha(
+                    $imagen,
+                    true
+                );
+            }
 
             break;
 
 
-
         case 'webp':
 
-            return move_uploaded_file(
-                $origen,
-                $destino
-            );
+            if (!function_exists('imagecreatefromwebp')) {
+                return move_uploaded_file(
+                    $origen,
+                    $destino
+                );
+            }
 
+            $imagen = @imagecreatefromwebp($origen);
+
+            break;
 
 
         default:
 
             return false;
-
     }
-
 
 
     if (!$imagen) {
@@ -802,19 +820,14 @@ function convertirAWebp(
     }
 
 
-
-
-    $resultado = imagewebp(
+    $resultado = @imagewebp(
         $imagen,
         $destino,
         85
     );
 
 
-
     imagedestroy($imagen);
-
-
 
     return $resultado;
 }

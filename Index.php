@@ -80,7 +80,7 @@ require_once ROOT_PATH . '/Includes/header.php';
                     <p class="hero-brand">PRIMAVERA INMOBILIARIA, S.C</p>
                 
                     <h1 id="hero-title">
-                        Contigo en cada paso hacia tu nuevo proyecto
+                        Contigo en cada paso, hacia tu nuevo proyecto.
                     </h1>
                 
                     <form class="search-form" action="<?= BASE_URL ?>Usuario/Catalogo.php" method="GET">

@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('BASE_URL')) {
     require_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
 }
@@ -6,6 +7,7 @@ if (!defined('BASE_URL')) {
 require_once ROOT_PATH . '/Config/database.php';
 require_once ROOT_PATH . '/Admin/auth.php';
 require_once ROOT_PATH . '/Backend/Propiedades/funciones-propiedad.php';
+
 validar_csrf();
 requiere_editor();
 
@@ -15,17 +17,32 @@ if (session_status() === PHP_SESSION_NONE) {
 
 $pdo = db();
 
-/* ================================
-   CONTROL DE AGENTE POR ROL
-================================ */
+
+/*
+================================
+CONTROL DE AGENTE
+================================
+*/
+
 if ($_SESSION['rol'] === 'editor') {
+
     if (empty($_SESSION['id_agente'])) {
         die('El usuario editor no tiene un agente asignado.');
     }
+
     $agente_id = (int)$_SESSION['id_agente'];
+
 } else {
+
     $agente_id = (int)($_POST['agente_id'] ?? 0);
 }
+
+
+/*
+================================
+VALIDAR AGENTE
+================================
+*/
 
 $stmtAgente = $pdo->prepare("
     SELECT COUNT(*)
@@ -33,17 +50,25 @@ $stmtAgente = $pdo->prepare("
     WHERE id = ?
     AND activo = 1
 ");
-$stmtAgente->execute([$agente_id]);
+
+$stmtAgente->execute([
+    $agente_id
+]);
 
 if ((int)$stmtAgente->fetchColumn() === 0) {
     die('El agente seleccionado no existe o está inactivo.');
 }
 
-/* ================================
-   RECOLECCIÓN Y VALIDACIÓN DE DATOS
-================================ */
+
+/*
+================================
+DATOS
+================================
+*/
+
 $titulo = trim($_POST['titulo'] ?? '');
 $descripcion = trim($_POST['descripcion'] ?? '');
+
 $precio = (float)($_POST['precio'] ?? 0);
 
 if ($precio <= 0) {
@@ -51,28 +76,76 @@ if ($precio <= 0) {
 }
 
 $moneda = trim($_POST['moneda'] ?? 'MXN');
-$tipo_operacion = $_POST['tipo_operacion'] ?? 'venta';
-$categoria_id = (int)($_POST['categoria_id'] ?? 0);
-$estado_publicacion = $_POST['estado_publicacion'] ?? 'activo';
-$ciudad_id = (int)($_POST['ciudad_id'] ?? 0);
 
-$direccion_completa = trim($_POST['direccion_completa'] ?? '');
-$direccion_completa = $direccion_completa === '' ? null : $direccion_completa;
-$google_maps_url = trim($_POST['google_maps_url'] ?? '');
-$google_maps_url = $google_maps_url === '' ? null : $google_maps_url;
+$tipo_operacion =
+    $_POST['tipo_operacion'] ?? 'venta';
 
-$recamaras = max(0, (int)($_POST['recamaras'] ?? 0));
-$banos = max(0, (float)($_POST['banos'] ?? 0));
-$estacionamientos = max(0, (int)($_POST['estacionamientos'] ?? 0));
+$categoria_id =
+    (int)($_POST['categoria_id'] ?? 0);
 
-$terreno_m2 = ($_POST['terreno_m2'] ?? '') !== '' ? $_POST['terreno_m2'] : null;
-$construccion_m2 = ($_POST['construccion_m2'] ?? '') !== '' ? $_POST['construccion_m2'] : null;
+$estado_publicacion =
+    $_POST['estado_publicacion'] ?? 'activo';
 
-$destacada = isset($_POST['destacada']) ? 1 : 0;
+$ciudad_id =
+    (int)($_POST['ciudad_id'] ?? 0);
+
+
+$direccion_completa =
+    trim($_POST['direccion_completa'] ?? '');
+
+$direccion_completa =
+    $direccion_completa === ''
+        ? null
+        : $direccion_completa;
+
+
+$google_maps_url =
+    trim($_POST['google_maps_url'] ?? '');
+
+$google_maps_url =
+    $google_maps_url === ''
+        ? null
+        : $google_maps_url;
+
+
+$recamaras =
+    max(0, (int)($_POST['recamaras'] ?? 0));
+
+$banos =
+    max(0, (float)($_POST['banos'] ?? 0));
+
+$estacionamientos =
+    max(0, (int)($_POST['estacionamientos'] ?? 0));
+
+
+$terreno_m2 =
+    ($_POST['terreno_m2'] ?? '') !== ''
+        ? $_POST['terreno_m2']
+        : null;
+
+
+$construccion_m2 =
+    ($_POST['construccion_m2'] ?? '') !== ''
+        ? $_POST['construccion_m2']
+        : null;
+
+
+$destacada =
+    isset($_POST['destacada'])
+        ? 1
+        : 0;
+
+
+/*
+================================
+VALIDACIONES
+================================
+*/
 
 if ($agente_id <= 0) {
     die('Debes seleccionar un agente.');
 }
+
 
 $stmtCategoria = $pdo->prepare("
     SELECT COUNT(*)
@@ -80,32 +153,69 @@ $stmtCategoria = $pdo->prepare("
     WHERE id = ?
     AND activo = 1
 ");
-$stmtCategoria->execute([$categoria_id]);
+
+$stmtCategoria->execute([
+    $categoria_id
+]);
 
 if ((int)$stmtCategoria->fetchColumn() === 0) {
     die('La categoría seleccionada no existe.');
 }
 
+
 if ($ciudad_id <= 0) {
     die('Debes seleccionar una ciudad válida.');
 }
+
 
 if ($titulo === '') {
     die('El título es obligatorio.');
 }
 
-if (!in_array($tipo_operacion, ['venta', 'renta', 'traspaso'], true)) {
+
+if (!in_array(
+    $tipo_operacion,
+    ['venta', 'renta', 'traspaso'],
+    true
+)) {
     die('Tipo de operación inválido.');
 }
 
-if (!in_array($estado_publicacion, ['activo', 'inactivo', 'vendido', 'rentado', 'traspasado'], true)) {
+
+if (!in_array(
+    $estado_publicacion,
+    [
+        'activo',
+        'inactivo',
+        'vendido',
+        'rentado',
+        'traspasado'
+    ],
+    true
+)) {
     die('Estado de publicación inválido.');
 }
 
+
+/*
+================================
+GUARDAR
+================================
+*/
+
 try {
+
     $pdo->beginTransaction();
 
+
+    /*
+    ========================================
+    CREAR PROPIEDAD
+    ========================================
+    */
+
     $slug = crearSlugPanel($titulo);
+
 
     $sql = "
         INSERT INTO propiedades (
@@ -133,7 +243,9 @@ try {
         )
     ";
 
+
     $stmt = $pdo->prepare($sql);
+
 
     $stmt->execute([
         $agente_id,
@@ -156,63 +268,85 @@ try {
         $construccion_m2
     ]);
 
-    $propiedad_id = (int)$pdo->lastInsertId();
 
-    /* =========================================================
-       GUARDAR IMÁGENES CON ORDEN Y PRINCIPAL
-       ========================================================= */
-    if (!empty($_FILES['imagenes']['name'][0])) {
-        $stmtImg = $pdo->prepare("
-            INSERT INTO imagenes_propiedades 
-            (propiedad_id, imagen_url, texto_alternativo, es_principal, orden) 
-            VALUES (?, ?, ?, ?, ?)
-        ");
+    $propiedad_id =
+        (int)$pdo->lastInsertId();
 
-        $archivos = $_FILES['imagenes'];
-        $totalArchivos = count($archivos['name']);
 
-        for ($i = 0; $i < $totalArchivos; $i++) {
-            if ($archivos['error'][$i] === UPLOAD_ERR_OK) {
-                $ext = strtolower(pathinfo($archivos['name'][$i], PATHINFO_EXTENSION));
-                $nombreArchivo = 'propiedad-' . $propiedad_id . '-' . uniqid() . '.' . $ext;
-                $rutaRelativa = 'Uploads/propiedades/' . $nombreArchivo;
-                $rutaDestino = ROOT_PATH . '/' . $rutaRelativa;
+    /*
+    ========================================
+    GUARDAR ARCHIVOS
+    ========================================
+    */
 
-                if (move_uploaded_file($archivos['tmp_name'][$i], $rutaDestino)) {
-                    $esPrincipal = ($i === 0) ? 1 : 0;
-                    $orden = $i + 1;
+    guardarImagenesPropiedad(
+        $pdo,
+        $propiedad_id,
+        $titulo
+    );
 
-                    $stmtImg->execute([
-                        $propiedad_id,
-                        $rutaRelativa,
-                        $titulo,
-                        $esPrincipal,
-                        $orden
-                    ]);
-                }
-            }
-        }
+
+    /*
+    ========================================
+    ASEGURAR IMAGEN PRINCIPAL
+    ========================================
+    */
+
+    if (!propiedadTieneImagenPrincipal(
+        $pdo,
+        $propiedad_id
+    )) {
+
+        throw new Exception(
+            'La propiedad debe tener al menos una imagen principal.'
+        );
     }
+
 
     $pdo->commit();
 
+
     $_SESSION['modal_exito'] = [
         'titulo' => 'Propiedad agregada',
-        'mensaje' => 'La propiedad se agregó correctamente al catálogo.'
+        'mensaje' =>
+            'La propiedad se agregó correctamente al catálogo.'
     ];
 
-    header('Location: ' . BASE_URL . 'Admin/Panel-propiedades.php');
+
+    header(
+        'Location: ' .
+        BASE_URL .
+        'Admin/Panel-propiedades.php'
+    );
+
     exit;
 
+
 } catch (Exception $e) {
-    $pdo->rollBack();
-    error_log($e->getMessage());
+
+    if ($pdo->inTransaction()) {
+        $pdo->rollBack();
+    }
+
+    error_log(
+        'Error agregar propiedad: ' .
+        $e->getMessage()
+    );
+
 
     $_SESSION['modal_exito'] = [
         'titulo' => 'Error',
-        'mensaje' => 'No fue posible guardar la propiedad.'
+        'mensaje' =>
+            'No fue posible guardar la propiedad: ' .
+            $e->getMessage()
     ];
 
-    header('Location: ' . BASE_URL . 'Admin/Panel-propiedades.php');
+
+    header(
+        'Location: ' .
+        BASE_URL .
+        'Admin/Panel-propiedades.php'
+    );
+
     exit;
 }

@@ -23,8 +23,8 @@ try {
     $pdo->beginTransaction();
 
     $stmtImagenes = $pdo->prepare("
-        SELECT imagen_url
-        FROM imagenes_propiedades
+        SELECT archivo_url
+        FROM multimedia_propiedades
         WHERE propiedad_id = ?
     ");
 
@@ -43,7 +43,7 @@ try {
     }
 
     $stmt = $pdo->prepare("
-        DELETE FROM imagenes_propiedades
+        DELETE FROM multimedia_propiedades
         WHERE propiedad_id = ?
     ");
 

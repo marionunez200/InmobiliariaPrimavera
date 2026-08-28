@@ -64,6 +64,7 @@ function operacionTexto(?string $operacion): string
     return match ($operacion) {
         'venta' => 'venta',
         'renta' => 'renta',
+        'traspaso' => 'traspaso',
         default => ''
     };
 }
@@ -74,15 +75,16 @@ $categoria = (int)($_GET['categoria'] ?? 0);
 $precioMin = $_GET['precio_min'] ?? '';
 $precioMax = $_GET['precio_max'] ?? '';
 
+// Consulta ajustada especificando tipo = 'imagen' para la vista previa
 $sql = "
     SELECT
         p.*,
         c.nombre AS categoria_nombre,
         ci.nombre AS ciudad_nombre,
         (
-            SELECT ip.imagen_url
-            FROM imagenes_propiedades ip
-            WHERE ip.propiedad_id = p.id
+            SELECT ip.archivo_url
+            FROM multimedia_propiedades ip
+            WHERE ip.propiedad_id = p.id AND ip.tipo = 'imagen'
             ORDER BY ip.es_principal DESC, ip.orden ASC, ip.id ASC
             LIMIT 1
         ) AS imagen_principal
@@ -235,8 +237,8 @@ require_once ROOT_PATH . '/Includes/header.php';
                 <div>
                     <div>
                         <div class="slider-container">
-                            <input class="range-slider" type="range" id="min-range" min="0" max="10000000" value="0" step="100">
-                            <input class="range-slider" type="range" id="max-range" min="0" max="10000000" value="10000000" step="100">
+                            <input class="range-slider" type="range" id="min-range" min="0" max="30000000" value="<?= is_numeric($precioMin) ? $precioMin : 0 ?>" step="100">
+                            <input class="range-slider" type="range" id="max-range" min="0" max="30000000" value="<?= is_numeric($precioMax) ? $precioMax : 30000000 ?>" step="100">
                         </div>
                     </div>
                 </div>
@@ -311,7 +313,7 @@ require_once ROOT_PATH . '/Includes/header.php';
                         </p>
 
                         <div class="info_card">
-                            <p>Baños: <?= e((int)$propiedad['banos']) ?></p>
+                            <p>Baños: <?= e((string)(int)$propiedad['banos']) ?></p>
                             <p>Recámaras: <?= e((string)$propiedad['recamaras']) ?></p>
                         </div>
 
@@ -469,12 +471,6 @@ require_once ROOT_PATH . '/Includes/header.php';
             if (mensajeBurbuja) {
                 mensajeBurbuja.style.display = "none";
             }
-        });
-    }
-
-    if (cerrarChat) {
-        cerrarChat.addEventListener("click", () => {
-            chatCard.classList.remove("activo");
         });
     }
 

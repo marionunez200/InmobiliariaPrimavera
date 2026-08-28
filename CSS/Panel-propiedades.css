@@ -1700,6 +1700,14 @@ MODAL DE ÉXITO
     color:#f39c12;
 }
 
+/* Clase para indicar que el movimiento no está permitido */
+.borde-rojo-error {
+    outline: 3px solid #dc3545 !important; /* Rojo de error */
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(220, 53, 69, 0.5);
+    transition: outline 0.2s ease, box-shadow 0.2s ease;
+}
+
 /* GRID 3 COLUMNAS ULTRA FLUIDO */
 #previewAgregar,
 #imagenesActualesEditar {

@@ -38,6 +38,7 @@
 }
 
 
+
 @keyframes entrarDerecha {
 
     from {
@@ -465,6 +466,116 @@
 .modal-exito-content button:hover{
     background:#17305e;
     transform:scale(1.05);
+}
+
+.miniatura-item video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 6px;
+    pointer-events: none; /* Evita interferir con el clic de la miniatura */
+}
+
+.miniatura-item .icono-play {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.65);
+    color: #ffffff;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    pointer-events: none;
+    z-index: 2;
+}
+
+/* ==========================================================================
+   CORRECCIÓN PARA VIDEOS EN PREVISUALIZACIONES Y MINIATURAS
+   ========================================================================== */
+
+/* 1. Asegura que el video dentro de las tarjetas de previsualización ocupe su espacio correctamente */
+.card-imagen-thumb video.img-preview-src {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* 2. Aplica las mismas dimensiones de las miniaturas de imágenes a las miniaturas de video */
+.miniatura-item {
+    flex-shrink: 0;
+    width: 180px;
+    height: 120px;
+    position: relative;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+/* Contenedor del video principal para que soporte el ícono flotante de pausa */
+.contenedor-video-principal {
+    position: relative;
+    width: 70vw;
+    height: 600px;
+    margin: 15px auto;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #000;
+}
+
+@media (max-width: 768px) {
+    .contenedor-video-principal {
+        width: 95%;
+        height: 260px;
+    }
+}
+
+/* El video principal ocupa todo su contenedor */
+.contenedor-video-principal video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+    cursor: pointer;
+}
+
+/* Ícono central de pausa (triángulo) */
+.overlay-pausa {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 70px;
+    height: 70px;
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 28px;
+    pointer-events: none; /* Para que los clics atraviesen el ícono y vayan al video */
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 10;
+}
+
+/* Se muestra cuando el video está pausado */
+.contenedor-video-principal.pausado .overlay-pausa {
+    opacity: 1;
+}
+
+/* 3. Ajuste responsive para las miniaturas en dispositivos móviles */
+@media (max-width: 768px) {
+    .miniatura-item {
+        width: 120px;
+        height: 80px;
+    }
 }
 
 /* Responsive - Teléfono */

@@ -4,12 +4,14 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
 require_once ROOT_PATH . '/Config/database.php';
 require_once ROOT_PATH . '/Admin/auth.php';
 requiere_admin();
+
 $pdo = db();
 
+// Limpieza automática de mensajes antiguos
 $pdo->exec("
     DELETE
     FROM mensajes_contacto
-    WHERE estado_mensaje='hecho'
+    WHERE estado_mensaje = 'hecho'
     AND completado_en <= DATE_SUB(NOW(), INTERVAL 10 DAY)
 ");
 
@@ -31,16 +33,13 @@ $stmt = $pdo->query("
     SELECT
         m.*,
         p.titulo,
-        i.imagen_url
+        i.archivo_url
     FROM mensajes_contacto m
-
     LEFT JOIN propiedades p
         ON p.id = m.propiedad_id
-
-    LEFT JOIN imagenes_propiedades i
+    LEFT JOIN multimedia_propiedades i
         ON i.propiedad_id = p.id
         AND i.es_principal = 1
-
     ORDER BY m.creado_en DESC
 ");
 
@@ -50,20 +49,13 @@ $mes = $_GET['mes'] ?? date('m');
 $anio = $_GET['anio'] ?? date('Y');
 
 ?>
-
 <!DOCTYPE html>
 <html lang="es-MX">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
     <title>Inmobiliaria Primavera | Panel Administrativo</title>
-
-    <meta 
-        name="description" 
-        content="Panel administrativo, agrega agentes y propiedades"
-    >
-
+    <meta name="description" content="Panel administrativo, gestión de mensajes de contacto">
     <meta name="robots" content="noindex, nofollow">
     <meta name="theme-color" content="#ffffff">
 
@@ -94,7 +86,6 @@ $anio = $_GET['anio'] ?? date('Y');
                 <?php endif; ?>
             </div>
         </div>
-
     </header>
 
     <aside class="admin-sidebar">
@@ -111,21 +102,18 @@ $anio = $_GET['anio'] ?? date('Y');
             <input
                 type="hidden"
                 name="csrf_token"
-                value="<?= $_SESSION['csrf_token'] ?>"
+                value="<?= $_SESSION['csrf_token'] ?? '' ?>"
             >
 
-            <button
-                class="cerrar-sesion"
-                type="submit">
+            <button class="cerrar-sesion" type="submit">
                 Cerrar sesión
             </button>
         </form>
-
     </aside>
 
     <main class="admin-main">
 
-                <section class="cards_top">
+        <section class="cards_top">
             <ul>
                 <li class="card_info_propiedades">
                     <i class="fa-solid fa-house icon"></i>
@@ -174,21 +162,20 @@ $anio = $_GET['anio'] ?? date('Y');
 
                         <article class="detalles_agente_fila">
 
-                            <!-- Nombre -->
+                            <!-- Nombre & Propiedad asociadas -->
                             <div class="info_mensaje">
-
                                 <img
                                     class="mini_propiedad"
-                                    src="<?= e($mensaje['imagen_url'] ? BASE_URL . $mensaje['imagen_url'] : BASE_URL . 'Imagenes/sin-imagen.webp') ?>"
-                                    alt="<?= e($mensaje['titulo']) ?>">
+                                    src="<?= e($mensaje['archivo_url'] ? BASE_URL . $mensaje['archivo_url'] : BASE_URL . 'Imagenes/sin-imagen.webp') ?>"
+                                    alt="<?= e($mensaje['titulo'] ?? 'Sin propiedad') ?>">
 
                                 <div>
                                     <h3><?= e($mensaje['nombre']) ?></h3>
-                                    <p><?= e($mensaje['titulo']) ?></p>
-                                    <small>ID mensaje: <?= e($mensaje['id']) ?></small>
+                                    <p><?= e($mensaje['titulo'] ?? 'Consulta general') ?></p>
+                                    <small>ID mensaje: <?= e((string)$mensaje['id']) ?></small>
                                 </div>
-
                             </div>
+
                             <!-- Teléfono -->
                             <span class="text_dentro">
                                 <?= e($mensaje['telefono']) ?>
@@ -228,15 +215,15 @@ $anio = $_GET['anio'] ?? date('Y');
                                     <i class="fa-solid fa-eye"></i>
                                 </button>
 
-                                <?php if (strtolower(trim($mensaje['estado_mensaje'])) == 'cerrado'): ?>
+                                <?php if (strtolower(trim($mensaje['estado_mensaje'])) === 'cerrado' || strtolower(trim($mensaje['estado_mensaje'])) === 'hecho'): ?>
 
                                     <form action="<?= BASE_URL ?>Backend/eliminar-mensaje.php" method="POST">
                                         <input 
                                             type="hidden"
                                             name="csrf_token"
-                                            value="<?= $_SESSION['csrf_token'] ?>"
+                                            value="<?= $_SESSION['csrf_token'] ?? '' ?>"
                                         >
-                                        <input type="hidden" name="id" value="<?= e($mensaje['id']) ?>">
+                                        <input type="hidden" name="id" value="<?= e((string)$mensaje['id']) ?>">
 
                                         <button
                                             type="button"
@@ -244,7 +231,6 @@ $anio = $_GET['anio'] ?? date('Y');
                                             data-confirmar-eliminar>
                                             <i class="fa-solid fa-trash"></i>
                                         </button>
-
                                     </form>
 
                                 <?php else: ?>
@@ -253,9 +239,9 @@ $anio = $_GET['anio'] ?? date('Y');
                                         <input 
                                             type="hidden"
                                             name="csrf_token"
-                                            value="<?= $_SESSION['csrf_token'] ?>"
+                                            value="<?= $_SESSION['csrf_token'] ?? '' ?>"
                                         >
-                                        <input type="hidden" name="id" value="<?= e($mensaje['id']) ?>">
+                                        <input type="hidden" name="id" value="<?= e((string)$mensaje['id']) ?>">
 
                                         <button type="button" class="hecho" data-confirmar-hecho>
                                             <i class="fa-solid fa-check-double"></i>
@@ -279,114 +265,63 @@ $anio = $_GET['anio'] ?? date('Y');
     </main>
 </div>
 
+<!-- MODAL PREVIEW MENSAJE -->
 <dialog id="modalMensaje" class="modal">
-
     <div class="modal-content">
-
         <div class="modal-header">
             <h2>Mensaje recibido</h2>
-
-            <button
-                type="button"
-                class="modal-close"
-                data-close-modal>
-                &times;
-            </button>
+            <button type="button" class="modal-close" data-close-modal>&times;</button>
         </div>
-
         <div class="modal-body">
-
             <p><strong>Nombre:</strong> <span id="verNombre"></span></p>
-
             <p><strong>Teléfono:</strong> <span id="verTelefono"></span></p>
-
             <p><strong>Email:</strong> <span id="verEmail"></span></p>
-
             <p><strong>Mensaje:</strong></p>
-
             <textarea id="verMensaje" readonly></textarea>
-
         </div>
-
     </div>
-
 </dialog>
 
-        <dialog id="modalConfirmarHecho" class="modal-exito">
-
-            <div class="modal-exito-content">
-
-                <div class="modal-exito-icon">
-                    <i class="fa-solid fa-circle-check"></i>
-                </div>
-
-                <h2>¿Marcar como hecho?</h2>
-
-                <p>
-                    El mensaje cambiará a estado <strong>"Hecho"</strong>.
-                </p>
-
-                <div class="acciones-confirmacion">
-
-                    <button
-                        type="button"
-                        class="btn-cancelar"
-                        id="cancelarHecho">
-                        Cancelar
-                    </button>
-
-                    <button
-                        type="button"
-                        class="btn-confirmar"
-                        id="confirmarHecho">
-                        Sí, marcar
-                    </button>
-
-                </div>
-
-            </div>
-
-        </dialog>
-
-        <dialog id="modalConfirmarEliminar" class="modal-confirmar">
-
-        <div class="modal-confirmar-content">
-
-            <div class="modal-confirmar-icono">
-                <i class="fa-solid fa-trash"></i>
-            </div>
-
-            <h2>Eliminar mensaje</h2>
-
-            <p>
-                ¿Estás seguro de que deseas eliminar este mensaje?<br>
-                Esta acción no se puede deshacer.
-            </p>
-
-            <div class="modal-confirmar-botones">
-
-                <button type="button" class="cancelar" id="cancelarEliminar">
-                    Cancelar
-                </button>
-
-                <button type="button" class="eliminar" id="confirmarEliminar">
-                    Eliminar
-                </button>
-
-            </div>
-
+<!-- MODAL MARCAR COMO HECHO -->
+<dialog id="modalConfirmarHecho" class="modal-exito">
+    <div class="modal-exito-content">
+        <div class="modal-exito-icon">
+            <i class="fa-solid fa-circle-check"></i>
         </div>
+        <h2>¿Marcar como hecho?</h2>
+        <p>El mensaje cambiará a estado <strong>"Hecho"</strong>.</p>
+        <div class="acciones-confirmacion">
+            <button type="button" class="btn-cancelar" id="cancelarHecho">Cancelar</button>
+            <button type="button" class="btn-confirmar" id="confirmarHecho">Sí, marcar</button>
+        </div>
+    </div>
+</dialog>
 
-    </dialog>
+<!-- MODAL ELIMINAR -->
+<dialog id="modalConfirmarEliminar" class="modal-confirmar">
+    <div class="modal-confirmar-content">
+        <div class="modal-confirmar-icono">
+            <i class="fa-solid fa-trash"></i>
+        </div>
+        <h2>Eliminar mensaje</h2>
+        <p>
+            ¿Estás seguro de que deseas eliminar este mensaje?<br>
+            Esta acción no se puede deshacer.
+        </p>
+        <div class="modal-confirmar-botones">
+            <button type="button" class="cancelar" id="cancelarEliminar">Cancelar</button>
+            <button type="button" class="eliminar" id="confirmarEliminar">Eliminar</button>
+        </div>
+    </div>
+</dialog>
+
 <script>
-
+// Modal Ver Mensaje Completo
 const modalMensaje = document.getElementById("modalMensaje");
 
-document.addEventListener("click", (e)=>{
-
+document.addEventListener("click", (e) => {
     const boton = e.target.closest("[data-ver]");
-
-    if(!boton) return;
+    if (!boton) return;
 
     document.getElementById("verNombre").textContent = boton.dataset.nombre;
     document.getElementById("verTelefono").textContent = boton.dataset.telefono;
@@ -394,270 +329,59 @@ document.addEventListener("click", (e)=>{
     document.getElementById("verMensaje").value = boton.dataset.mensaje;
 
     modalMensaje.showModal();
-
 });
 
-/* ================================
-    CERRAR MODALES
-================================ */
-function abrirModal(modal) {
-    if (modal) {
-        modal.showModal();
-    }
-}
-
-function cerrarModal(modal) {
-    if (modal) {
-        modal.close();
-    }
-}
-
+// Cerrar Modales con atributo data-close-modal
 document.addEventListener('click', (event) => {
     const closeButton = event.target.closest('[data-close-modal]');
-
-    if (!closeButton) {
-        return;
-    }
-
+    if (!closeButton) return;
     const modal = closeButton.closest('dialog');
-
-    cerrarModal(modal);
+    if (modal) modal.close();
 });
 
-/* ================================
-   FOTO ACTUAL DEL AGENTE
-================================ */
-
-function renderizarFotoActualAgente(fotoUrl, nombreAgente) {
-    const contenedor = document.getElementById('fotoActualAgenteEditar');
-
-    if (!contenedor) {
-        return;
-    }
-
-    contenedor.innerHTML = '';
-
-    const foto = fotoUrl || 'Imagenes/agente1.webp';
-    const nombreArchivo = foto.split('/').pop();
-
-    const card = document.createElement('div');
-    card.className = 'archivo-preview archivo-existente';
-
-    card.innerHTML = `
-        <img src="${foto}" alt="${nombreAgente || 'Agente'}">
-
-        <div class="archivo-info">
-            <span class="archivo-nombre" title="${nombreArchivo}">
-                ${nombreArchivo}
-            </span>
-
-            <span class="archivo-peso">
-                Foto actual
-            </span>
-        </div>
-    `;
-
-    contenedor.appendChild(card);
-}
-
-/* ================================
-   PREVIEW MINI DE FOTO
-================================ */
-
-function formatearPesoAgente(bytes) {
-    if (bytes < 1024) {
-        return bytes + ' B';
-    }
-
-    if (bytes < 1024 * 1024) {
-        return (bytes / 1024).toFixed(1) + ' KB';
-    }
-
-    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
-}
-
-function configurarFotoAgente(dropId, inputId, previewId) {
-    const dropzone = document.getElementById(dropId);
-    const input = document.getElementById(inputId);
-    const preview = document.getElementById(previewId);
-
-    if (!dropzone || !input || !preview) {
-        return;
-    }
-
-    function mostrarPreview(file) {
-        preview.innerHTML = '';
-
-        if (!file || !file.type.startsWith('image/')) {
-            return;
-        }
-
-        const reader = new FileReader();
-
-        reader.onload = (event) => {
-            const card = document.createElement('div');
-            card.className = 'archivo-preview';
-
-            card.innerHTML = `
-                <img src="${event.target.result}" alt="${file.name}">
-
-                <div class="archivo-info">
-                    <span class="archivo-nombre" title="${file.name}">
-                        ${file.name}
-                    </span>
-
-                    <span class="archivo-peso">
-                        ${formatearPesoAgente(file.size)}
-                    </span>
-
-                    <button type="button" class="archivo-quitar">
-                        Quitar
-                    </button>
-                </div>
-            `;
-
-            preview.appendChild(card);
-        };
-
-        reader.readAsDataURL(file);
-    }
-
-    input.addEventListener('change', () => {
-        mostrarPreview(input.files[0]);
-    });
-
-    preview.addEventListener('click', (event) => {
-        const botonQuitar = event.target.closest('.archivo-quitar');
-
-        if (!botonQuitar) {
-            return;
-        }
-
-        input.value = '';
-        preview.innerHTML = '';
-    });
-
-    dropzone.addEventListener('dragover', (event) => {
-        event.preventDefault();
-        dropzone.classList.add('dragover');
-    });
-
-    dropzone.addEventListener('dragleave', () => {
-        dropzone.classList.remove('dragover');
-    });
-
-    dropzone.addEventListener('drop', (event) => {
-        event.preventDefault();
-        dropzone.classList.remove('dragover');
-
-        const file = event.dataTransfer.files[0];
-
-        if (!file || !file.type.startsWith('image/')) {
-            return;
-        }
-
-        const dataTransfer = new DataTransfer();
-        dataTransfer.items.add(file);
-
-        input.files = dataTransfer.files;
-
-        mostrarPreview(file);
-    });
-}
-
-configurarFotoAgente('dropAgenteAgregar', 'inputAgenteAgregar', 'previewAgenteAgregar');
-configurarFotoAgente('dropAgenteEditar', 'inputAgenteEditar', 'previewAgenteEditar');
-
-/* ================================
-   MODAL DE ÉXITO
-================================ */
-
-document.addEventListener('DOMContentLoaded', () => {
-    const modalExito = document.getElementById('modalExito');
-    const cerrarModalExito = document.getElementById('cerrarModalExito');
-
-    if (!modalExito) {
-        return;
-    }
-
-    modalExito.showModal();
-
-    function cerrarExito() {
-        modalExito.close();
-    }
-
-    if (cerrarModalExito) {
-        cerrarModalExito.addEventListener('click', cerrarExito);
-    }
-
-    modalExito.addEventListener('click', (event) => {
-        if (event.target === modalExito) {
-            cerrarExito();
-        }
-    });
-});
-
+// Confirmación Marcar como Hecho
 const modalConfirmarHecho = document.getElementById("modalConfirmarHecho");
-
 let formularioHecho = null;
 
 document.querySelectorAll("[data-confirmar-hecho]").forEach((boton) => {
-
     boton.addEventListener("click", () => {
-
         formularioHecho = boton.closest("form");
-
         modalConfirmarHecho.showModal();
-
     });
-
 });
 
 document.getElementById("cancelarHecho").addEventListener("click", () => {
-
     modalConfirmarHecho.close();
-
 });
 
 document.getElementById("confirmarHecho").addEventListener("click", () => {
-
-    if(formularioHecho){
+    if (formularioHecho) {
         formularioHecho.submit();
     }
-
 });
 
+// Confirmación Eliminar Mensaje
 const modalEliminar = document.getElementById("modalConfirmarEliminar");
 const btnCancelarEliminar = document.getElementById("cancelarEliminar");
 const btnConfirmarEliminar = document.getElementById("confirmarEliminar");
-
 let formularioEliminar = null;
 
 document.querySelectorAll("[data-confirmar-eliminar]").forEach(boton => {
-
     boton.addEventListener("click", () => {
-
         formularioEliminar = boton.closest("form");
-
         modalEliminar.showModal();
-
     });
-
 });
 
 btnCancelarEliminar.addEventListener("click", () => {
-
     formularioEliminar = null;
     modalEliminar.close();
-
 });
 
 btnConfirmarEliminar.addEventListener("click", () => {
-
-    if(formularioEliminar){
+    if (formularioEliminar) {
         formularioEliminar.submit();
     }
-
 });
 </script>
 </body>

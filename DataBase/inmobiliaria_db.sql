@@ -96,13 +96,13 @@ INSERT INTO `ciudades` (`id`, `nombre`, `activo`, `protegida`) VALUES
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `imagenes_propiedades`
+-- Estructura de tabla para la tabla `multimedia_propiedades`
 --
 
-CREATE TABLE `imagenes_propiedades` (
+CREATE TABLE `multimedia_propiedades` (
   `id` int NOT NULL,
   `propiedad_id` int NOT NULL,
-  `imagen_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `archivo_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `texto_alternativo` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `es_principal` tinyint DEFAULT '0',
   `orden` int DEFAULT '0',
@@ -110,10 +110,10 @@ CREATE TABLE `imagenes_propiedades` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Volcado de datos para la tabla `imagenes_propiedades`
+-- Volcado de datos para la tabla `multimedia_propiedades`
 --
 
-INSERT INTO `imagenes_propiedades` (`id`, `propiedad_id`, `imagen_url`, `texto_alternativo`, `es_principal`, `orden`, `creado_en`) VALUES
+INSERT INTO `multimedia_propiedades` (`id`, `propiedad_id`, `archivo_url`, `texto_alternativo`, `es_principal`, `orden`, `creado_en`) VALUES
 (1, 1, 'Uploads/propiedades/propiedad-1-6a753246eac7e.webp', 'Casa en Punta Arena, Guaymas', 0, 1, '2026-08-07 01:17:59'),
 (2, 1, 'Uploads/propiedades/propiedad-1-6a7532470a256.webp', 'Casa en Punta Arena, Guaymas', 0, 2, '2026-08-07 01:17:59'),
 (3, 1, 'Uploads/propiedades/propiedad-1-6a7532471cdac.webp', 'Casa en Punta Arena, Guaymas', 1, 3, '2026-08-07 01:17:59'),
@@ -309,9 +309,9 @@ ALTER TABLE `ciudades`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indices de la tabla `imagenes_propiedades`
+-- Indices de la tabla `multimedia_propiedades`
 --
-ALTER TABLE `imagenes_propiedades`
+ALTER TABLE `multimedia_propiedades`
   ADD PRIMARY KEY (`id`),
   ADD KEY `idx_imagenes_propiedad` (`propiedad_id`);
 
@@ -386,9 +386,9 @@ ALTER TABLE `ciudades`
   MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
--- AUTO_INCREMENT de la tabla `imagenes_propiedades`
+-- AUTO_INCREMENT de la tabla `multimedia_propiedades`
 --
-ALTER TABLE `imagenes_propiedades`
+ALTER TABLE `multimedia_propiedades`
   MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
@@ -439,10 +439,10 @@ ALTER TABLE `agentes`
   ADD CONSTRAINT `fk_agentes_usuario` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios_admin` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 --
--- Filtros para la tabla `imagenes_propiedades`
+-- Filtros para la tabla `multimedia_propiedades`
 --
-ALTER TABLE `imagenes_propiedades`
-  ADD CONSTRAINT `fk_imagenes_propiedades` FOREIGN KEY (`propiedad_id`) REFERENCES `propiedades` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `multimedia_propiedades`
+  ADD CONSTRAINT `fk_multimedia_propiedades` FOREIGN KEY (`propiedad_id`) REFERENCES `propiedades` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `mensajes_contacto`

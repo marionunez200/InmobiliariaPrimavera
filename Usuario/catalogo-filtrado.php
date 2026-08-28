@@ -49,9 +49,10 @@ $sql = "
         c.nombre AS categoria_nombre,
         ci.nombre AS ciudad_nombre,
         (
-            SELECT ip.imagen_url
-            FROM imagenes_propiedades ip
-            WHERE ip.propiedad_id = p.id
+            SELECT ip.archivo_url
+            FROM multimedia_propiedades ip
+            WHERE ip.propiedad_id = p.id 
+            AND ip.tipo = 'imagen'
             ORDER BY ip.es_principal DESC, ip.orden ASC, ip.id ASC
             LIMIT 1
         ) AS imagen_principal

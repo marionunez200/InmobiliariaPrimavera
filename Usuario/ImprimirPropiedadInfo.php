@@ -4,10 +4,15 @@ if (!defined('BASE_URL')) {
 }
 
 require_once ROOT_PATH . '/Config/database.php';
+require_once ROOT_PATH . '/Backend/cambio-moneda.php';
 
 $pdo = db();
 
 $monedaMostrar = strtoupper($_GET['moneda'] ?? 'MXN');
+
+if (!in_array($monedaMostrar, ['MXN', 'USD'], true)) {
+    $monedaMostrar = 'MXN';
+}
 
 function operacionDetalleTexto(?string $operacion): string
 {
@@ -25,7 +30,7 @@ if (!$id || !is_numeric($id)) {
     exit('Propiedad no encontrada');
 }
 
-// Consulta SQL con JOIN a la tabla ciudades
+// Consulta SQL con JOIN a la tabla ciudades, categorías y agentes
 $stmt = $pdo->prepare("
     SELECT
         p.*,
@@ -54,12 +59,13 @@ if (!$propiedad) {
     exit('Propiedad no encontrada');
 }
 
+// Filtrar solo elementos multimedia de tipo 'imagen' para el reporte impreso
 $stmtImagenes = $pdo->prepare("
     SELECT
-        imagen_url,
+        archivo_url,
         texto_alternativo
-    FROM imagenes_propiedades
-    WHERE propiedad_id = ?
+    FROM multimedia_propiedades
+    WHERE propiedad_id = ? AND tipo = 'imagen'
     ORDER BY es_principal DESC,
              orden ASC,
              id ASC
@@ -70,27 +76,31 @@ $imagenes = $stmtImagenes->fetchAll();
 
 if (empty($imagenes)) {
     $imagenes[] = [
-        'imagen_url' => 'Imagenes/casa2.webp',
+        'archivo_url' => 'Imagenes/casa2.webp',
         'texto_alternativo' => $propiedad['titulo']
     ];
 }
 
-$imagenPrincipal = $imagenes[0]['imagen_url'];
+$imagenPrincipal = $imagenes[0]['archivo_url'];
 
-$precioTexto = '$' .
-number_format((float)$propiedad['precio'], 2)
-. ' '
-. $propiedad['moneda'];
+// Conversión y formato dinámico de moneda
+$precioConvertido = MonedaService::convertir(
+    (float)$propiedad['precio'],
+    $propiedad['moneda'],
+    $monedaMostrar
+);
 
-if ($propiedad['tipo_operacion'] == 'renta') {
+$precioTexto = MonedaService::formato(
+    $precioConvertido,
+    $monedaMostrar
+);
+
+if ($propiedad['tipo_operacion'] === 'renta') {
     $precioTexto .= '/mes';
 }
 
-// Se obtiene el nombre de la ciudad traído por la consulta SQL
 $ciudadTexto = $propiedad['ciudad_nombre'] ?? $propiedad['ciudad'] ?? 'Ciudad no disponible';
-
 $tipoTexto = $propiedad['categoria_nombre'] ?? 'Propiedad';
-
 $operacionTexto = operacionDetalleTexto($propiedad['tipo_operacion']);
 
 $fotoAgente = !empty($propiedad['agente_foto'])
@@ -130,7 +140,7 @@ $fotoAgente = !empty($propiedad['agente_foto'])
 
     <section class="galeria">
         <?php foreach ($imagenes as $imagen): ?>
-            <img src="<?= BASE_URL ?><?= e($imagen['imagen_url']) ?>" alt="<?= e($imagen['texto_alternativo']) ?>">
+            <img src="<?= BASE_URL ?><?= e($imagen['archivo_url']) ?>" alt="<?= e($imagen['texto_alternativo']) ?>">
         <?php endforeach; ?>
     </section>
 
@@ -156,13 +166,13 @@ $fotoAgente = !empty($propiedad['agente_foto'])
         <div class="card">
             <i class="fa-solid fa-house"></i>
             <span>Construcción</span>
-            <strong><?= e((string)$propiedad['construccion_m2']) ?> m²</strong>
+            <strong><?= e((string)($propiedad['construccion_m2'] ?? 0)) ?> m²</strong>
         </div>
 
         <div class="card">
             <i class="fa-solid fa-ruler-combined"></i>
             <span>Terreno</span>
-            <strong><?= e((string)$propiedad['terreno_m2']) ?> m²</strong>
+            <strong><?= e((string)($propiedad['terreno_m2'] ?? 0)) ?> m²</strong>
         </div>
 
         <div class="card">
@@ -174,7 +184,7 @@ $fotoAgente = !empty($propiedad['agente_foto'])
         <div class="card">
             <i class="fa-solid fa-toilet"></i>
             <span>Baños</span>
-            <strong><?= e((string)$propiedad['banos']) ?></strong>
+            <strong><?= (int)$propiedad['banos'] ?></strong>
         </div>
 
         <div class="card">
@@ -198,12 +208,16 @@ $fotoAgente = !empty($propiedad['agente_foto'])
     <?php endif; ?>
 
     <section class="agente">
-        <img src="<?= BASE_URL ?><?= e($fotoAgente) ?>" alt="<?= e($propiedad['agente_nombre']) ?>">
+        <img src="<?= BASE_URL ?><?= e($fotoAgente) ?>" alt="<?= e($propiedad['agente_nombre'] ?? 'Agente') ?>">
         <div>
-            <h2><?= e($propiedad['agente_nombre']) ?></h2>
+            <h2><?= e((string)($propiedad['agente_nombre'] ?? 'Primavera Inmobiliaria')) ?></h2>
             <p>Asesor Inmobiliario</p>
-            <p><i class="fa-solid fa-phone"></i> <?= e($propiedad['agente_telefono']) ?></p>
-            <p><i class="fa-solid fa-envelope"></i> <?= e($propiedad['agente_email']) ?></p>
+            <?php if (!empty($propiedad['agente_telefono'])): ?>
+                <p><i class="fa-solid fa-phone"></i> <?= e($propiedad['agente_telefono']) ?></p>
+            <?php endif; ?>
+            <?php if (!empty($propiedad['agente_email'])): ?>
+                <p><i class="fa-solid fa-envelope"></i> <?= e($propiedad['agente_email']) ?></p>
+            <?php endif; ?>
         </div>
     </section>
 
@@ -219,16 +233,5 @@ $fotoAgente = !empty($propiedad['agente_foto'])
     </footer>
 
 </div>
-
-<script>
-window.onload = function() {
-    window.print();
-};
-
-window.onafterprint = function() {
-    window.close();
-};
-</script>
-
 </body>
 </html>

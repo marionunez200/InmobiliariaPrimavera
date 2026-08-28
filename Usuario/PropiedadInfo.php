@@ -53,9 +53,10 @@ if (!$propiedad) {
     die('Propiedad no encontrada.');
 }
 
+// Obtener elementos multimedia (fotos y videos)
 $stmtImagenes = $pdo->prepare("
-    SELECT imagen_url, texto_alternativo
-    FROM imagenes_propiedades
+    SELECT archivo_url, texto_alternativo, tipo
+    FROM multimedia_propiedades
     WHERE propiedad_id = ?
     ORDER BY es_principal DESC, orden ASC, id ASC
 ");
@@ -65,12 +66,13 @@ $imagenes = $stmtImagenes->fetchAll();
 
 if (empty($imagenes)) {
     $imagenes[] = [
-        'imagen_url' => 'Imagenes/casa2.webp',
-        'texto_alternativo' => $propiedad['titulo']
+        'archivo_url' => 'Imagenes/casa2.webp',
+        'texto_alternativo' => $propiedad['titulo'],
+        'tipo' => 'imagen'
     ];
 }
 
-$imagenPrincipal = $imagenes[0]['imagen_url'] ?? 'Imagenes/casa2.webp';
+$primerElemento = $imagenes[0];
 
 $precioConvertido = MonedaService::convertir(
     (float)$propiedad['precio'],
@@ -109,14 +111,28 @@ require_once ROOT_PATH . '/Includes/header.php';
 ?>
 
 <main>
+    <!-- Sección Multimedia -->
     <section class="propiedad_imagenes">
-        <figure>
-            <img 
-                class="imagen_principal" 
-                id="imagenPrincipal"
-                src="<?= BASE_URL ?><?= e((string)$imagenPrincipal) ?>" 
-                alt="<?= e((string)$propiedad['titulo']) ?>"
-            >
+        <figure id="contenedorVisor">
+            <?php if (($primerElemento['tipo'] ?? 'imagen') === 'video'): ?>
+                <div class="contenedor-video-principal" id="wrapperVideo">
+                    <video 
+                        class="imagen_principal" 
+                        id="visorPrincipal"
+                        src="<?= BASE_URL ?><?= e((string)$primerElemento['archivo_url']) ?>" 
+                        muted
+                        playsinline>
+                    </video>
+                    <div class="overlay-pausa">▶</div>
+                </div>
+            <?php else: ?>
+                <img 
+                    class="imagen_principal" 
+                    id="visorPrincipal"
+                    src="<?= BASE_URL ?><?= e((string)$primerElemento['archivo_url']) ?>" 
+                    alt="<?= e((string)$propiedad['titulo']) ?>"
+                >
+            <?php endif; ?>
         </figure>
 
         <div class="contenedor_miniaturas">
@@ -126,12 +142,22 @@ require_once ROOT_PATH . '/Includes/header.php';
 
             <div class="miniaturas" id="miniaturas">
                 <div class="miniaturas-contenedor">
-                    <?php foreach ($imagenes as $imagen): ?>
-                        <img
-                            src="<?= BASE_URL ?><?= e((string)$imagen['imagen_url']) ?>"
-                            alt="<?= e((string)($imagen['texto_alternativo'] ?: $propiedad['titulo'])) ?>"
-                            onclick="cambiarImagen(this.src)"
+                    <?php foreach ($imagenes as $index => $item): ?>
+                        <div 
+                            class="miniatura-item <?= $index === 0 ? 'activa' : '' ?>"
+                            data-type="<?= e($item['tipo'] ?? 'imagen') ?>"
+                            data-src="<?= BASE_URL ?><?= e((string)$item['archivo_url']) ?>"
+                            onclick="cambiarMedia(this)"
                         >
+                            <?php if (($item['tipo'] ?? 'imagen') === 'video'): ?>
+                                <video src="<?= BASE_URL ?><?= e((string)$item['archivo_url']) ?>#t=0.5" preload="metadata" muted></video>
+                            <?php else: ?>
+                                <img
+                                    src="<?= BASE_URL ?><?= e((string)$item['archivo_url']) ?>"
+                                    alt="<?= e((string)($item['texto_alternativo'] ?: $propiedad['titulo'])) ?>"
+                                >
+                            <?php endif; ?>
+                        </div>
                     <?php endforeach; ?>
                 </div>
             </div>
@@ -142,49 +168,30 @@ require_once ROOT_PATH . '/Includes/header.php';
         </div>
     </section>
 
-    <!-- Información de la propiedad -->
+    <!-- Información detallada de la propiedad -->
     <section class="propiedad">
         <article class="info_propiedad">
-            <h1>
-                <?= e($titulo) ?>
-            </h1>
+            <h1><?= e($titulo) ?></h1>
 
-            <!-- Ubicación y precio -->
             <div class="ubicacion_precio">
-                <p>
-                    <?= e((string)$propiedad['direccion_completa']) ?>
-                </p>
-
-                <p class="precio">
-                    <?= e($precio) ?>
-                </p>
-
+                <p><?= e((string)$propiedad['direccion_completa']) ?></p>
+                <p class="precio"><?= e($precio) ?></p>
             </div>
 
-            <!-- Características -->
             <div class="caracteristicas">
                 <ul>
                     <li>
                         <i class="fa-solid fa-house"></i>
-                        <p>
-                            Construcción: 
-                            <?= e((string)($propiedad['construccion_m2'] ?? 0)) ?> M²
-                        </p>
+                        <p>Construcción: <?= e((string)($propiedad['construccion_m2'] ?? 0)) ?> M²</p>
                     </li>
-
                     <li>
                         <i class="fa-solid fa-ruler-combined"></i>
-                        <p>
-                            Terreno: 
-                            <?= e((string)($propiedad['terreno_m2'] ?? 0)) ?> M²
-                        </p>
+                        <p>Terreno: <?= e((string)($propiedad['terreno_m2'] ?? 0)) ?> M²</p>
                     </li>
-
                     <li>
                         <i class="fa-solid fa-location-dot"></i>
                         <p><?= e($ciudadTexto) ?></p>
                     </li>
-
                     <li>
                         <i class="fa-solid fa-tag"></i>
                         <p><?= e($tipoTexto) ?></p>
@@ -196,22 +203,17 @@ require_once ROOT_PATH . '/Includes/header.php';
                         <i class="fa-solid fa-building"></i>
                         <p><?= e(ucfirst($operacionTexto)) ?></p>
                     </li>
-
                     <li>
                         <i class="fa-solid fa-bed"></i>
                         <p><?= e((string)$propiedad['recamaras']) ?> recámaras</p>
                     </li>
-
                     <li>
                         <i class="fa-solid fa-toilet"></i>
                         <p><?= (int)$propiedad['banos'] ?> baños</p>
                     </li>
-
                     <li>
                         <i class="fa-solid fa-car"></i>
-                        <p>
-                            <?= e((string)$propiedad['estacionamientos']) ?> Estacionamientos
-                        </p>
+                        <p><?= e((string)$propiedad['estacionamientos']) ?> Estacionamientos</p>
                     </li>
                 </ul>
             </div>
@@ -224,7 +226,7 @@ require_once ROOT_PATH . '/Includes/header.php';
             <?php endif; ?>
         </article>
 
-        <!-- Info agente -->
+        <!-- Información y contacto del agente -->
         <aside class="info_agente">
             <img 
                 src="<?= BASE_URL ?><?= e((string)$fotoAgente) ?>"
@@ -233,7 +235,6 @@ require_once ROOT_PATH . '/Includes/header.php';
 
             <div>
                 <h2><?= e((string)($propiedad['agente_nombre'] ?: 'Agente no asignado')) ?></h2>
-
                 <p><strong>Contacto</strong></p>
 
                 <?php if (!empty($propiedad['agente_email'])): ?>
@@ -256,71 +257,29 @@ require_once ROOT_PATH . '/Includes/header.php';
             <p><strong>Contáctanos</strong></p>
 
             <form action="<?= BASE_URL ?>Backend/guardar-mensaje.php" method="POST" class="form-contacto">
-                <input
-                    type="hidden"
-                    name="propiedad_id"
-                    value="<?= $propiedad['id'] ?? '' ?>"
-                >
-
-                <label>
-                    Nombre
-                    <input
-                        type="text"
-                        name="nombre"
-                        required
-                    >
-                </label>
-
-                <label>
-                    Teléfono
-                    <input
-                        type="tel"
-                        name="telefono"
-                        required
-                    >
-                </label>
-
-                <label>
-                    Correo electrónico
-                    <input
-                        type="email"
-                        name="email"
-                        required
-                    >
-                </label>
-
-                <label>
-                    Mensaje
-                    <textarea
-                        name="mensaje"
-                        rows="5"
-                        required
-                    ></textarea>
-                </label>
-
-                <button type="submit">
-                    Enviar mensaje
-                </button>
-
-                <input
-                    type="hidden"
-                    name="slug"
-                    value="<?= e($propiedad['slug']) ?>"
-                >
+                <input type="hidden" name="propiedad_id" value="<?= $propiedad['id'] ?? '' ?>">
+                <label>Nombre <input type="text" name="nombre" required></label>
+                <label>Teléfono <input type="tel" name="telefono" required></label>
+                <label>Correo electrónico <input type="email" name="email" required></label>
+                <label>Mensaje <textarea name="mensaje" rows="5" required></textarea></label>
+                <button type="submit">Enviar mensaje</button>
+                <input type="hidden" name="slug" value="<?= e($propiedad['slug']) ?>">
             </form>
         </aside>
     </section>
 
+    <!-- Botón que lanza la impresión directa -->
     <button
         class="imprimir"
         type="button"
-            onclick="window.open('<?= BASE_URL ?>Usuario/ImprimirPropiedadInfo.php?id=<?= $propiedad['id'] ?>&moneda=<?= urlencode($monedaMostrar) ?>', '_blank')"        <i class="fa-solid fa-print"></i>
+        onclick="imprimirDirecto('<?= BASE_URL ?>Usuario/ImprimirPropiedadInfo.php?id=<?= $propiedad['id'] ?>&moneda=<?= urlencode($monedaMostrar) ?>')">
+        <i class="fa-solid fa-print"></i>
         Imprimir ficha
     </button>
 
+    <!-- Ubicación Google Maps -->
     <section class="maps">
         <h1>Encuentra la propiedad</h1>
-
         <iframe 
             src="<?= e((string)$mapsUrl) ?>"
             width="945" 
@@ -343,9 +302,7 @@ require_once ROOT_PATH . '/Includes/header.php';
                     Gracias por contactarnos.<br>
                     Un asesor de Primavera Inmobiliaria se comunicará contigo lo antes posible.
                 </p>
-                <button id="cerrarModalMensaje">
-                    Aceptar
-                </button>
+                <button id="cerrarModalMensaje">Aceptar</button>
             </div>
         </dialog>
     <?php endif; ?>
@@ -355,163 +312,193 @@ require_once ROOT_PATH . '/Includes/header.php';
 <?php require_once ROOT_PATH . '/Includes/footer.php'; ?>
 
 <script>
-let imagenActual = 0;
-
-function cambiarImagen(src, direccion = "derecha") {
-
-    const imagen = document.getElementById("imagenPrincipal");
-
-    if (!imagen) return;
-
-
-    imagen.classList.remove(
-        "animacion-derecha",
-        "animacion-izquierda"
-    );
-
-
-    // Reinicia animación
-    void imagen.offsetWidth;
-
-
-    imagen.src = src;
-
-
-    if(direccion === "derecha"){
-
-        imagen.classList.add("animacion-derecha");
-
-    }else{
-
-        imagen.classList.add("animacion-izquierda");
-
-    }
-
-}
-
-
+let mediaActual = 0;
+let listaMultimedia = [];
 let inicioX = 0;
 let finalX = 0;
 
-
-// Capturar inicio del movimiento
 document.addEventListener("DOMContentLoaded", () => {
+    // 1. Cargar items multimedia
+    const items = document.querySelectorAll(".miniatura-item");
+    listaMultimedia = Array.from(items).map(item => ({
+        src: item.dataset.src,
+        type: item.dataset.type
+    }));
 
-    const imagenPrincipal = document.getElementById('imagenPrincipal');
+    // Vincular evento de clic / pausa al video principal inicial si existe
+    const videoInicial = document.getElementById("visorPrincipal");
+    const wrapperInicial = document.getElementById("wrapperVideo");
+    if (videoInicial && wrapperInicial) {
+        configurarEventosVideo(videoInicial, wrapperInicial);
+    }
 
-    if(!imagenPrincipal) return;
+    // 2. Swipe táctil en visor
+    const visor = document.getElementById('contenedorVisor');
+    if (visor) {
+        visor.addEventListener("touchstart", (e) => { inicioX = e.touches[0].clientX; });
+        visor.addEventListener("touchend", (e) => {
+            finalX = e.changedTouches[0].clientX;
+            if (inicioX - finalX > 50) siguienteMedia();
+            if (finalX - inicioX > 50) anteriorMedia();
+        });
+    }
 
+    // 3. Scroll de miniaturas
+    const miniaturas = document.getElementById('miniaturas');
+    const btnIzquierda = document.getElementById('btnMiniaturasIzquierda');
+    const btnDerecha = document.getElementById('btnMiniaturasDerecha');
 
-    const miniaturas = document.querySelectorAll(".miniaturas img");
+    if (btnIzquierda && miniaturas) {
+        btnIzquierda.addEventListener('click', () => miniaturas.scrollBy({ left: -500, behavior: 'smooth' }));
+    }
+    if (btnDerecha && miniaturas) {
+        btnDerecha.addEventListener('click', () => miniaturas.scrollBy({ left: 500, behavior: 'smooth' }));
+    }
 
-
-    // Guardar las rutas de las imágenes
-    const fotos = Array.from(miniaturas).map(img => img.src);
-
-
-    imagenPrincipal.addEventListener("touchstart", (e)=>{
-
-        inicioX = e.touches[0].clientX;
-
-    });
-
-
-    imagenPrincipal.addEventListener("touchend", (e)=>{
-
-        finalX = e.changedTouches[0].clientX;
-
-
-        // Deslizar izquierda
-        if(inicioX - finalX > 50){
-
-            siguienteFoto(fotos);
-
+    // 4. Modal de mensaje enviado
+    const modalMensaje = document.getElementById("modalMensajeEnviado");
+    if (modalMensaje) {
+        modalMensaje.showModal();
+        const cerrarBtn = document.getElementById("cerrarModalMensaje");
+        if (cerrarBtn) {
+            cerrarBtn.addEventListener("click", () => {
+                modalMensaje.close();
+                limpiarUrlMensaje();
+            });
         }
-
-
-        // Deslizar derecha
-        if(finalX - inicioX > 50){
-
-            anteriorFoto(fotos);
-
-        }
-
-    });
-
+        modalMensaje.addEventListener("click", (e) => {
+            if (e.target === modalMensaje) {
+                modalMensaje.close();
+                limpiarUrlMensaje();
+            }
+        });
+    }
 });
 
-
-
-function siguienteFoto(fotos){
-
-    if(imagenActual < fotos.length - 1){
-
-        imagenActual++;
-
-        cambiarImagen(fotos[imagenActual]);
-
+// Función para imprimir directamente sin modal visible
+function imprimirDirecto(url) {
+    let iframe = document.getElementById("iframeImpresionOculto");
+    
+    // Si no existe el iframe invisible, lo creamos
+    if (!iframe) {
+        iframe = document.createElement("iframe");
+        iframe.id = "iframeImpresionOculto";
+        iframe.style.position = "fixed";
+        iframe.style.right = "0";
+        iframe.style.bottom = "0";
+        iframe.style.width = "0px";
+        iframe.style.height = "0px";
+        iframe.style.border = "none";
+        document.body.appendChild(iframe);
     }
 
-}
+    // Evento al cargar el iframe
+    iframe.onload = function() {
+        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
 
-
-
-function anteriorFoto(fotos){
-
-    if(imagenActual > 0){
-
-        imagenActual--;
-
-        cambiarImagen(fotos[imagenActual]);
-
-    }
-
-}
-const miniaturas = document.getElementById('miniaturas');
-const btnIzquierda = document.getElementById('btnMiniaturasIzquierda');
-const btnDerecha = document.getElementById('btnMiniaturasDerecha');
-
-if (btnIzquierda && miniaturas) {
-    btnIzquierda.addEventListener('click', () => {
-        miniaturas.scrollBy({
-            left: -500,
-            behavior: 'smooth'
+        // Esperar a que las imágenes internas del iframe terminen de cargar para rapidez y precisión
+        const imagenes = iframeDoc.querySelectorAll("img");
+        const promesasImagenes = Array.from(imagenes).map(img => {
+            if (img.complete) return Promise.resolve();
+            return new Promise(resolve => {
+                img.onload = resolve;
+                img.onerror = resolve;
+            });
         });
-    });
+
+        Promise.all(promesasImagenes).then(() => {
+            setTimeout(() => {
+                iframe.contentWindow.focus();
+                iframe.contentWindow.print();
+            }, 100);
+        });
+    };
+
+    iframe.src = url;
 }
 
-if (btnDerecha && miniaturas) {
-    btnDerecha.addEventListener('click', () => {
-        miniaturas.scrollBy({
-            left: 500,
-            behavior: 'smooth'
-        });
-    });
+function limpiarUrlMensaje() {
+    const url = new URL(window.location);
+    url.searchParams.delete("mensaje");
+    window.history.replaceState({}, "", url);
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-    const modal = document.getElementById("modalMensajeEnviado");
-    if (!modal) return;
-
-    modal.showModal();
-
-    const cerrarBtn = document.getElementById("cerrarModalMensaje");
-    if (cerrarBtn) {
-        cerrarBtn.addEventListener("click", () => {
-            modal.close();
-            const url = new URL(window.location);
-            url.searchParams.delete("mensaje");
-            window.history.replaceState({}, "", url);
-        });
-    }
-
-    modal.addEventListener("click", (e) => {
-        if (e.target === modal) {
-            modal.close();
-            const url = new URL(window.location);
-            url.searchParams.delete("mensaje");
-            window.history.replaceState({}, "", url);
+function configurarEventosVideo(video, wrapper) {
+    video.addEventListener('click', (e) => {
+        if (e.target === video) {
+            if (video.paused) {
+                video.play();
+                wrapper.classList.remove('pausado');
+            } else {
+                video.pause();
+                wrapper.classList.add('pausado');
+            }
         }
     });
-});
+
+    video.addEventListener('pause', () => wrapper.classList.add('pausado'));
+    video.addEventListener('play', () => wrapper.classList.remove('pausado'));
+}
+
+function cambiarMedia(element) {
+    const src = element.dataset.src;
+    const type = element.dataset.type;
+    const contenedor = document.getElementById("contenedorVisor");
+    if (!contenedor) return;
+
+    const items = Array.from(document.querySelectorAll(".miniatura-item"));
+    mediaActual = items.indexOf(element);
+
+    items.forEach(el => el.classList.remove("activa"));
+    element.classList.add("activa");
+
+    contenedor.innerHTML = "";
+
+    if (type === 'video') {
+        const wrapper = document.createElement("div");
+        wrapper.className = "contenedor-video-principal animacion-derecha";
+        wrapper.id = "wrapperVideo";
+
+        const video = document.createElement("video");
+        video.className = "imagen_principal";
+        video.id = "visorPrincipal";
+        video.src = src;
+        video.autoplay = true;
+        video.muted = true; // Forzado a estar muteado al cambiar de video
+        video.playsInline = true;
+
+        const overlay = document.createElement("div");
+        overlay.className = "overlay-pausa";
+        overlay.innerHTML = "▶";
+
+        wrapper.appendChild(video);
+        wrapper.appendChild(overlay);
+        contenedor.appendChild(wrapper);
+
+        configurarEventosVideo(video, wrapper);
+    } else {
+        const img = document.createElement("img");
+        img.className = "imagen_principal animacion-derecha";
+        img.id = "visorPrincipal";
+        img.src = src;
+        img.alt = "Imagen de propiedad";
+        contenedor.appendChild(img);
+    }
+}
+
+function siguienteMedia() {
+    if (mediaActual < listaMultimedia.length - 1) {
+        mediaActual++;
+        const items = document.querySelectorAll(".miniatura-item");
+        cambiarMedia(items[mediaActual]);
+    }
+}
+
+function anteriorMedia() {
+    if (mediaActual > 0) {
+        mediaActual--;
+        const items = document.querySelectorAll(".miniatura-item");
+        cambiarMedia(items[mediaActual]);
+    }
+}
 </script>
