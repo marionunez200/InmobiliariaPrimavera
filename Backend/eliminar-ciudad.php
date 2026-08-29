@@ -82,7 +82,8 @@ $stmt->execute([$id]);
 
 $_SESSION['modal_exito'] = [
     'titulo' => 'Ciudad eliminada',
-    'mensaje' => 'La ciudad fue eliminada correctamente.'
+    'mensaje' => 'La ciudad fue eliminada correctamente.',
+    'tipo' => 'eliminacion'
 ];
 
 header('Location: ' . BASE_URL . 'Admin/Panel-propiedades.php');

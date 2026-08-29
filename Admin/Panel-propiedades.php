@@ -465,7 +465,7 @@ $ultimasPropiedades = $stmtUltimas->fetchAll();
                             class="editar"
                             type="button"
                             data-edit
-                            data-propiedad="<?= e($propiedadJson ?: "{}", ENT_QUOTES, "UTF-8") ?>">
+                            data-propiedad="<?= e($propiedadJson ?: "{}") ?>">
                             <i class="fa-regular fa-pen-to-square"></i>
                         </button>
 
@@ -1606,6 +1606,169 @@ function escaparHTML(texto) {
   return div.innerHTML;
 }
 
+const MODAL_AGREGAR_KEY = "modalAgregarState";
+const MODAL_EDITAR_KEY = "modalEditarState";
+
+function guardarEstadoFormulario(selector, key) {
+  const form = document.querySelector(selector);
+
+  if (!form) return;
+
+  try {
+    const state = {};
+
+    form.querySelectorAll("input, select, textarea").forEach((element) => {
+      const { name, type } = element;
+
+      if (!name || type === "file") return;
+
+      if (type === "checkbox" || type === "radio") {
+        state[name] = element.checked ? "1" : "0";
+        return;
+      }
+
+      if (type === "select-multiple") {
+        state[name] = Array.from(element.selectedOptions).map((option) => option.value);
+        return;
+      }
+
+      state[name] = element.value;
+    });
+
+    // Guardar también las imágenes si es el modal de editar
+    if (selector === "#modalEditar form") {
+      state._imagenesEditar = JSON.stringify(listaArchivosEditar);
+    }
+    if (selector === "#modalAgregar form") {
+      state._imagenesAgregar = JSON.stringify(listaArchivosAgregar);
+    }
+
+    sessionStorage.setItem(key, JSON.stringify(state));
+  } catch (error) {
+    console.warn("No se pudo guardar el estado del formulario:", error);
+  }
+}
+
+function restaurarEstadoFormulario(selector, key, modalId) {
+  const form = document.querySelector(selector);
+
+  if (!form) return;
+
+  try {
+    const raw = sessionStorage.getItem(key);
+
+    if (!raw) return;
+
+    const state = JSON.parse(raw);
+
+    // Restaurar imágenes si existen
+    if (modalId === "modalEditar" && state._imagenesEditar) {
+      try {
+        listaArchivosEditar = JSON.parse(state._imagenesEditar);
+      } catch (e) {
+        listaArchivosEditar = [];
+      }
+      delete state._imagenesEditar;
+    }
+    if (modalId === "modalAgregar" && state._imagenesAgregar) {
+      try {
+        listaArchivosAgregar = JSON.parse(state._imagenesAgregar);
+      } catch (e) {
+        listaArchivosAgregar = [];
+      }
+      delete state._imagenesAgregar;
+    }
+
+    Object.entries(state).forEach(([name, value]) => {
+      const input = form.elements.namedItem(name);
+
+      if (!input) return;
+
+      if (Array.isArray(value)) {
+        Array.from(input.options || []).forEach((option) => {
+          option.selected = value.includes(option.value);
+        });
+        return;
+      }
+
+      if (input instanceof HTMLInputElement && (input.type === "checkbox" || input.type === "radio")) {
+        input.checked = String(value) === "1";
+        return;
+      }
+
+      input.value = value ?? "";
+    });
+
+    sessionStorage.removeItem(key);
+
+    const modal = document.getElementById(modalId);
+    if (modal) {
+      abrirModal(modal);
+      // Renderizar el contenido después de restaurar
+      if (modalId === "modalEditar") {
+        const direccionEditar = document.getElementById("edit_direccion_completa");
+        const googleEditar = document.getElementById("edit_google_maps_url");
+        const iframeEditar = document.getElementById("iframeEditar");
+        actualizarMapa(direccionEditar, googleEditar, iframeEditar);
+        renderizarEditar();
+      } else if (modalId === "modalAgregar") {
+        renderizarAgregar();
+      }
+    }
+  } catch (error) {
+    console.warn("No se pudo restaurar el estado del formulario:", error);
+    sessionStorage.removeItem(key);
+  }
+}
+
+function guardarEstadoFormularioActivo() {
+  if (document.getElementById("modalEditar")?.open) {
+    guardarEstadoFormulario("#modalEditar form", MODAL_EDITAR_KEY);
+    return;
+  }
+
+  if (document.getElementById("modalAgregar")?.open) {
+    guardarEstadoFormulario("#modalAgregar form", MODAL_AGREGAR_KEY);
+  }
+}
+
+function restaurarEstadoFormularioActivo() {
+  if (sessionStorage.getItem(MODAL_EDITAR_KEY)) {
+    restaurarEstadoFormulario("#modalEditar form", MODAL_EDITAR_KEY, "modalEditar");
+    return;
+  }
+
+  if (sessionStorage.getItem(MODAL_AGREGAR_KEY)) {
+    restaurarEstadoFormulario("#modalAgregar form", MODAL_AGREGAR_KEY, "modalAgregar");
+  }
+}
+
+function limpiarFormularioAgregar() {
+  const formAgregar = document.querySelector("#modalAgregar form");
+
+  if (formAgregar) {
+    formAgregar.reset();
+  }
+
+  const inputOrden = document.getElementById("orden_imagenes_agregar");
+  if (inputOrden) inputOrden.value = "";
+
+  const previewAgregar = document.getElementById("previewAgregar");
+  if (previewAgregar) previewAgregar.innerHTML = "";
+
+  listaArchivosAgregar = [];
+
+  const iframeAgregar = document.getElementById("iframeAgregar");
+  const googleMapsAgregar = document.getElementById("googleMapsAgregar");
+  const direccionAgregar = document.getElementById("direccionAgregar");
+
+  if (iframeAgregar) iframeAgregar.src = "";
+  if (googleMapsAgregar) googleMapsAgregar.value = "";
+  if (direccionAgregar) direccionAgregar.value = "";
+
+  sessionStorage.removeItem(MODAL_AGREGAR_KEY);
+}
+
 /* =========================================================
    CREAR OBJETO PARA ARCHIVO NUEVO
 ========================================================= */
@@ -1708,7 +1871,21 @@ document.addEventListener("click", function (event) {
   const openButton = event.target.closest("[data-open-modal]");
 
   if (openButton) {
-    const modal = document.getElementById(openButton.dataset.openModal);
+    const modalId = openButton.dataset.openModal;
+    const modal = document.getElementById(modalId);
+
+    // Solo guardar estado para modales de AGREGAR, no para ELIMINAR
+    if ([
+      "modalCategoria",
+      "modalCiudad",
+      "modalCategorias",
+      "modalCiudades"
+    ].includes(modalId)) {
+      guardarEstadoFormularioActivo();
+      if (document.getElementById("modalEditar")?.open) {
+        guardarEstadoFormulario("#modalEditar form", MODAL_EDITAR_KEY);
+      }
+    }
 
     abrirModal(modal);
 
@@ -1726,6 +1903,10 @@ document.addEventListener("click", function (event) {
   if (closeButton) {
     const modal = closeButton.closest("dialog") || closeButton.closest(".modal");
 
+    if (modal && modal.id === "modalAgregar") {
+      limpiarFormularioAgregar();
+    }
+
     cerrarModal(modal);
 
     return;
@@ -1738,6 +1919,26 @@ document.addEventListener("click", function (event) {
             inputEliminar.value = deleteButton.dataset.id;
             abrirModal(modalEliminar);
         }
+    }
+
+    const botonEliminarCategoria = event.target.closest('.btn-eliminar-cat-modal');
+    if (botonEliminarCategoria) {
+        const inputCategoria = document.getElementById('delete_categoria_id');
+        if (inputCategoria && modalEliminarCategoria) {
+            inputCategoria.value = botonEliminarCategoria.dataset.id;
+            abrirModal(modalEliminarCategoria);
+        }
+        return;
+    }
+
+    const botonEliminarCiudad = event.target.closest('.btn-eliminar-ciu-modal');
+    if (botonEliminarCiudad) {
+        const inputCiudad = document.getElementById('delete_ciudad_id');
+        if (inputCiudad && modalEliminarCiudad) {
+            inputCiudad.value = botonEliminarCiudad.dataset.id;
+            abrirModal(modalEliminarCiudad);
+        }
+        return;
     }
 });
 
@@ -2987,6 +3188,20 @@ document.querySelectorAll("form").forEach(function (form) {
   });
 });
 
+[
+  { selector: "#modalAgregar form", key: MODAL_AGREGAR_KEY },
+  { selector: "#modalEditar form", key: MODAL_EDITAR_KEY }
+].forEach(({ selector, key }) => {
+  const form = document.querySelector(selector);
+
+  if (!form) return;
+
+  form.querySelectorAll("input, select, textarea").forEach((element) => {
+    element.addEventListener("input", () => guardarEstadoFormulario(selector, key));
+    element.addEventListener("change", () => guardarEstadoFormulario(selector, key));
+  });
+});
+
 /* =========================================================
     MODAL ÉXITO
 ========================================================= */
@@ -2994,7 +3209,25 @@ document.querySelectorAll("form").forEach(function (form) {
 document.addEventListener("DOMContentLoaded", function () {
   const modalExito = document.getElementById("modalExito");
 
-  if (!modalExito) {
+  // Si existe un modal de éxito
+  if (modalExito && modalExito.innerHTML.trim()) {
+    const titulo = modalExito.querySelector("h2")?.textContent || "";
+    
+    // Limpiar si es una acción de propiedad, error o eliminación
+    if (titulo.includes("Propiedad") || titulo.includes("Cambios guardados") || 
+        titulo.includes("Error") || titulo.includes("eliminada")) {
+      sessionStorage.removeItem(MODAL_AGREGAR_KEY);
+      sessionStorage.removeItem(MODAL_EDITAR_KEY);
+    } else if (titulo.includes("Categoría") || titulo.includes("Ciudad")) {
+      // Para categoría/ciudad AGREGADA, restaurar el formulario que estaba abierto
+      restaurarEstadoFormularioActivo();
+    }
+  } else {
+    // Solo restaurar si no hay modal de éxito
+    restaurarEstadoFormularioActivo();
+  }
+
+  if (!modalExito || !modalExito.innerHTML.trim()) {
     return;
   }
 

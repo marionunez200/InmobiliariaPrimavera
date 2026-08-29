@@ -85,7 +85,8 @@ $stmt->execute([$id]);
 
 $_SESSION['modal_exito'] = [
     'titulo' => 'Categoría eliminada',
-    'mensaje' => 'La categoría fue eliminada correctamente.'
+    'mensaje' => 'La categoría fue eliminada correctamente.',
+    'tipo' => 'eliminacion'
 ];
 
 header('Location: ' . BASE_URL . 'Admin/Panel-propiedades.php');
