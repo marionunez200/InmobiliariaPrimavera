@@ -192,7 +192,7 @@ require_once ROOT_PATH . '/Includes/header.php';
 
             <div class="about-image">
                 <img 
-                    src="<?= BASE_URL ?>Imagenes/Quienes_somos.webp"
+                    src="<?= BASE_URL ?>Imagenes/acc.webp"
                     alt="Equipo de Primavera inmobiliaria atendiendo clientes"
                     class="about-img"
                 >
